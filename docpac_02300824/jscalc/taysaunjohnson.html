@@ -7,17 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="number" id="number1">
-    <input type="number" id="number2">
-    <div id="box"></div>
-    <select id="arithmetic">
-        <option>+</option>
-        <option>-</option>
-        <option>*</option>
-        <option>/</option>
-        <option>%</option>
-    </select>
-    <button id="result">Result</button>
+    <div class="result-container">
+        <div id="box"></div>
+    </div>
+    <div class="calculations">
+        <input type="number" id="number1" class="number">
+        <input type="number" id="number2" class="number">
+        <select id="arithmetic">
+            <option>+</option>
+            <option>-</option>
+            <option>*</option>
+            <option>/</option>
+            <option>%</option>
+        </select>
+        <input type="button" id="result" value="Result">
+        <input type="button" id="clear" value="Clear">
+    </div>
 
     <script src="script.js"></script>
 </body>

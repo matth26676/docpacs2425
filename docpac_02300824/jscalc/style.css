@@ -5,10 +5,36 @@
 }
 
 body {
-    display: flex;
     font-family: "roboto", Arial;
     height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+
+.result-container {
+    display: flex;
+    height: 50vh;
+    width: 100vw;
+    font-size: 150px;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+}
+
+#box {
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+}
+
+.calculations {
+    display: flex;
+    width: 100vw;
+    justify-content: center;
+}
+
+.calculations input, .calculations select {
+    margin: 0 5px;
+}
+
+.number {
+    width: 100px;
 }
