@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SODA!!!!</title>
+    <script>
+        function sodaCalculation() {
+            let num1 = document.getElementById("first")
+            let num2 = document.getElementById("second")
+            let op = document.getElementById("operator")
+            console.log(num1 + num2 + op)
+        }
+    </script>
+</head>
+<body>
+    <input type="number" id="first">
+    <select name="operator" id="operator">
+        <option value="+">+</option>
+        <option value="-"->-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+    </select>
+    <input type="number" id="second">
+    <div id="result"></div>
+    <button onclick="sodaCalculation()">SODA!!!!</button>
+</body>
+</html>
