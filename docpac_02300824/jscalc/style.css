@@ -35,6 +35,36 @@ body {
     margin: 0 5px;
 }
 
+.calculations select {
+    border-radius: 10px;
+}
+
 .number {
     width: 100px;
+}
+
+.btns {
+    display: flex;
+    justify-content: center;
+    margin: 50px;
+}
+
+.btns input {
+    height: 40px;
+    width: 100px;
+    border-radius: 15px;
+    border: none;
+    background-color: rgb(62, 62, 133);
+    color: white;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.btns input:disabled {
+    background-color: lightgray;
+    transform: scale(100%);
+}
+
+.btns input:active {
+    transform: scale(98%);
 }
