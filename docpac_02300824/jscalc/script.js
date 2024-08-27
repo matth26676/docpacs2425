@@ -37,7 +37,6 @@ result.addEventListener('click', update = () => {
 
 clear.addEventListener('click', () => {
     box.style.opacity = 0
-    // result.disabled = false
     result.style.display = "block"
     clear.style.display = "none"
     number1.value = ''
