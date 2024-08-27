@@ -5,23 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>jscalcKB</title>
     <script>
-        
+        function math() {
+            console.log("working")
+            var num1 = document.getElementById("num1").value;
+            var num2 = document.getElementById("num2").value;
+            var operations = document.getElementById("operations").value;
+            
+            if ( num2 == 0 && operations == "/" || operations == "%") {
+                document.getElementById("result").innerHTML = "Error!";
+            } else { 
+                document.getElementById("result").innerHTML = eval(num1 + operations + num2);
+            }
+        }
     </script>
 </head>
 <body>
-    <input id="firstNum" type="number">
+    <input id="num1" type="number">
     <div id="dropDown">
-        <form>
-            <select id="operations">
-                <option id="plus">+</option>
-                <option id="minus">-</option>
-                <option id="multiply">*</option>
-                <option id="divide">/</option>
-                <option id="percent">%</option>
-            </select>
-        </form>
+        <select id="operations">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+            <option value="%">%</option>
+        </select>
     </div>
-    <input id="secondNum" type="number">
+    <input id="num2" type="number">
+
+    <div id="break">
+        <br></br>
+    </div>
 
     <div id="result">
     </div>
@@ -29,7 +42,8 @@
     <div id="break">
         <br></br>
     </div>
-    <button onclick="Solve">Solve</button>
+    
+    <button onclick="math()">Solve</button>
 
 </body>
 </html>
