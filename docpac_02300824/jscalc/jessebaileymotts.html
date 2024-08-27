@@ -3,15 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SODA!!!!</title>
-    <script>
-        function sodaCalculation() {
-            let num1 = document.getElementById("first")
-            let num2 = document.getElementById("second")
-            let op = document.getElementById("operator")
-            console.log(num1 + num2 + op)
-        }
-    </script>
+    <title>SODA!!!! calculator</title>
 </head>
 <body>
     <input type="number" id="first">
@@ -23,7 +15,29 @@
         <option value="%">%</option>
     </select>
     <input type="number" id="second">
-    <div id="result"></div>
+    <div id="resultBox"></div>
     <button onclick="sodaCalculation()">SODA!!!!</button>
 </body>
+<script>
+    function sodaCalculation() {
+        let num1 = +document.getElementById("first").value;
+        let num2 = +document.getElementById("second").value;
+        let op = document.getElementById("operator").value;
+        let result = 0;
+        if (op = "+") {
+            result = num1 + num2;
+        } else if (op = "-") {
+            result = num1 - num2;
+        } else if (op = "*") {
+            result = num1 * num2;
+        } else if (op = "/" && num2 != 0) {
+            result = num1 / num2;
+        } else if (op = "%" && num2 != 0) {
+            result = num1 % num2;
+        } else {
+            result = "Error";
+        }
+        resultBox.innerText = result;
+    }
+</script>
 </html>
