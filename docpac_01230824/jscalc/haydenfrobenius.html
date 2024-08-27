@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS CALC</title>
+    <style>
+        .error {
+            color: #FF0000;
+        }
+    </style>
+</head>
+<body>
+    <input type="number" id="box1">
+    <select id="operatorSelect">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+      </select>
+    <input type="number" id="box2">
+    <button onclick="solve()">Solve</button>
+    <br><br>
+    <div id="emptyDiv"></div>
+    <script>
+        let box1 = document.getElementById('box1');
+        let box2 = document.getElementById('box2');
+        let operatorSelect = document.getElementById('operatorSelect');
+        let emptyDiv = document.getElementById('emptyDiv');
+
+        function solve(){
+            let num1 = Number(box1.value);
+            let num2 = Number(box2.value);
+            let op = operatorSelect.value;
+            let result = eval(num1+op+num2);
+
+            if( (result !== 0 && !result) || result === Infinity){
+                result = "<p class='error'>ERROR</p>";
+            }
+
+            emptyDiv.innerHTML = result;
+        }
+    </script>
+</body>
+</html>
