@@ -124,8 +124,8 @@
         console.log(window.innerHeight)
         clear.style.display = "none"
         result.addEventListener('click', update = () => {
-            let num1 = parseInt(number1.value)
-            let num2 = parseInt(number2.value)
+            let num1 = parseFloat(number1.value)
+            let num2 = parseFloat(number2.value)
             let options = document.getElementsByTagName('option');
 
             if (number1.value && number2.value) {
