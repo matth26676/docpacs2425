@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChickenEating</title>
+    <script>
+        function mathThingy() {
+            let n1 = Number(document.getElementById("n1").value);
+            let n2 = Number(document.getElementById("n2").value);
+            let answer = 0;
+            let operation = document.getElementById("operators").value;
+            if (operation == "+") {
+                answer = n1 + n2;
+            } else if (operation == "-") {
+                answer = n1 - n2;
+            } else if (operation == "*") {
+                answer = n1 * n2;
+            } else if (operation == "/" && n2 != 0) {
+                answer = n1 / n2;
+            } else if (operation == "%" && n2 != 0) {
+                answer = n1 % n2;
+            } else {
+                answer = "Error!"
+            }
+            answerBox.innerText = answer;
+        }
+    </script>
+</head>
+
+<body>
+    <input type="number" id="n1">
+    <div id="dropDown">
+        <select name="operators" id="operators">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+            <option value="%">%</option>
+        </select>
+    </div>
+    <input type="number" id="n2">
+    <div id="answerBox"></div>
+    <button onclick="mathThingy()">Do the maths</button>
+</body>
+
+</html>
