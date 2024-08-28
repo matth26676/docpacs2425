@@ -60,6 +60,7 @@
             <option value="-">-</option>
             <option value="*">*</option>
             <option value="%">%</option>
+            <option value="/">/</option>
         </select>
         <input type="number" id="number2">
         <button onclick="calculate()">Calculate</button>
@@ -83,8 +84,14 @@
                 result = num1 * num2;
                 break;
             case '%':
-                if(num2 != 0) {
+                
                     result = num1 % num2;
+            
+                break;
+
+                case '/':
+                if(num2 != 0) {
+                    result = num1 / num2;
                 } else {
                     result = 'Error: Division by zero';
                 }
