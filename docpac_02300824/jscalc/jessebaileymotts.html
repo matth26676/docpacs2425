@@ -24,15 +24,15 @@
         let num2 = +document.getElementById("second").value;
         let op = document.getElementById("operator").value;
         let result = 0;
-        if (op = "+") {
+        if (op == "+") {
             result = num1 + num2;
-        } else if (op = "-") {
+        } else if (op == "-") {
             result = num1 - num2;
-        } else if (op = "*") {
+        } else if (op == "*") {
             result = num1 * num2;
-        } else if (op = "/" && num2 != 0) {
-            result = num1 / num2;
-        } else if (op = "%" && num2 != 0) {
+        } else if (op == "/" && num2 != 0) {
+            result == num1 / num2;
+        } else if (op == "%" && num2 != 0) {
             result = num1 % num2;
         } else {
             result = "Error";
