@@ -33,10 +33,27 @@
             let num1 = Number(box1.value);
             let num2 = Number(box2.value);
             let op = operatorSelect.value;
-            let result = eval(num1+op+num2);
+            let errorMessage = "<p class='error'>ERROR</p>";
+            let result;
 
+            //gross
+            if(op === "+"){
+                result = num1 + num2;
+            } else if(op === "-"){
+                result = num1 - num2;
+            } else if(op === "*"){
+                result = num1 * num2;
+            } else if(op === "/"){
+                result = num1 / num2;
+            } else if(op === "%"){
+                result = num1 % num2;
+            } else {
+                result = errorMessage
+            }
+            
+            
             if( (result !== 0 && !result) || result === Infinity){
-                result = "<p class='error'>ERROR</p>";
+                result = errorMessage;
             }
 
             emptyDiv.innerHTML = result;
