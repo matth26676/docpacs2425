@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+<body>
+    <div id="scoreBox">Score: 0</div>
+    <div id="timerBox">Time remaining: </div>
+    <div id="directionBox">Direction: Up</div>
+    <script>
+        const scoreBox = document.getElementById("scoreBox");
+        const timerBox = document.getElementById("timerBox");
+        const directionBox = document.getElementById("directionBox");
+        let score = 0;
+        let timer = 60;
+        let direction = 0;
+
+        // Can be indexed with the direction variable to get the corresponding string
+        const directionMap = ["Up", "Right", "Down", "Left"];
+
+        // Gets a random whole number between the minimum and maximum
+        function randomInteger(min, max) {
+            // Works by rounding down after multiplying to get a number from the min to max rather than 0-1
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Subtracts 1 from the timer every second
+        setInterval(() => {
+            if (timer > 0) {
+                timer -= 1;
+                timerBox.innerHTML = "Time remaining: " + timer;
+            }
+        }, 1000);
+
+        // Changes the direction every 2 seconds
+        setInterval(() => {
+            direction = randomInteger(0, 3);
+            directionBox.innerHTML = "Direction: " + directionMap[direction];
+        }, 2000);
+
+        window.addEventListener("gamepadconnected", (event) => {
+            function update() {
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) {
+                        continue;
+                    }
+
+                    // todo
+                }
+
+                // Call update for the next frame
+                requestAnimationFrame(update);
+            }
+
+            // Start the update loop
+            update();
+        });
+    </script>
+</body>
+</html>
