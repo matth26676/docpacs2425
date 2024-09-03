@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Calculator</title>
+    <style>
+body {
+    margin:auto;
+width:80%;
+text-align:center;
+}
+    </style>
+</head>
+
+<body>
+    <input type="number" id="nmbr1">
+
+    <select name="selectOperator" id="operator">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+    </select>
+    <input type="number" id="nmbr2">
+    <button onclick="myFunction()">Calculate</button>
+    <div id="result">
+
+    </div>
+</body>
+<script>
+    function myFunction() {
+        var operator = document.getElementById("operator").value
+        var nmbr1 = parseFloat(document.getElementById("nmbr1").value)
+        var nmbr2 = parseFloat(document.getElementById("nmbr2").value)
+        var result;
+
+        switch (operator) {
+            case "+": result = nmbr1 + nmbr2
+                break
+            case "-": result = nmbr1 - nmbr2
+                break
+            case "*": result = nmbr1 * nmbr2
+                break
+            case "/": result = nmbr1 / nmbr2
+                if (nmbr2 == 0) { window.alert('Error') }
+                if (nmbr2 == 0) result = "Cannot divide by 0"
+                break
+            case "%": result = nmbr1 % nmbr2
+                if (nmbr2 == 0) { window.alert('Error') }
+                if (nmbr2 == 0) result = "Cannot modulus by 0"
+                break
+            default: result = "invalid operator"
+        }
+
+        document.getElementById("result").innerHTML = result;
+
+
+    }
+</script>
+
+</html>

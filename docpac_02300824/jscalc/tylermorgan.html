@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cal-Cul-ATOR</title>
+</head>
+
+<body>
+    <input type="text" id="num1">
+    <br> <br>
+    <select id="operator">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+    </select>
+    <br> <br>
+    <input type="text" id="num2">
+    <br> <br>
+    <button type="button" onclick="calculating()">RESULT!</button>
+    <br> <br>
+    <div id="operator">
+        
+    </div>
+</body>
+<script>
+    function calculating() {
+        var num1 = +document.getElementById("num1").value;
+        var num2 = +document.getElementById("num2").value;
+        var operator = document.getElementById("operator").value;
+        var num3;
+
+        if (operator == "+") {
+            num3 = num1 + num2
+        }
+        else if (operator == "-") {
+            num3 = num1 - num2
+        }
+        else if (operator == "*") {
+            num3 = num1 * num2
+        }
+        else if (operator == "/") {
+            num3 = num1 / num2
+        }
+        else if (operator == "%") {
+            num3 = num1 % num2
+        }
+        
+        if (num2 == "0" && (operator == "/" || operator == "%")) {
+            alert("STOP, ERROR!!!");
+            return;
+        }
+
+        alert(num3)
+    }
+</script>
+
+</html>

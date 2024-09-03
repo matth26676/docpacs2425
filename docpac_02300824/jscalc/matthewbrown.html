@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jscalc</title>
+</head>
+<script>
+    function calculate() {
+        // Get the values from the input fields
+        let numInputOne = document.getElementById("numOne").value;
+        console.log(numInputOne);
+        let numInputTwo = document.getElementById("numTwo").value;
+        console.log(numInputTwo);
+
+        // Get the selected operator
+        let operator = document.getElementById("operatorList").value;
+
+        let result = 0;
+
+        // Check for division or modulus by zero
+        if ((operator == "/" || operator == "%") && numInputTwo == "0") {
+            document.getElementById("divOne").innerHTML = "Error: Division or Modulus by zero";
+            return;
+        }
+
+        // Perform the calculation based on the selected operator
+        switch (operator) {
+            case "+":
+                result = parseInt(numInputOne) + parseInt(numInputTwo);
+                break;
+            case "-":
+                result = parseInt(numInputOne) - parseInt(numInputTwo);
+                break;
+            case "*":
+                result = parseInt(numInputOne) * parseInt(numInputTwo);
+                break;
+            case "/":
+                result = parseInt(numInputOne) / parseInt(numInputTwo);
+                break;
+            case "%":
+                result = parseInt(numInputOne) % parseInt(numInputTwo);
+                break;
+            default:
+                result = "Invalid operator";
+        }
+
+        // Display the result
+        document.getElementById("divOne").innerHTML = result;
+    };
+</script>
+
+<body>
+    <!-- Input fields for numbers -->
+    <input type="text" id="numOne">
+    <input type="text" id="numTwo"> <br>
+    
+    <!-- Div to display the result -->
+    <div id="divOne"></div>
+    
+    <!-- Dropdown for selecting the operator -->
+    <select id="operatorList">
+        <option value="+" id="1">Addition +</option>
+        <option value="-" id="2">Subtraction -</option>
+        <option value="*" id="3">Multiplication x</option>
+        <option value="/" id="4">Division /</option>
+        <option value="%" id="5">Modulus %</option>
+    </select>
+    
+    <!-- Button to trigger the calculation -->
+    <button onclick="calculate()">Solve</button>
+</body>
+
+</html>

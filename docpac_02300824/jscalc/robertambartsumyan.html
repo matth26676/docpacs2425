@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calc for smify</title>
+    <style>
+        #display{
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div id="bruh">
+        <input type="number" id="num1">
+        <select name="Options" id="chose">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+            <option value="%">%</option>
+        </select>
+        <input type="number" id="num2">
+        <button onclick="doEverything()">=</button>
+    </div>
+    <div id="display"></div>
+</body>
+<script>
+   
+    var anwser = 0;
+
+    function doEverything(){
+        let firstNum = Number(document.getElementById('num1').value);
+        let secondNum = Number(document.getElementById('num2').value);
+        let eType = document.getElementById('chose').value;
+        //console.log(firstNum);
+        //console.log(secondNum);
+        if (eType == '+') {
+            anwser = firstNum + secondNum;
+            //console.log('+')
+        }else if (eType == '-') {
+            //console.log('-')
+            anwser = firstNum - secondNum;
+        }else if (eType == '*') {
+            //console.log('*')
+            anwser = firstNum * secondNum;
+        }else if (eType == '/') {
+            //console.log('/')
+            anwser = firstNum / secondNum;
+        }else if (eType == '%') {
+            //console.log('%')
+            anwser = firstNum % secondNum;
+        }
+
+        if (eType == '/' && firstNum == 0) {
+            alert('ERROR');
+            return
+        }else if (eType == '/' && secondNum == 0) {
+            alert('ERROR');
+            return
+        }else if (eType == '%' && secondNum == 0) {
+            alert('ERROR');
+            return
+        }else if (eType == '%' && firstNum == 0) {
+            alert('ERROR');
+            return
+        }
+
+        document.getElementById('display').innerHTML = anwser;
+        //console.log('hello')
+    }
+</script>
+</html>
