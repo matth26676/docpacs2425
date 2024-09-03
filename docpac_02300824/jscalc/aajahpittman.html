@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jscalc</title>
+</head>
+
+<input type="number" id="number1">
+<input type="number" id="number2">
+
+
+<body>
+
+    <div id="myDiv"></div>
+
+
+    <div></div>
+    <select name="sign" id="sign">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+    </select>
+
+    <button onClick="calculate()">Calculate</button>
+
+    <p id="result"></p>
+
+    <script>
+        function calculate() {
+            var number1 = parseFloat(document.getElementById("number1").value);
+            var number2 = parseFloat(document.getElementById("number2").value);
+            var sign = document.getElementById("sign").value;
+            var result;
+
+            if (sign == "/" && number2 == 0) {
+                document.getElementById("result").innerHTML = "Error!";
+                return;
+            }
+
+
+            if (sign == "+") {
+                result = number1 + number2;
+            } else if (sign == "-") {
+                result = number1 - number2;
+            } else if (sign == "*") {
+                result = number1 * number2;
+            } else if (sign == "/") {
+                result = number1 / number2;
+            }
+
+
+            document.getElementById("result").innerHTML = "Result: " + result;
+        }
+    </script>
+
+
+
+</body>
+
+</html>

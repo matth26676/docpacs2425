@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Calculater</title>
+</head>
+
+<body>
+    <h1>This is a calculater</h1>
+    <input type="" id="N1">
+    <select id="operations">
+        <option> </option>
+        <option>+</option>
+        <option>-</option>
+        <option>*</option>
+        <option>/</option>
+        <option>%</option>
+    </select>
+    <input type="" id="N2">
+    <button onclick="solve()"> solve </button>
+    <div id="div"></div>
+
+</body>
+<script>
+    function solve() {
+        let N1v = document.getElementById("N1").value
+        let N2v = document.getElementById("N2").value
+        let operationsV = document.getElementById("operations").value
+        if ((operationsV == "/" || operationsV == "%") && (N2v == "0")) {
+            document.getElementById("div").innerText = "ERROR Can't divide or modulus by 0"
+        }
+        else {
+            if (operationsV == "+") {
+                let N3v = parseInt(N1v) + parseInt(N2v)
+                document.getElementById("div").innerText = N3v;
+            }
+            else if (operationsV == "-") {
+                let N3v = parseInt(N1v) - parseInt(N2v)
+                document.getElementById("div").innerText = N3v;
+            }
+            else if (operationsV == "*") {
+                let N3v = parseInt(N1v) * parseInt(N2v)
+                document.getElementById("div").innerText = N3v;
+            }
+            else if (operationsV == "/") {
+                let N3v = parseInt(N1v) / parseInt(N2v)
+                document.getElementById("div").innerText = N3v;
+            }
+            else if (operationsV == "%") {
+                let N3v = parseInt(N1v) % parseInt(N2v)
+                document.getElementById("div").innerText = N3v;
+            }
+        }
+    }
+</script>
+
+</html>
