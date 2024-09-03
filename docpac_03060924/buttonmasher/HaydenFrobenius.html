@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+
+<body>
+    <div id="titleBox"><h1 id="titleText"></h1></div>
+    <div id="scoreBox"></div>
+    <div id="timerBox"></div>
+    <div id="directionBox"></div>
+    <script>
+
+        let titleText = document.getElementById('titleText');
+        let titleBox = document.getElementById('titleBox');
+        let scoreBox = document.getElementById('scoreBox');
+        let timerBox = document.getElementById('timerBox');
+        let directionBox = document.getElementById('directionBox');
+
+        let score = 0;
+        let timer = 20;
+        let direction = 0;
+
+        const buttonA = 0;
+
+        titleText.innerText = "CONNECT CONTROLLER";
+
+        window.addEventListener("gamepadconnected", onGamepadConnected);
+        window.addEventListener("gamepaddisconnected", onGamepadDisconnected);
+
+        function onGamepadConnected(event){
+
+            console.log(
+                "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+                event.gamepad.index,
+                event.gamepad.id,
+                event.gamepad.buttons.length,
+                event.gamepad.axes.length,
+            );
+
+            setInterval(timerUpdate, 1000);
+            setInterval(directionUpdate, 2000);
+            setInterval(checkButtons, 0);
+
+            timerUpdate();
+            directionUpdate();
+
+            titleBox.style.display = 'none';
+
+        }
+
+        function onGamepadDisconnected(event){
+            location.reload();
+        }
+
+        function checkButtons(){
+            let gp = navigator.getGamepads()[0];
+            let buttons = gp.buttons;
+
+            
+        }
+
+        function timerUpdate() {
+            if (timer > 0) {
+                timer -= 1;
+                timerBox.innerHTML = timer;
+            }
+        }
+
+        function directionUpdate() {
+            let directionKey = {
+                0: 'up',
+                1: 'right',
+                2: 'down',
+                3: 'left'
+            };
+
+            let randomDirection = Math.round(Math.random() * 3);
+            directionBox.innerHTML = directionKey[randomDirection];
+
+        }
+    </script>
+</body>
+
+</html>
