@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,23 +10,38 @@
         let direction = 0
         let time = 20
 
-        setInterval(() =>{
-            if (time > 0){
+        setInterval(() => {
+            if (time > 0) {
                 time--
                 document.getElementById('timerbox').innerHTML = time
             }
         }, 1000);
 
-        setInterval(() =>{
+        setInterval(() => {
             direction = Math.floor(Math.random() * 3)
             document.getElementById('directionbox').innerHTML = direction
         }, 2000);
 
+        // window.addEventListener('gamepadconnected', (event) => {
+        // });
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+                const output = document.getElementById('buttons');
+                output.innerHTML = '';
+            }
+            requestAnimationFrame(update);
+
+            update();
+        });
     </script>
 </head>
+
 <body>
     <div id="scorebox"></div>
     <div id="timerbox"></div>
     <div id="directionbox"></div>
+    <div id="buttons"></div>
 </body>
+
 </html>
