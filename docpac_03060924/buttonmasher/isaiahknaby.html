@@ -4,7 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>button mash</title>
-    <script></script>
+    <script>
+        let score = 0
+        let direction = 0
+        let time = 20
+
+        setInterval(() =>{
+            if (time > 0){
+                time--
+                document.getElementById('timerbox').innerHTML = time
+            }
+        }, 1000);
+
+        setInterval(() =>{
+            direction = Math.floor(Math.random() * 3)
+            document.getElementById('directionbox').innerHTML = direction
+        }, 2000);
+
+    </script>
 </head>
 <body>
     <div id="scorebox"></div>
