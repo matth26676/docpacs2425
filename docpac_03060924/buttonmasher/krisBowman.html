@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    var scr = 0; //creates score variable - default 0
+    var dir = 0; //creates direction variable - default 0
+    var tmr = 20; //creates timer variable - default 20
+
+    setInterval(function runTimer() {
+        if (tmr > 0) {
+            document.getElementByID("tmrBox").innerHTML = eval(tmr -= 1);
+        };
+    });
+
+    setInterval(function runDirection() {
+        rand = Math.floor(Math.random() * 4)
+        if (rand = 0) {
+            document.getElementByID("dirBox").innerHTML = "up";
+        }
+
+        if (rand = 1) {
+            document.getElementByID("dirBox").innerHTML = "right";
+        }
+
+        if (rand = 2) {
+            document.getElementByID("dirBox").innerHTML = "down";
+        }
+        
+        if (rand = 3) {
+            document.getElementByID("dirBox").innerHTML = "left";
+        }
+    });
+
+    
+</script>
+<body>
+    
+    <div id="scrBox"></div>;
+    <div id="tmrBox"></div>;
+    <div id="dirBox"></div>;
+
+
+</body>
+</html>
