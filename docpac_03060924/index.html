@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SODA!!!! Masher</title>
+</head>
+<body>
+    <div id="scoreBox"></div>
+    <div id="timerBox">Timer: 20</div>
+    <div id="directionBox"></div>
+</body>
+<script>
+    var scoreBox = document.getElementById("scoreBox");
+    var timerBox = document.getElementById("timerBox");
+    var directionBox = document.getElementById("directionBox");
+
+    var score = 0;
+    var timer = 20;
+    var direction = 0;
+
+    counter = setInterval(() => {
+        timer--; 
+        timerBox.innerText = "Timer: " + timer;
+        if (timer <= 0) clearInterval(counter);
+    }, 1000)
+
+</script>
+</html>

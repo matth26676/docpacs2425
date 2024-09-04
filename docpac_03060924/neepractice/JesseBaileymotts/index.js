@@ -7,8 +7,9 @@ const port = 3000;
 app.set("view engine", "ejs");
 
 // Renders an EJS HTML page that says "Hello, world!"
+// Define routes
 app.get("/", (req, res) => {
-    res.render("index.ejs")
+    res.render("index.ejs");
 })
 
 // Renders an EJS HTML page that says "Hello," and the name
@@ -19,4 +20,4 @@ app.get("/endpoint", (req, res) => {
 })
 
 // Listens to port 3000 for localhost
-app.listen(port)
+app.listen(port);
