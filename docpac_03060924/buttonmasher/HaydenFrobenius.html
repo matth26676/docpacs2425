@@ -24,7 +24,13 @@
         let timer = 20;
         let direction = 0;
 
+        let stickDirectionNames = ['up','right','down','left'];
+
         const buttonA = 0;
+        const buttonStart = 9;
+
+        const leftStickHorizontal = 0;
+        const leftStickVerticle = 1;
 
         titleText.innerText = "CONNECT CONTROLLER";
 
@@ -59,8 +65,17 @@
         function checkButtons(){
             let gp = navigator.getGamepads()[0];
             let buttons = gp.buttons;
+            let stick = gp.axes;
+            let horizontalDirection = Math.round(stick[leftStickHorizontal])+1;
+            let verticleDirection = Math.round(stick[leftStickVerticle])+1;
 
-            
+            if(!horizontalDirection && !verticleDirection){
+                return false;
+            }
+
+
+            //console.log(buttons[16].value)
+            console.log(stickDirectionNames[horizontalDirection + verticleDirection]);
         }
 
         function timerUpdate() {
@@ -71,15 +86,10 @@
         }
 
         function directionUpdate() {
-            let directionKey = {
-                0: 'up',
-                1: 'right',
-                2: 'down',
-                3: 'left'
-            };
 
             let randomDirection = Math.round(Math.random() * 3);
-            directionBox.innerHTML = directionKey[randomDirection];
+            direction = stickDirectionNames[randomDirection];
+            directionBox.innerHTML = direction;
 
         }
     </script>
