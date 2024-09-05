@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <style>
+        body {
+            background-color: rgb(60, 66, 58);
+            text-align: center;
+        }
+
+        div {
+            color: rgb(5, 173, 185);
+        }
+    </style>
+</head>
+
+<body>
+    <input type="number" id="firstnumber"> 
+    <input type="number" id="secondnumber">
+
+
+
+    <div id="jsCalc">
+        
+        <select name="operation" id="operation">
+            <option value="*">*</option>
+            <option value="/">/</option>
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="%">%</option>
+        </select> 
+        <button onclick=jsCalcInputs()>Answer</button>
+        <div id="answer"></div>
+    </div>
+    
+</body>
+<script>
+    
+    function jsCalcInputs() {
+
+        var numeric1 = document.getElementById("firstnumber").value; // inputs value as string and returns the integer inputed
+        var numeric2 = document.getElementById("secondnumber").value;
+        var operation = document.getElementById("operation").value;
+
+        if (operation == "%" && numeric2 == "0") {
+            document.write("ERROR! Refresh to try again.")
+        } else if (operation == "*") {
+            answer = numeric1 * numeric2
+        } else if (operation == "/") {
+            answer = numeric1 / numeric2
+        } else if (operation == "-") {
+            answer = numeric1 - numeric2
+        } else if (operation == "+") {
+            answer = numeric1 + numeric2
+        } else if (operation == "%") {
+            answer = numeric1 % numeric2
+        } 
+        document.getElementById("answer").innerHTML = "The result is:" + answer
+        
+    } 
+</script>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "roboto", Arial;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .result-container {
+            display: flex;
+            height: 50vh;
+            width: 100vw;
+            font-size: 150px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #box {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .calculations {
+            display: flex;
+            width: 100vw;
+            justify-content: center;
+        }
+
+        .calculations input,
+        .calculations select {
+            margin: 0 5px;
+        }
+
+        .calculations select {
+            border-radius: 10px;
+        }
+
+        .number {
+            width: 100px;
+        }
+
+        .btns {
+            display: flex;
+            justify-content: center;
+            margin: 50px;
+        }
+
+        .btns input {
+            height: 40px;
+            width: 100px;
+            border-radius: 15px;
+            border: none;
+            background-color: rgb(62, 62, 133);
+            color: white;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .btns input:disabled {
+            background-color: lightgray;
+            transform: scale(100%);
+        }
+
+        .btns input:active {
+            transform: scale(98%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="result-container">
+        <div id="box"></div>
+    </div>
+    <div class="calculations">
+        <input type="number" id="number1" class="number">
+        <select id="arithmetic">
+            <option>+</option>
+            <option>-</option>
+            <option>x</option>
+            <option>/</option>
+            <option>%</option>
+        </select>
+        <input type="number" id="number2" class="number">
+    </div>
+    <div class="btns">
+        <input type="button" id="result" value="Result">
+        <input type="button" id="clear" value="Clear">
+    </div>
+
+    <script>
+        let result = document.getElementById('result');
+        let box = document.getElementById('box');
+        let clear = document.getElementById('clear')
+        let number1 = document.getElementById('number1')
+        let number2 = document.getElementById('number2')
+        let resultContainer = document.querySelector('.result-container')
+
+        function checkSize() {
+            if (window.innerWidth < 600) {
+                resultContainer.style.fontSize = "100px"
+            } else {
+                resultContainer.style.fontSize = "150px"
+            }
+        }
+
+        checkSize()
+        window.addEventListener('resize', () => {
+            checkSize()
+        })
+
+        console.log(window.innerHeight)
+        clear.style.display = "none"
+        result.addEventListener('click', update = () => {
+            let num1 = parseFloat(number1.value)
+            let num2 = parseFloat(number2.value)
+            let options = document.getElementsByTagName('option');
+
+            if (number1.value && number2.value) {
+                if (options[0].selected) {
+                    box.innerHTML = num1 + num2
+                } else if (options[1].selected) {
+                    box.innerHTML = num1 - num2
+                } else if (options[2].selected) {
+                    box.innerHTML = num1 * num2
+                } else if (options[3].selected) {
+                    box.innerHTML = num1 / num2
+                } else {
+                    box.innerHTML = num1 % num2
+                }
+                box.style.opacity = 1
+                clear.style.display = "block"
+                result.style.display = "none"
+            } else {
+                box.innerHTML = "INVALID"
+                box.style.opacity = 1
+                setTimeout(() => {
+                    box.style.opacity = 0
+                }, 1000)
+            }
+
+        })
+
+        clear.addEventListener('click', () => {
+            box.style.opacity = 0
+            result.style.display = "block"
+            clear.style.display = "none"
+        })
+
+    </script>
+</body>
+
+</html>
