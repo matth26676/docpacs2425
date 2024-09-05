@@ -1,29 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SODA!!!! Masher</title>
 </head>
+
 <body>
-    <div id="scoreBox"></div>
+    <div id="scoreBox">Score: 0</div>
     <div id="timerBox">Timer: 20</div>
-    <div id="directionBox"></div>
+    <div id="directionBox">Direction: Up</div>
+    <div id="buttons" style="display: flex; flex-direction: column;"></div>
+    <div id="axes" style="display: flex; flex-direction: column;"></div>
 </body>
 <script>
+    // Sets variables for the HTML boxes and the values that will go in them
     var scoreBox = document.getElementById("scoreBox");
     var timerBox = document.getElementById("timerBox");
-    var directionBox = document.getElementById("directionBox");
-
+    var dirBox = document.getElementById("directionBox");
     var score = 0;
     var timer = 20;
     var direction = 0;
 
-    counter = setInterval(() => {
-        timer--; 
+    // Counts the timer down and stops at 0    
+    var counter = setInterval(() => {
+        timer--;
         timerBox.innerText = "Timer: " + timer;
         if (timer <= 0) clearInterval(counter);
     }, 1000)
 
+    // Sets direction to a random integer before stopping at 0
+    var dirChanger = setInterval(() => {
+        direction = Math.floor(Math.random() * 4)
+        if (direction == 0) {
+            direction = 'Up';
+        } else if (direction == 1) {
+            direction = 'Right';
+        } else if (direction == 2) {
+            direction = "Down";
+        } else {
+            direction = "Left";
+        }
+        dirBox.innerText = "Direction: " + direction;
+        if (timer <= 0) clearInterval(dirChanger);
+    }, 2000)
+
+    window.addEventListener('gamepadconnected', (event) => {
+        // Continuously updates
+        const update = () => {
+            const gamepad = navigator.getGamepads()[0];
+            const xAxis = gamepad.axes[1];
+            const yAxis = gamepad.axes[0];
+            const aButton = gamepad.buttons[0];
+
+            requestAnimationFrame(update);
+        };
+        update();
+
+    });
+
+
+
+    // Hayden's Credit Card Information
+    // 4104 8724 6693 3801
+    // CVC: 571
+    // EXP: 3/25
+
 </script>
+
 </html>
