@@ -129,19 +129,20 @@
                                 if (gamepad.buttons[0 ].pressed != wasPressed) {
                                     wasPressed = gamepad.buttons[0].pressed;
                                     if (wasPressed) { // button pressed code
-                                        if (gamepad.axes[1] <= -0.8 && way == "up" && timer > 0) {
-                                            score++;
+                                        switch (true) {
+                                            case (gamepad.axes[1] <= -0.8 && way == "up" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[1] >= 0.8 && way == "down" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[0] == 1 && way == "right" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[0] == -1 && way == "left" && timer > 0):
+                                                score++;
+                                                break;
                                         }
-                                        else if (gamepad.axes[1] >= 0.8 && way == "down" && timer > 0) {
-                                            score++;
-                                        }
-                                        else if (gamepad.axes[0] == 1 && way == "right" && timer > 0) {
-                                            score++;
-                                        }
-                                        else if (gamepad.axes[0] == -1 && way == "left" && timer > 0) {
-                                            score++;
-                                        }
-                                    
                                     }
                                 }
                                 document.getElementById("scorebox").innerHTML = "Score = " + score;
