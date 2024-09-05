@@ -124,6 +124,9 @@
         }
 
         function addScore() {
+
+            if(timer <= 0) return;
+
             score++;
             scoreBox.innerText = score;
         }
