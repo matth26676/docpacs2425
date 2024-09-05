@@ -7,19 +7,27 @@
 </head>
 <body>
     <div id="scoreBox">Score: 0</div>
-    <div id="timerBox">Time remaining: </div>
+    <div id="timerBox">Time remaining: 20</div>
     <div id="directionBox">Direction: Up</div>
     <script>
         const scoreBox = document.getElementById("scoreBox");
         const timerBox = document.getElementById("timerBox");
         const directionBox = document.getElementById("directionBox");
         let score = 0;
-        let timer = 60;
+        let timer = 20;
         let direction = 0;
+        let directionX = 0;
+        let directionY = 0;
         let isHolding = false; // Prevent the player from holding down the A button to get score
 
         // Can be indexed with the direction variable to get the corresponding string
         const directionMap = ["Up", "Right", "Down", "Left"];
+        const directionChecks = {
+            0: () => { return directionY == -1 }, // Up
+            1: () => { return directionX == 1 }, // Right
+            2: () => { return directionY == 1 }, // Down
+            3: () => { return directionX == -1 } // Left
+        }; 
 
         // Gets a random whole number between the minimum and maximum
         function randomInteger(min, max) {
@@ -50,35 +58,30 @@
 
         window.addEventListener("gamepadconnected", (event) => {
             function update() {
-                for (const gamepad of navigator.getGamepads()) {
-                    // Ensure there's a gamepad and the game is still running
-                    if (!gamepad || timer == 0) {
-                        continue;
+                // Get the gamepad and ensure the game is still running.
+                const gamepad = navigator.getGamepads()[0];
+                const startButton = gamepad.buttons[9];
+                const AButton = gamepad.buttons[0];
+                
+                // Refresh game when start button is pressed
+                if (startButton.pressed) {
+                    location.reload();
+                }
+
+                // Don't allow players to get score if the timer has hit 0
+                if (timer == 0) {
+                    return requestAnimationFrame(update);
+                }
+
+                directionX = gamepad.axes[0];
+                directionY = gamepad.axes[1];
+                if (AButton.pressed) {
+                    if (!isHolding && directionChecks[direction]()) {
+                        addScore();
                     }
-
-                    const directionX = gamepad.axes[0];
-                    const directionY = gamepad.axes[1];
-                    const AButton = gamepad.buttons[0];
-
-                    if (AButton.pressed) {
-                        if (isHolding) {
-                            continue;
-                        }
-
-                        if (direction == 0 && directionY == -1) { // Up
-                            addScore();
-                        } else if (direction == 1 && directionX == 1) { // Right
-                            addScore();
-                        } else if (direction == 2 && directionY == 1) { // Down
-                            addScore();
-                        } else if (direction == 3 && directionX == -1) { // Left
-                            addScore();
-                        }
-
-                        isHolding = true;
-                    } else {
-                        isHolding = false;
-                    }
+                    isHolding = true;
+                } else {
+                    isHolding = false;
                 }
 
                 // Call update for the next frame
