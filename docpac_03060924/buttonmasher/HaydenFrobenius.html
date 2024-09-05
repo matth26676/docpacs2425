@@ -8,11 +8,22 @@
 </head>
 
 <body>
-    <div id="titleBox"><h1 id="titleText"></h1></div>
+    <div id="titleBox">
+        <h1 id="titleText"></h1>
+    </div>
     <div id="scoreBox"></div>
     <div id="timerBox"></div>
     <div id="directionBox"></div>
     <script>
+
+        const buttonA = 0;
+        const buttonStart = 9;
+
+        const specialButton = buttonA;
+        const restartButton = buttonStart;
+
+        const leftStickHorizontal = 0;
+        const leftStickVerticle = 1;
 
         let titleText = document.getElementById('titleText');
         let titleBox = document.getElementById('titleBox');
@@ -24,20 +35,37 @@
         let timer = 20;
         let direction = 0;
 
-        let stickDirectionNames = ['up','right','down','left'];
+        let restartCoolDownTime = 500;
 
-        const buttonA = 0;
-        const buttonStart = 9;
+        let canRestart = false;
 
-        const leftStickHorizontal = 0;
-        const leftStickVerticle = 1;
+        let directionX = 0;
+        let directionY = 0;
+
+        let directionNames = ['up', 'right', 'down', 'left'];
+
+        let timerUpdateInterval;
+        let directionUpdateInterval;
+        let checkButtonsInterval;
+
+        // Anything to get out of doing an if statement chain 😈
+        let directionCheckKey = {
+            0: () => {return directionY == -1},
+            1: () => {return directionX == 1},
+            2: () => {return directionY == 1},
+            3: () => {return directionX == -1},
+        }
+
+        let buttonJustPressed = false;
 
         titleText.innerText = "CONNECT CONTROLLER";
 
-        window.addEventListener("gamepadconnected", onGamepadConnected);
-        window.addEventListener("gamepaddisconnected", onGamepadDisconnected);
+        setTimeout(function(){
+            window.addEventListener("gamepadconnected", onGamepadConnected);
+            window.addEventListener("gamepaddisconnected", onGamepadDisconnected);
+        }, restartCoolDownTime);
 
-        function onGamepadConnected(event){
+        function onGamepadConnected(event) {
 
             console.log(
                 "Gamepad connected at index %d: %s. %d buttons, %d axes.",
@@ -47,49 +75,78 @@
                 event.gamepad.axes.length,
             );
 
-            setInterval(timerUpdate, 1000);
-            setInterval(directionUpdate, 2000);
-            setInterval(checkButtons, 0);
+            timerUpdateInterval = setInterval(timerUpdate, 1000);
+            directionUpdateInterval = setInterval(directionUpdate, 2000);
+            checkButtonsInterval = setInterval(checkButtons, 16);
 
             timerUpdate();
             directionUpdate();
 
             titleBox.style.display = 'none';
 
+            setTimeout(function(){
+                canRestart = true;
+            }, restartCoolDownTime);
+
         }
 
-        function onGamepadDisconnected(event){
+        function onGamepadDisconnected(event) {
             location.reload();
         }
 
-        function checkButtons(){
+        function checkButtons() {
             let gp = navigator.getGamepads()[0];
             let buttons = gp.buttons;
-            let stick = gp.axes;
-            let horizontalDirection = Math.round(stick[leftStickHorizontal])+1;
-            let verticleDirection = Math.round(stick[leftStickVerticle])+1;
+            let sticks = gp.axes;
 
-            if(!horizontalDirection && !verticleDirection){
-                return false;
+            directionX = Math.round(sticks[leftStickHorizontal]);
+            directionY = Math.round(sticks[leftStickVerticle]);
+
+            if (buttons[restartButton].pressed && canRestart) {
+                location.reload();
+            }
+
+            if (buttons[specialButton].pressed) {
+                if(buttonJustPressed) return;
+                
+                let directionMatches = directionCheckKey[direction]();
+
+                if(directionMatches){
+                    addScore();
+                }
+
+                buttonJustPressed = true;
+            } else {
+                buttonJustPressed = false;
             }
 
 
-            //console.log(buttons[16].value)
-            console.log(stickDirectionNames[horizontalDirection + verticleDirection]);
+        }
+
+        function addScore() {
+            score++;
+            scoreBox.innerText = score;
         }
 
         function timerUpdate() {
             if (timer > 0) {
                 timer -= 1;
                 timerBox.innerHTML = timer;
+            } else {
+                gameOver();
             }
+        }
+
+        function gameOver(){
+            clearInterval(timerUpdateInterval);
+            clearInterval(directionUpdateInterval);
         }
 
         function directionUpdate() {
 
             let randomDirection = Math.round(Math.random() * 3);
-            direction = stickDirectionNames[randomDirection];
-            directionBox.innerHTML = direction;
+            direction = randomDirection;
+            directionBox.innerHTML = directionNames[randomDirection];
 
         }
     </script>
