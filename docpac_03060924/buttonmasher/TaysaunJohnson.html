@@ -9,23 +9,20 @@
 
 <body>
     <div id="scoreBox"></div>
-    <div id="timerBox">30</div>
+    <div id="timerBox">20</div>
     <div id="directionBox"></div>
-    <button id="btn">Start</button>
 
 
     <script>
 
         var score = 0
-        var timer = 30
+        var timer = 20
         var direction = 0
 
-        var btn = document.getElementById('btn')
         var scoreBox = document.getElementById('scoreBox')
         var timerBox = document.getElementById('timerBox')
         var directionBox = document.getElementById('directionBox')
 
-        btn.style.display = 'none'
 
         function directionSwitch() {
             direction = Math.floor(Math.random() * 4)
@@ -50,17 +47,13 @@
                 timerBox.innerHTML = timer - 1
                 timer--;
             }
-
-            if (timer == 0) {
-                btn.style.display = 'block'
-            }
         }, 1000)
 
         directionSwitch()
         setInterval(directionSwitch, 2000)
 
-        buttonON = false;
-
+        var buttonON = false;
+        
         window.addEventListener('gamepadconnected', (event) => {
             const update = () => {
 
@@ -94,15 +87,18 @@
                             }
                         }
                     }
+
+                    if (gamepad.buttons[9].pressed) {
+                        setTimeout(() => {
+                            location.reload()
+                        }, 250)
+                    }
+
                 }
                 requestAnimationFrame(update);
             };
             update();
         });
-
-        btn.addEventListener('click', () => {
-            location.reload()
-        })
 
     </script>
 </body>
