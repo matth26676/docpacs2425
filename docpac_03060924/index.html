@@ -53,6 +53,15 @@
             const xAxis = gamepad.axes[1];
             const yAxis = gamepad.axes[0];
             const aButton = gamepad.buttons[0];
+            const pressed = false;
+
+            if (aButton.pressed && !pressed) {
+                score++;
+                scoreBox.innerText = "Score: " + score;
+                pressed = true;
+            } else {
+                pressed = false;
+            }
 
             requestAnimationFrame(update);
         };
