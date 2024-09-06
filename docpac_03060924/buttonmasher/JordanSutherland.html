@@ -19,10 +19,12 @@
     var bButton = false
     var xButton = false
     var yButton = false
+    var pause = true
     var alock
     var block
     var xlock
     var ylock
+    var plock
 
     var left = false
     var right = false
@@ -40,6 +42,7 @@
                     bButton = gamepad.buttons[1].pressed
                     xButton = gamepad.buttons[2].pressed
                     yButton = gamepad.buttons[3].pressed
+                    pause = gamepad.buttons[9].pressed
                 }
                 if (gamepad.axes[0] == -1 && (gamepad.axes[1] != -1 || gamepad.axes[1] != -1)) {
                     left = true
@@ -147,6 +150,12 @@
                 scoreBox.innerHTML = score
             } else if (!yButton) {
                 ylock = true
+            }
+            if (pause && plock) {
+                location.reload()
+                plock = false
+            } else if (!pause) {
+                plock = true
             }
         }
     }, 1)
