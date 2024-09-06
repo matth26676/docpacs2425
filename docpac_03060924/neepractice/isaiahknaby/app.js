@@ -13,4 +13,4 @@ app.get("/endpoint", (req, res) => {
     res.render('endpoint.ejs', { name });
 });
 
-app.listen(PORT);
+app.listen(PORT, console.log(`Server is running on port ${PORT}`));
