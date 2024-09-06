@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="scorebox"></div>
+    <div id="timerbox"></div>
+    <div id="directionbox"></div>
+    <div id="buttons" style="display: flex; flex-direction: column;"></div>
+</body>
+<script>
+    var scoreBox = document.getElementById("scorebox")
+    var aButton = false
+    var bButton = false
+    var xButton = false
+    var yButton = false
+    var alock
+    var block
+    var xlock
+    var ylock
+
+    var left = false
+    var right = false
+    var up = false
+    var down = false
+    window.addEventListener('gamepadconnected', (event) => {
+        const update = () => {
+            const output = document.getElementById('buttons');
+            output.innerHTML = ''; // clear the output
+
+            for (const gamepad of navigator.getGamepads()) {
+                if (!gamepad) continue;
+                for (const [index, button] of gamepad.buttons.entries()) {
+                    aButton = gamepad.buttons[0].pressed
+                    bButton = gamepad.buttons[1].pressed
+                    xButton = gamepad.buttons[2].pressed
+                    yButton = gamepad.buttons[3].pressed
+                }
+                if (gamepad.axes[0] == -1 && (gamepad.axes[1] != -1 || gamepad.axes[1] != -1)) {
+                    left = true
+                } else {
+                    left = false
+                }
+                if (gamepad.axes[0] == 1 && (gamepad.axes[1] != 1 || gamepad.axes[1] != 1)) {
+                    right = true
+                } else {
+                    right = false
+                }
+                if (gamepad.axes[1] == 1 && (gamepad.axes[0] != 1 || gamepad.axes[0] != 1)) {
+                    down = true
+                } else {
+                    down = false
+                }
+                if (gamepad.axes[1] == -1 && (gamepad.axes[0] != -1 || gamepad.axes[0] != -1)) {
+                    up = true
+                } else {
+                    up = false
+                }
+            }
+
+            requestAnimationFrame(update);
+        };
+        update();
+    });
+
+
+    var timerBox = document.getElementById("timerbox")
+    var dirBox = document.getElementById("directionbox")
+
+    var score = 0
+    var timer = 20
+    var direction = 0
+
+    setInterval(function () {
+        if (timer > 0) {
+            timer -= 1
+            timerBox.innerHTML = timer
+
+            if (Number.isInteger(timer / 2))
+                direction = Math.floor(Math.random() * 4)
+            switch (direction) {
+                case 0:
+                    direction = "up"
+                    break;
+                case 1:
+                    direction = "right"
+                    break;
+                case 2:
+                    direction = "down"
+                    break;
+                case 3:
+                    direction = "left"
+                    break;
+            }
+
+            dirBox.innerHTML = direction
+
+        }
+    }, 1000)
+
+    setInterval(function () {
+        if (timer > 0) {
+            if (aButton && alock) {
+                if (down && direction == "down") {
+                    score++
+                }
+                console.log("A")
+                alock = false
+                scoreBox.innerHTML = score
+            } else if (!aButton) {
+                alock = true
+            }
+    
+            if (bButton && block) {
+                if (right && direction == "right") {
+                    score++
+                }
+                console.log("B")
+                block = false
+                scoreBox.innerHTML = score
+            } else if (!bButton) {
+                block = true
+            }
+    
+            if (xButton && xlock) {
+                if (left && direction == "left") {
+                    score++
+                }
+                console.log("X")
+                xlock = false
+                scoreBox.innerHTML = score
+            } else if (!xButton) {
+                xlock = true
+            }
+    
+            if (yButton && ylock) {
+                if (up && direction == "up") {
+                    score++
+                }
+                console.log("Y")
+                ylock = false
+                scoreBox.innerHTML = score
+            } else if (!yButton) {
+                ylock = true
+            }
+        }
+    }, 1)
+</script>
+
+</html>
