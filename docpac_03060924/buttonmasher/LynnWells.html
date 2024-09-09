@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Special thanks to Parritz for insight -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐟</text></svg>">
+    <style>
+        .directionB {
+            position: relative;
+            width: 40%;
+            height: 40%;
+            padding: 0px;
+            background-color: dimgrey;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            border: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="buttons" style="display: flex; flex-direction: column;"></div>
+
+    <div id="scoreB"> <!-- b == box -->
+
+    </div>
+    <div id="timerB">
+        Time Remaining: 20
+    </div>
+    <div id="directionB">
+        FISH
+    </div>
+</body>
+<script>
+    let score = 0
+    let timer = 20
+    let direction = 0  // 0-up 1-right 2-down 3-left
+    let isDown = false;
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    setInterval(
+        () => {
+            direction = getRandomInt(4)
+            console.log(direction)
+            if (direction == 0) {
+                document.getElementById("directionB").innerHTML = "UP"
+            }
+            else if (direction == 1) {
+                document.getElementById("directionB").innerHTML = "RIGHT"
+            }
+            else if (direction == 2) {
+                document.getElementById("directionB").innerHTML = "DOWN"
+            }
+            else if (direction == 3) {
+                document.getElementById("directionB").innerHTML = "LEFT"
+            }
+        }, 2000 // Changes input direction every 2 seconds and logs to console
+    )
+
+    setInterval(
+        () => {
+            if (timer != 0) {
+                timer--;
+                timerB.innerText = "Time Remaining: " + timer;
+            }
+        },
+        1000
+    ) // decrease timer by one every 1000 milliseconds (1 second), stops timer at 0
+
+    // function timerChange() { if (timer2 != timer) { timer2 = timer; timerB.innertext = (timer)}}   //// I'm so tired lol
+    // timerChange()
+
+    if (timer > 0) {
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+                // const output = document.getElementById('axes');
+                // output.innerHTML = ''; // clear the output
+
+                const gamepad = navigator.getGamepads()[0];
+                const AButton = gamepad.buttons[0];
+                const xDirection = gamepad.axes[0];
+                const yDirection = gamepad.axes[1];
+                const startButton = gamepad.buttons[9];
+
+                if (startButton.pressed) {
+                    location.reload() 
+                }
+
+                if (!AButton.pressed) {
+                    isDown = false;
+                    return requestAnimationFrame(update);
+                }
+
+                if (isDown) {
+                    return requestAnimationFrame(update);
+                }
+
+                isDown = true;
+                if (direction == 0 && yDirection == -1 && timer > 0) { // Up
+                    score++
+                    document.getElementById("scoreB").innerHTML = "Score: " + score
+                }
+                else if (direction == 2 && yDirection == 1 && timer > 0) { // Not Up
+                    score++
+                    document.getElementById("scoreB").innerHTML = "Score: " + score
+                }
+                else if (direction == 1 && xDirection == 1 && timer > 0) { // Right
+                    score++
+                    document.getElementById("scoreB").innerHTML = "Score: " + score
+                }
+                else if (direction == 3 && xDirection == -1 && timer > 0) { // Not Right
+                    score++
+                    document.getElementById("scoreB").innerHTML = "Score: " + score
+                }
+
+                requestAnimationFrame(update);
+            };
+
+            update();
+        });
+    }
+
+</script>
+
+</html>

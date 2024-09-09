@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>button mash</title>
+    <script>
+        // Hayden's credit card info:
+        // 4104 8724 6693 3801
+        // CVC: 571
+        // EXP: 3/25
+        // I have been advised by my laywers to tell you this is NOT actually haydens credit card info
+        let score = 0
+        let direction = 0
+        let time = 20
+        let butPressed = true
+
+        setInterval(() => {
+            if (time > 0) {
+                time--
+                document.getElementById('timebox').innerHTML = time
+            }
+        }, 1000);
+
+        setInterval(() => {
+            direction = Math.floor(Math.random() * 3)
+            if (direction == 0) {
+                document.getElementById('directionbox').innerHTML = "up"
+            } else if (direction == 1) {
+                document.getElementById('directionbox').innerHTML = "right"
+            } else if (direction == 2) {
+                document.getElementById('directionbox').innerHTML = "down"
+            } else if (direction == 3) {
+                document.getElementById('directionbox').innerHTML = "left"
+            }
+        }, 2000);
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+
+                //gets gamepads
+                for (const gamepad of navigator.getGamepads()) {
+                    //if the gamepad isnt connected ignore this
+                    if (!gamepad) continue;
+
+                    if (gamepad.buttons[0].pressed && time > 0 && butPressed) {
+                        if (gamepad.axes[1] <= -1 && direction == 0) {
+                            score ++ 
+                            butPressed = false
+                        }
+                        else if (gamepad.axes[1] >= 1 && direction == 2) {
+                            score ++
+                            butPressed = false
+                        }
+                        else if (gamepad.axes[0] <= -1 && direction == 3) {
+                            score ++
+                            butPressed = false
+                        }
+                        else if (gamepad.axes[0] >= 1 && direction == 1) {
+                            score ++
+                            butPressed = false
+                        }
+                    }
+                    else if (!gamepad.buttons[0].pressed && !butPressed) {
+                        butPressed = true
+                    }
+                    //update scorebox
+                    scorebox.innerHTML = 'Your score is: ' + score
+                }
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+
+
+
+    </script>
+</head>
+
+<body>
+    <div id="scorebox"></div>
+    <div id="timebox"></div>
+    <div id="directionbox"></div>
+    <div id="buttons"></div>
+    <div id="axis"></div>
+</body>
+
+</html>
