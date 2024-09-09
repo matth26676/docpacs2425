@@ -38,7 +38,7 @@
     setInterval(tmrTick, 1000)
 
     setInterval(function () {
-        let dir = Math.floor(Math.random() * 3)
+        let dir = Math.floor(Math.random() * 4)
         if (dir == 0) {
             dirBox.innerHTML = "up"
         } else if (dir == 1) {
@@ -48,6 +48,7 @@
         } else if (dir == 3) {
             dirBox.innerHTML = "left"
         };
+        console.log(dir)
     }, 2000);
 
     //check if controller is connected
@@ -56,37 +57,40 @@
             const gamepad = navigator.getGamepads();
 
             for (const gamepad of navigator.getGamepads()) {
-                if (!gamepad) { continue; }
-                else {
-                    // if "A" button pressed down
-                    if (gamepad.buttons[0].pressed != lastPress && tmr > 0)  {
-                        lastPress = gamepad.buttons[0]
+                if (!gamepad) continue;
+                // if "A" button pressed down
+                console.log(dir,  gamepad.axes);
+                
+                if (gamepad.buttons[0].pressed && tmr > 0 && lastPress != gamepad.buttons[0].pressed) {
+                    if (dir == 0 && gamepad.axes[1] <= -0.8) {
                         // if left joystick up
-                        if (dir == 0 && gamepad.axes[1] == -1.0) {
-                            scr++
-                            scrBox.innerHTML = scr
-                            // else if left joystick right
-                        } else if (dir == 1 && gamepad.axes[0] == 1.0) {
-                            scr++
-                            scrBox.innerHTML = scr
-                            // else if left joystick down
-                        } else if (dir == 2 && gamepad.axes[1] == 1.0) {
-                            scr++
-                            scrBox.innerHTML = scr
-                            // else if left joystick left
-                        } else if (dir == 3 && gamepad.axes[0] == -1.0) {
-                            scr++
-                            scrBox.innerHTML = scr
-                        };
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 1 && gamepad.axes[0] >= 0.8) {
+                        // else if left joystick right
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 2 && gamepad.axes[1] >= 0.8) {
+                        // else if left joystick down
+                        scr++
+                        scrBox.innerHTML = scr
+                    
+                    } else if (dir == 3 && gamepad.axes[0] <= -0.8) {
+                        // else if left joystick left
+                        scr++
+                        scrBox.innerHTML = scr
                     };
-                    if (gamepad.buttons[9].pressed) {
-                        location.reload();
+                };
+
+                lastPress = gamepad.buttons[0].pressed
+
+                if (gamepad.buttons[9].pressed) {
+                    location.reload();
                 };
             };
             requestAnimationFrame(update);
         };
         update();
-    }
     });
 </script>
 
