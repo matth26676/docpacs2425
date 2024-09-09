@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="scrBox">Score</div>
+    <div id="tmrBox">Timer</div>
+    <div id="dirBox">Direction</div>
+
+
+</body>
+
+<script>
+    let scr = 0; //creates score variable - default 0
+    let dir = 0; //creates direction variable - default 0
+    let tmr = 20; //creates timer variable - default 20
+
+    let scrBox = document.getElementById("scrBox");
+    let tmrBox = document.getElementById("tmrBox");
+    let dirBox = document.getElementById("dirBox");
+
+    let lastPress = false;
+
+    function tmrTick() {
+        if (tmr > 0) {
+            tmr--
+            tmrBox.innerHTML = tmr
+            scrBox.innerHTML = scr
+        };
+    };
+
+    setInterval(tmrTick, 1000)
+
+    setInterval(function () {
+        let dir = Math.floor(Math.random() * 4)
+        if (dir == 0) {
+            dirBox.innerHTML = "up"
+        } else if (dir == 1) {
+            dirBox.innerHTML = "right"
+        } else if (dir == 2) {
+            dirBox.innerHTML = "down"
+        } else if (dir == 3) {
+            dirBox.innerHTML = "left"
+        };
+        console.log(dir)
+    }, 2000);
+
+    //check if controller is connected
+    window.addEventListener("gamepadconnected", (e) => {
+        const update = () => {
+            const gamepad = navigator.getGamepads();
+
+            for (const gamepad of navigator.getGamepads()) {
+                if (!gamepad) continue;
+                // if "A" button pressed down
+                console.log(dir,  gamepad.axes);
+                
+                if (gamepad.buttons[0].pressed && tmr > 0 && lastPress != gamepad.buttons[0].pressed) {
+                    if (dir == 0 && gamepad.axes[1] <= -0.8) {
+                        // if left joystick up
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 1 && gamepad.axes[0] >= 0.8) {
+                        // else if left joystick right
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 2 && gamepad.axes[1] >= 0.8) {
+                        // else if left joystick down
+                        scr++
+                        scrBox.innerHTML = scr
+                    
+                    } else if (dir == 3 && gamepad.axes[0] <= -0.8) {
+                        // else if left joystick left
+                        scr++
+                        scrBox.innerHTML = scr
+                    };
+                };
+
+                lastPress = gamepad.buttons[0].pressed
+
+                if (gamepad.buttons[9].pressed) {
+                    location.reload();
+                };
+            };
+            requestAnimationFrame(update);
+        };
+        update();
+    });
+</script>
+
+</html>
