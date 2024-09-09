@@ -1,0 +1,8 @@
+Lab requirements:
+"Discuss the job-role requirements of a Javascript developer."
+
+Proof of completion:
+Summary of completed reading
+
+Javascript developers use HTML, CSS, and Javascript proficiency to make elements behave the correct way when interacted with. 
+Asynchronus requst handling, partial page updates, and AJAX knowledge may also be required.
