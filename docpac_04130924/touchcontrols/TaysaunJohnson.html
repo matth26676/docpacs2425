@@ -37,6 +37,7 @@
     swipeImg.style.top = window.getComputedStyle(swipeImg).top;
     swipeImg.style.left = window.getComputedStyle(swipeImg).left;
 
+
     //LIST OF IMAGES
     let images = [
         'img/levelup01.png',
@@ -75,6 +76,7 @@
         end(event);
     });
 
+
     /**********************************************************************************************************************\
      * After this comment, write the appropriate line of code to achieve each comment.                                    *
      * Some comments will have multiple lines of code.                                                                    *
@@ -84,12 +86,13 @@
 
     function start(event) {
         //set the start coordinate of each axis to the touch position
-        startX = [event.touches[0].screenX]
-        startY = [event.touches[0].screenY]
+        startX = event.touches[0].screenX
+        startY = event.touches[0].screenY
+        console.log(startY)
         //reset the last touch position of each axis to 0
 
-        lastX = [0]
-        lastY = [0]
+        // lastX = [0]
+        // lastY = [0]
     }
 
     function move(event) {
@@ -111,41 +114,78 @@
                 swipeImg.style.left = '0px'
             }
             //set the last touch position to the current touch position
-            lastX = [event.touches[0].screenX]
-            lastY = [event.touches[0].screenY]
+            lastX = event.touches[0].screenX
+            lastY = event.touches[0].screenY
+            console.log(lastY)
     }
 
     function end(event) {
         console.log(event)
         //set the end coordinate of each axis to the touch position
-        endX = [event.changedTouches[0].screenX]
-        endY = [event.changedTouches[0].screenY]
+        endX = lastX
+        endY = lastY
 
         //calculate the absolute value of difference between the start touch and the end touch for each axis
-        let xDifference = Math.abs(startX - endX)
-        let yDifference = Math.abs(startY - endY)
+        let xAbsDifference = Math.abs(startX - endX)
+        let yAbsDifference = Math.abs(startY - endY)
+        let xDifference = startX - endX
+        let yDifference = startY - endY
+
+        console.log(startY)
+        console.log(endY)
+        console.log(yDifference)
         // if the distance from the start to end on the X axis is greater than the minimum swipe distance and
         // the difference of the X axis is greater than the Y axis
-        if (xDifference > SWIPE_MIN && xDifference > yDifference) {
+        if (xDifference > SWIPE_MIN && xAbsDifference > yAbsDifference) {
             //if the image index is greater than 0
             if (imgIndex > 0) {
                 //decrement the image index
                 imgIndex--
                 //change the image src property to the previous image in the list
                 swipeImg.setAttribute('src', images[imgIndex])
+                console.log(swipeImg)
+            } else {
+                //else
+                //set the image index to the last image in the list
+                imgIndex = 9
+                //change the image src property to the last image in the list
+                swipeImg.setAttribute('src', images[imgIndex])
+                console.log(swipeImg)
             }
-        }
-            //else
-            //set the image index to the last image in the list
-            //change the image src property to the last image in the list
-        // else if the distance from the start to end on the X axis is less than the minimum swipe distance and
-        // the difference of the X axis is greater than the Y axis
-            //if the image index is less than the length of the image list
-                //increment the image index
+        } else if (xDifference < SWIPE_MIN * -1 && xAbsDifference > yAbsDifference) {
+            // else if the distance from the start to end on the X axis is less than the minimum swipe distance and
+            // the difference of the X axis is greater than the Y axis
+            if (imgIndex < images.length - 1) {
+                 //if the image index is less than the length of the image list
+                 imgIndex++;
+                 swipeImg.setAttribute('src', images[imgIndex])
+                 console.log(swipeImg)
+                 //increment the image index
                 //change the image src property to the next image in the list
-            //else
-            //reset the image index to 0
-            //change the image src property to the first image in the list
+            } else {
+                imgIndex = 0
+                swipeImg.setAttribute('src', images[imgIndex])
+                console.log(swipeImg)
+                //else
+                //reset the image index to 0
+                //change the image src property to the first image in the list
+            }
+
+        } else if (yDifference > SWIPE_MIN && yAbsDifference > xAbsDifference) {
+            if (images) {
+                images.splice(imgIndex)
+                if (imgIndex > images.length - 1) {
+                    imgIndex--;
+                } else {
+                    swipeImg.setAttribute('src', images[imgIndex])
+                }
+            }
+            swipeImg.setAttribute('src', images[imgIndex])
+        }
+            
+           
+                
+            
         // else if the distance from the start to end on the Y axis is greater than the minimum swipe distance and
         // the difference of the Y axis is greater than the X axis
             //if there is at least one image in the list
