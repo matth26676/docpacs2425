@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #mainpage {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: cadetblue;
+        }
+
+        #gameBox {
+            top: 10%;
+            left: 10%;
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: darkblue;
+            border-radius: 25%;
+        }
+
+        #scoreBox {
+            position: absolute;
+            width: 20%;
+            height: 24%;
+            font-size: 40px;
+            align-content: center;
+            text-align: center;
+            top: 30%;
+            left: 5%;
+            background-color: dodgerblue;
+            border-radius: 10%;
+        }
+
+        #timerBox {
+            position: absolute;
+            right: 5%;
+            width: 20%;
+            height: 24%;
+            font-size: 40px;
+            align-content: center;
+            text-align: center;
+            top: 30%;
+            border-radius: 10%;
+            background-color: dodgerblue;
+        }
+
+        #directionBox {
+            position: absolute;
+            width: 30vw;
+            height: 30vw;
+            background-color: rgb(5, 0, 75);
+            border: 5px rgb(0, 56, 141) solid;
+            left: 32%;
+            top: 20%;
+            border-radius: 10%;
+        }
+
+        #axes {
+            position: absolute;
+            background-color: white;
+            width: 20%;
+            height: 30%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="mainpage">
+        <div id="gameBox">
+            <div id="scoreBox">Score: 0</div>
+            <div id="timerBox">Time: 20</div>
+            <img id="directionBox" src=""></img>
+        </div>
+    </div>
+
+    <script>
+
+        var score = 0
+        var direction = 0
+        var timer = 20
+        var wasPressed = false
+        var timerBox = document.getElementById('timerBox')
+        var scoreBox = document.getElementById('scoreBox')
+        var directionBox = document.getElementById('directionBox')
+
+
+
+
+
+
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) continue;
+                    if (gamepad.buttons[9].pressed) {
+                        window.location.reload()
+                    }
+
+                    //if (gamepad.buttons[6].pressed) {
+                    //    scorePoint()
+                    //}
+
+                    if (gamepad.buttons[0].pressed != wasPressed) {
+                        wasPressed = gamepad.buttons[0].pressed
+                        if (wasPressed) {
+                            if (gamepad.axes[0] == 1 && direction == 1 && timer > 0) {
+                                scorePoint()
+                            } else if (gamepad.axes[0] == -1 && direction == 3 && timer > 0) {
+                                scorePoint()
+                            } else if (gamepad.axes[1] == 1 && direction == 2 && timer > 0) {
+                                scorePoint()
+                            } else if (gamepad.axes[1] == -1 && direction == 0 && timer > 0) {
+                                scorePoint()
+                            }
+                        }
+                    }
+                }
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+
+        function randomDirection() {
+            direction = Math.round(Math.random() * 3)
+            directionBox.innerText = direction
+            if (direction == 0) {
+                directionBox.src = 'YellowArrowUp.gif'
+            } else if (direction == 1) {
+                directionBox.src = 'RedArrowRight.gif'
+            } else if (direction == 2) {
+                directionBox.src = 'GreenArrowDown.gif'
+            } else if (direction == 3) {
+                directionBox.src = 'BlueArrowLeft.gif'
+            }
+        }
+
+        function scorePoint() {
+            score++
+            scoreBox.innerText = 'Score: ' + score
+        }
+
+
+        randomDirection()
+        setInterval(() => {
+            if (timer > 0) {
+                randomDirection()
+            }
+        }, 2000);
+
+        setInterval(() => {
+            if (timer > 0) {
+                timer--
+            }
+            timerBox.innerText = 'Time: ' + timer
+        }, 1000);
+
+    </script>
+</body>
+
+</html>
