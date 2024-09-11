@@ -87,22 +87,21 @@
         startX[0] = event.touches[0].clientX
         startY[0] = event.touches[0].clientY
         //reset the last touch position of each axis to 0
-        lastX[0] = startX[0];
-        lastY[0] = startY[0];
+        lastX[0] = 0
+        lastY[0] = 0
     }
 
     function move(event) {
         event.preventDefault();
-
+        const touch = event.touches[0];
         //if the touch is not in its initial position, move the image by the amount the touch has moved since the last event
         if (lastX[0] !== startX[0]) {
-            swipeImg.style.left = `${startX - lastX}`
-            swipeImg.style.top = `${startY - lastY}`
+            swipeImg.style.left = `${touch.clientX - lastX[0]}`
+            swipeImg.style.top = `${touch.clientY - lastY[0]}`
         }
             //calculate the difference between the start touch and the current touch for each axis
-            const touch = event.touches[0];
             const difX = touch.clientX - startX[0];
-            const difY = touch.clientX - startY[0];
+            const difY = touch.clientY - startY[0];
             //if the absolute value of the X difference is greater than the Y difference
             if (Math.abs(difX) > Math.abs(difY)) {
                 // move the image horizontally
@@ -123,7 +122,11 @@
 
     function end(event) {
         //set the end coordinate of each axis to the touch position
+        endX[0] = event.touches.clientX[0];
+        endY[0] = event.touches.clientY[0];
         //calculate the absolute value of difference between the start touch and the end touch for each axis
+        const difX = touch.clientX - endX[0];
+        const difY = touch.clientY - endY[0];
         // if the distance from the start to end on the X axis is greater than the minimum swipe distance and
         // the difference of the X axis is greater than the Y axis
             //if the image index is greater than 0
