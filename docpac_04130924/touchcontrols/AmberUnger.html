@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swipe Image Gallery</title>
+    <style>
+        #container {
+            width: 480px;
+            margin: auto;
+            background-color: #666666;
+        }
+
+        #swipeImg {
+            width: 480px;
+            height: auto;
+            position: relative;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <img src="img/levelup01.png" alt="" id="swipeImg">
+    </div>
+</body>
+<script>
+    // CONSTANTS
+    const SWIPE_MIN = 200;
+
+    // SETUP IMAGE
+    let swipeImg = document.getElementById('swipeImg');
+    swipeImg.style.top = window.getComputedStyle(swipeImg).top;
+    swipeImg.style.left = window.getComputedStyle(swipeImg).left;
+
+    // LIST OF IMAGES
+    let images = [
+        'img/levelup01.png',
+        'img/levelup02.png',
+        'img/levelup03.png',
+        'img/levelup04.png',
+        'img/levelup05.png',
+        'img/levelup06.png',
+        'img/levelup07.png',
+    ];
+
+    // Image index to keep track of the current image
+    let imgIndex = 0;
+
+    // Variables to store the start and end coordinates of touch events
+    let startX = 0;
+    let startY = 0;
+    let endX = 0;
+    let endY = 0;
+
+    // Detect the start of a touch event on the image
+    swipeImg.addEventListener('touchstart', function (event) {
+        start(event);
+    });
+    // Detect the movement of a touch event on the image
+    swipeImg.addEventListener('touchmove', function (event) {
+        move(event);
+    });
+    // Detect the end of a touch event on the image
+    swipeImg.addEventListener('touchend', function (event) {
+        end(event);
+    });
+
+    // Detect mouse wheel scroll on the image
+    swipeImg.addEventListener('wheel', function (event) {
+        handleScroll(event);
+    });
+
+    function start(event) {
+        // Set the start coordinates to the touch position
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+    }
+
+    function move(event) {
+        // Optional: You can handle touch move here for visual feedback, but not necessary for this case
+    }
+
+    function end(event) {
+        // Set the end coordinates to the touch position
+        endX = event.changedTouches[0].clientX;
+        endY = event.changedTouches[0].clientY;
+        // Calculate the absolute difference between the start and end touch positions for each axis
+        let diffX = Math.abs(endX - startX);
+        let diffY = Math.abs(endY - startY);
+
+        // If horizontal swipe (left or right)
+        if (diffX > SWIPE_MIN && diffX > diffY) {
+            if (endX < startX) {
+                // Swipe left - show previous image
+                showPreviousImage();
+            } else {
+                // Swipe right - show next image
+                showNextImage();
+            }
+        }
+        // If vertical swipe (up or down)
+        else if (diffY > SWIPE_MIN && diffY > diffX) {
+            if (endY < startY) {
+                // Swipe up - show previous image
+                showPreviousImage();
+            } else {
+                // Swipe down - show next image
+                showNextImage();
+            }
+        }
+        // Reset image position after swipe
+        swipeImg.style.left = '0px';
+        swipeImg.style.top = '0px';
+    }
+
+    function showPreviousImage() {
+        if (imgIndex > 0) {
+            imgIndex--;
+        } else {
+            imgIndex = images.length - 1; // Go to the last image if at the first
+        }
+        swipeImg.src = images[imgIndex];
+    }
+
+    function showNextImage() {
+        if (imgIndex < images.length - 1) {
+            imgIndex++;
+        } else {
+            imgIndex = 0; // Go to the first image if at the last
+        }
+        swipeImg.src = images[imgIndex];
+    }
+
+    function handleScroll(event) {
+        // Prevent the default scroll behavior
+        event.preventDefault();
+        // If the user scrolls up
+        if (event.deltaY < 0) {
+            showPreviousImage();
+        } else {
+            // If the user scrolls down
+            showNextImage();
+        }
+    }
+</script>
+
+</html>
