@@ -84,36 +84,41 @@
 
     function start(events) {
         //set the start coordinate of each axis to the touch position
-        startX = touchstart
-        startY = touchstart
+        startX[0] = event.touches[0].clientX
+        startY[0] = event.touches[0].clientY
         //reset the last touch position of each axis to 0
-        lastX = 0
-        lastY = 0
+        lastX[0] = startX[0];
+        lastY[0] = startY[0];
     }
 
     function move(event) {
+        event.preventDefault();
+
         //if the touch is not in its initial position, move the image by the amount the touch has moved since the last event
-        if (Touch != startX && Touch != startY) {
-            swipeImg 
+        if (lastX[0] !== startX[0]) {
+            swipeImg.style.left = `${startX - lastX}`
+            swipeImg.style.top = `${startY - lastY}`
         }
-        //calculate the difference between the start touch and the current touch for each axis
-            
+            //calculate the difference between the start touch and the current touch for each axis
+            const touch = event.touches[0];
+            const difX = touch.clientX - startX[0];
+            const difY = touch.clientX - startY[0];
             //if the absolute value of the X difference is greater than the Y difference
-            if (Math.abs(startX) > Math.abs(startY)) {
+            if (Math.abs(difX) > Math.abs(difY)) {
                 // move the image horizontally
-                
+                swipeImg.style.left = `${difX}px`;
                 //reset the vertical position of the image to 0px
-                startY = 0
+                swipeImg.style.top = "0px";
             //else
             } else {
                 //move the image vertically
-
+                swipeImg.style.top = `${difY}px`;
                 //reset the horizontal position of the image to 0px
-                startY = 0
+                swipeImg.style.left = "0px";
             }
         //set the last touch position to the current touch position
-        lastX = Touch
-        lastY = Touch
+        lastX[0] = touch.clientX
+        lastY[0] = touch.clientY
     }
 
     function end(event) {
@@ -148,9 +153,8 @@
         // the difference of the Y axis is greater than the X axis
             //add this image to the end of the list
         //reset the horizontal and vertical position of the image to 0px
-        //reset the last touch position of each axis to 0
+        //reset the last touch position of each exis to 0
     }
-
 </script>
 
 </html>
