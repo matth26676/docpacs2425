@@ -84,19 +84,36 @@
 
     function start(events) {
         //set the start coordinate of each axis to the touch position
+        startX = touchstart
+        startY = touchstart
         //reset the last touch position of each axis to 0
+        lastX = 0
+        lastY = 0
     }
 
     function move(event) {
         //if the touch is not in its initial position, move the image by the amount the touch has moved since the last event
-            //calculate the difference between the start touch and the current touch for each axis
+        if (Touch != startX && Touch != startY) {
+            swipeImg 
+        }
+        //calculate the difference between the start touch and the current touch for each axis
+            
             //if the absolute value of the X difference is greater than the Y difference
+            if (Math.abs(startX) > Math.abs(startY)) {
                 // move the image horizontally
+                
                 //reset the vertical position of the image to 0px
+                startY = 0
             //else
-            //move the image vertically
-            //reset the horizontal position of the image to 0px
+            } else {
+                //move the image vertically
+
+                //reset the horizontal position of the image to 0px
+                startY = 0
+            }
         //set the last touch position to the current touch position
+        lastX = Touch
+        lastY = Touch
     }
 
     function end(event) {
@@ -131,7 +148,7 @@
         // the difference of the Y axis is greater than the X axis
             //add this image to the end of the list
         //reset the horizontal and vertical position of the image to 0px
-        //reset the last touch position of each exis to 0
+        //reset the last touch position of each axis to 0
     }
 
 </script>
