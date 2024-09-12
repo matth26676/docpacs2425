@@ -136,24 +136,22 @@
                 //decrement the image index
                 imgIndex -= 1;
                 //change the image src property to the previous image in the list
-                console.log(images[imgIndex]);
                 swipeImg.src = images[imgIndex];
             } else { //else
                 //set the image index to the last image in the list
                 imgIndex = images.length - 1;
                 //change the image src property to the last image in the list
-                console.log(images[imgIndex]);
                 swipeImg.src = images[imgIndex];
             }
-        } else if (differenceX < SWIPE_MIN && differenceX > differenceY) { 
+
             // else if the distance from the start to end on the X axis is less than the minimum swipe distance and
             // the difference of the X axis is greater than the Y axis
-
+        } else if (differenceX < SWIPE_MIN && differenceX > differenceY) { 
             //if the image index is less than the length of the image list
-            if (imgIndex < images.length - 1) {
+            if (imgIndex < images.length) {
                 //increment the image index
-                imgIndex += 1;
                 //change the image src property to the next image in the list
+                imgIndex += 1;
                 swipeImg.src = images[imgIndex];
             } else { //else
                 //reset the image index to 0
@@ -161,17 +159,17 @@
                 imgIndex = 0;
                 swipeImg.src = images[imgIndex];
             }
-        } else if (differenceY > SWIPE_MIN && differenceY > differenceX) {
+
             // else if the distance from the start to end on the Y axis is greater than the minimum swipe distance and
             // the difference of the Y axis is greater than the X axis
-            
+        } else if (differenceY > SWIPE_MIN && differenceY > differenceX) {
             //if there is at least one image in the list
-            if (images[0]) {
+            if (images.length > 0) {
                 //remove this image from the list
                 images.splice(0, 1);
 
                 //if the image index is greater than the length of the image list
-                if (imgIndex > images.length - 1) {
+                if (imgIndex >= images.length - 1) {
                     //decrement the image index
                     imgIndex -= 1;
                 } else { //else
@@ -182,13 +180,12 @@
             
             //change the image src property to the current image in the list
             swipeImg.src = images[imgIndex];
-        } else if (differenceY < SWIPE_MIN && differenceY > differenceX) {
+
             // else if the distance from the start to end on the Y axis is less than the minimum swipe distance and
             // the difference of the Y axis is greater than the X axis
-
+        } else if (differenceY < SWIPE_MIN && differenceY > differenceX) {
             //add this image to the end of the list
-            images[images.length] = images[imgIndex];
-            console.log(images);
+            images.push(images[imgIndex]);
         }
 
         //reset the horizontal and vertical position of the image to 0px
