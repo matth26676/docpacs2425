@@ -9,7 +9,7 @@
         #container {
             width: 480px;
             margin: auto;
-            background-color: #666666;
+            background-color: #d6e457;
         }
 
         #swipeImg {
@@ -116,7 +116,7 @@
         swipeImg.style.left = '0px';
         swipeImg.style.top = '0px';
     }
-
+// makes it when you scrooll down or left it takes uou to the previos img
     function showPreviousImage() {
         if (imgIndex > 0) {
             imgIndex--;
@@ -125,7 +125,7 @@
         }
         swipeImg.src = images[imgIndex];
     }
-
+// makes it when you scrool up or right it berings you to the next img
     function showNextImage() {
         if (imgIndex < images.length - 1) {
             imgIndex++;
@@ -134,7 +134,8 @@
         }
         swipeImg.src = images[imgIndex];
     }
-
+// the img is bing scrooled and y is less then 0 have it go to the last img 
+// else 0 is less the y go to the next img 
     function handleScroll(event) {
         // Prevent the default scroll behavior
         event.preventDefault();
