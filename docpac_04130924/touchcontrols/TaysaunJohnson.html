@@ -118,7 +118,6 @@
     }
 
     function end(event) {
-        console.log(swipeImg)
         //set the end coordinate of each axis to the touch position
         endX = event.changedTouches[0].screenX
         endY = event.changedTouches[0].screenY
@@ -128,8 +127,6 @@
         let yAbsDifference = Math.abs(startY - endY)
         let xDifference = startX - endX
         let yDifference = startY - endY
-
-        console.log(xDifference)
 
         // if the distance from the start to end on the X axis is greater than the minimum swipe distance and
         // the difference of the X axis is greater than the Y axis
