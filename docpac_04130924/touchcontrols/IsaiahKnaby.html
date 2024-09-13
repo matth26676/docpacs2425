@@ -134,6 +134,7 @@
             if(imgIndex > [0]){
                 //decrement the image index
                 imgIndex--;
+                console.log("next");
                 //change the image src property to the previous image in the list
                 swipeImg.src = images[imgIndex];
             }
@@ -169,6 +170,7 @@
             if(images.length > 1){
                 //remove this image from the list
                 images.splice(imgIndex, 1);
+                console.log("bye bye")
                 //if the image index is greater than the length of the image list
                 if (imgIndex > images.length){
                     //decrement the image index
@@ -188,6 +190,7 @@
         else if(diffY < SWIPE_MIN && diffY > diffX){
             //add this image to the end of the list
             images.push(images);
+            console.log("newbie")
         }
         //reset the horizontal and vertical position of the image to 0px
         swipeImg.style.left = '0px';
