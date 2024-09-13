@@ -90,15 +90,15 @@
         startY = event.touches[0].screenY
         //reset the last touch position of each axis to 0
 
-        // lastX = [0]
-        // lastY = [0]
+        lastX = []
+        lastY = []
     }
 
     function move(event) {
         //if the touch is not in its initial position, move the image by the amount the touch has moved since the last event
             //calculate the difference between the start touch and the current touch for each axis
-            let xDifference = startX - event.touches[0].screenX
-            let yDifference = startY - event.touches[0].screenY
+            let xDifference = event.touches[0].screenX - startX 
+            let yDifference = event.touches[0].screenY - startY
             //if the absolute value of the X difference is greater than the Y difference
             if (Math.abs(xDifference) > Math.abs(yDifference)) {
                 // move the image horizontally
@@ -118,15 +118,18 @@
     }
 
     function end(event) {
+        console.log(swipeImg)
         //set the end coordinate of each axis to the touch position
-        endX = lastX
-        endY = lastY
+        endX = event.changedTouches[0].screenX
+        endY = event.changedTouches[0].screenY
 
         //calculate the absolute value of difference between the start touch and the end touch for each axis
         let xAbsDifference = Math.abs(startX - endX)
         let yAbsDifference = Math.abs(startY - endY)
         let xDifference = startX - endX
         let yDifference = startY - endY
+
+        console.log(xDifference)
 
         // if the distance from the start to end on the X axis is greater than the minimum swipe distance and
         // the difference of the X axis is greater than the Y axis
