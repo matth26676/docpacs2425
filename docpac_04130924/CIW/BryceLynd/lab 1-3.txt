@@ -1,0 +1,14 @@
+Game developer reaserch:
+To be a successful game developer one must have these six essential skills.
+Programming & Technical Knowledge - I mean how else are you going to create a game if you have no understanding or knoledge of how to do it.
+Creativity - Creativity is needed to bring life to a game.
+Time Management - Time Management is needed because deadlines exist, and deadlines are a crutial part in making sure the game being developed is released on time.
+Communication Skills - Communication Skills are a core piece to working in a team as withought them the team itself cannot function properly, nor acheive the desiered goal.
+Problem Solving - Having Problem Solving skills is crutial to working in game development as one is bound to come across bugs and problems that must be over come.
+Passion for Games - Without a Passion for Games what is even the point to working so hard to create one, as you would have less motivation to do anything related to it than someone who is passionate for games.
+
+VR developer reaserch:
+To be a VR developer one must be proficiency in programming languages like C# or C++, 
+have familiarity with game engines, such as especially Unity3D and Unreal Engine,
+a deep understanding of 3D graphics, physics, and VR best practices,
+as well as a Strong mathematical and algorithmic foundation, which are crucial for VR development, etc.
