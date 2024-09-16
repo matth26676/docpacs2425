@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sussier EJS</title>
+    <style>
+        .h1 {
+            font-weight: bolder;
+        }
+
+        .body {
+            position: absolute;
+            width: 50%;
+            height: 92px;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Hello, <%= name %>
+    </h1>
+    <h1>STEVEN!!!!</h1>
+    <button id="shutdownBtn">KILL</button> 
+    <div id="sus"><img src="https://facilities.uiowa.edu/sites/facilities.uiowa.edu/files/building_images/0190.jpg"
+            alt="A picture of a MT Dew can">
+    </div>
+
+    <script>
+        document.getElementById('shutdownBtn').addEventListener('click', () => {
+            fetch('/shutdown') // *explosion.mp3*
+                .then(response => response.text())
+                .then(text => {
+                    console.log(text); // stuff for nerds
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

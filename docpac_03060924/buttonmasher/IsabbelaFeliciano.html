@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+
+<body>
+    <h1>Button Masher</h1>
+    <div id="axes" style="display: flex; flex-direction: column;"></div>
+    <div id="buttons" style="display: flex; flex-direction: column;"></div>
+
+    <div id="scorebox">Score: 0</div>
+    <div id="timerbox">Timer: 20</div>
+    <div id="directionbox">Direction: </div>
+
+    <script>
+        let score = 0;
+        let timer = 20;
+        let direction = '';
+
+        const sbox = document.getElementById('scorebox');
+        const tbox = document.getElementById('timerbox');
+        const dbox = document.getElementById('directionbox');
+
+        const updateScore = () => sbox.textContent = `Score: ${score}`;
+        const updateTimer = () => tbox.textContent = `Timer: ${timer}`;
+        const updateDirection = () => dbox.textContent = `Direction: ${direction}`;
+
+        function ticker() {
+            if (timer > 0) {
+                timer -= 1;
+                updateTimer();
+            }
+        }
+
+        setInterval(ticker, 1000);
+
+        setInterval(() => {
+            const rand = Math.floor(Math.random() * 4);
+            switch (rand) {
+                case 0: direction = "Up"; break;
+                case 1: direction = "Right"; break;
+                case 2: direction = "Down"; break;
+                case 3: direction = "Left"; break;
+            }
+            updateDirection();
+        }, 2000);
+
+        window.addEventListener('gamepadconnected', () => {
+            const update = () => {
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) continue;
+
+                    if (gamepad.buttons[0].pressed) {
+                        if (timer > 0) {
+                            if ((direction === "Left" && gamepad.axes[0] === -1) ||
+                                (direction === "Right" && gamepad.axes[0] === 1) ||
+                                (direction === "Up" && gamepad.axes[1] === -1) ||
+                                (direction === "Down" && gamepad.axes[1] === 1)) {
+                                score += 1;
+                                updateScore();
+                            }
+                        }
+                    }
+
+                    if (gamepad.buttons[9].pressed) {
+                        location.reload();
+                    }
+                }
+
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+    </script>
+</body>
+
+</html>
