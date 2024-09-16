@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas width="800" height="600" id="canvas"></canvas>
+
+</body>
+<script>
+    var canvas = document.getElementById("canvas")
+    var ctx = canvas.getContext("2d");
+    var w = false, a = false, s = false, d = false
+    var inputSpeed = 1
+    var player = {
+        x: 0,
+        y: 0,
+        w: 100,
+        h: 100,
+        img: "pixelWizard.png"
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.keyCode == 87) {
+            w = true
+        } if (event.keyCode == 65) {
+            a = true
+        } if (event.keyCode == 83) {
+            s = true
+        } if (event.keyCode == 68) {
+            d = true
+        }
+        
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if (event.keyCode == 87) {
+            w = false
+        } if (event.keyCode == 65) {
+            a = false
+        } if (event.keyCode == 83) {
+            s = false
+        } if (event.keyCode == 68) {
+            d = false
+        }
+        
+    });
+
+
+    function callback() {
+        if (w && player.y > 0) {
+            player.y += -2
+        } if (s && player.y < canvas.height - player.h) {
+            player.y += 2
+        } if (a && player.x > 0) {
+            player.x += -2
+        } if (d && player.x < canvas.width - player.w) {
+            player.x += 2
+        }
+
+        ctx.fillStyle = "White"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.fillStyle = "Black"
+        ctx.fillRect(player.x, player.y, player.w, player.h)
+
+        requestAnimationFrame(callback)
+    }
+
+    requestAnimationFrame(callback)
+
+</script>
+
+</html>
