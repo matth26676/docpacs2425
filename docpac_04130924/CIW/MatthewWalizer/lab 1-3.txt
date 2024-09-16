@@ -1,0 +1,8 @@
+    There are several advantages and disadvantages to running JavaScript all client-sided. Some advantages is the 
+company doesn't need to spend as much on server resources for the servers to handle the strain and an internet
+connection won't be a factor in how fast a page or game will load. However, there are several disadvantages;
+the client's computer is now the one with all the strain which may not work, you can't have variables that 
+can be used between multiple clients, and the client could potentially inject code into the script.
+
+    In a normal stantard nowadays, clients runs some code while the server runs other code. Typically and client
+can handle and run the front-end page of a website while a server handles all the back-end code and variables.
