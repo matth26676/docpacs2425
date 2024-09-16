@@ -1,0 +1,44 @@
+Lab requirements:
+"Search on recruiter's protals and other websites for game and VR development to see various Javascript role requirements. Look at several different listings and compare the skills they require.
+
+Proof of completion:
+Links to 3 seperate listings and the requirements
+
+https://www.linkedin.com/jobs/view/jr-web-developer-entry-level-at-planned-systems-international-3940392184?trk=public_jobs_topcard-title
+
+"Jr Web Deveeloper (Entry Level)"
+
+1) Bachelor’s degree in Computer Science, Engineering, or closely related field.
+2) Strong understanding of user interface design principles, with proven track record of creative web site development in accordance with the design specifications, user interface style guides and established usability standards.
+3) Must have strong experience working with a variety of technology and the ability to multi-task between different projects and workflow stages.
+4) Must have experience communicating directly with end users and the ability to gather requirements.
+5) Experience analyzing business product needs, recommending, then possibly implementing, effective software solutions in a timely manner.
+6) Experience analyzing core standards for software development, and maintaining an effective process for support.
+7) Experience providing guidance and leadership to other developers and development teams.
+8) U.S. Citizenship is required. Candidates selected must be able to successfully pass a client background investigation.
+
+
+https://www.linkedin.com/jobs/view/junior-frontend-engineer-javascript-html-css-at-hiremefast-llc-4021242889?trk=public_jobs_topcard-title
+
+"Junior Frontend Endgineer (Javascript/HTML/CSS)"
+
+1) Minimum 1 year of project experience
+2) Front-end web experience coding in JavaScript/HTML/CSS.
+3) Willing to mentor junior talent.
+4) Eager to move into a lead role with rapid expected company growth.
+5) Comfortable working in a remote role.
+6) A dependable individual who can take initiative on cleaning up and expanding projects.
+
+
+https://www.indeed.com/viewjob?jk=a47b98e7482e1e0d&q=javascript+developer&tk=1i7bil032j0rr88p&from=web&advn=2600498686408392&adid=408892460&ad=-6NYlbfkN0BUqc42VoWA1IUzFhs_b-r9PP2duAgXnd_bSymumAJSOeZFETm-926XFKxGkofaht3zdMPF0RnRUFMC1BBdddD6xnSLXUKy-aqvDWp5eTLAadEeUOIGOaYhDUNaeCbtPNBoxBS4N4JQMBv6mY4mFrf0bPWjmwBmNLfQ_O4eybEm4EPf7iDH-l2HYZcnsrJNwBubMG9BvSZmKJPff5eLwjzVuml-YZsYOW9UZIGG5HM9T9ZOszHresA9T57fywI2HCabyWM32bHDWW04pVdSNeuOAbg1lwnCW7_AZ-YKZE4UlOo2yBGKY63mfPXGpFYiZbtigziWuvkps9ajJykYG1uzVgBrXItT1U26UrKDJ6-9HuMrviW44hKfXj98lpi7vFjvgBkId5M41s2gcy41n6vf5R9NrZkBlim9A7fmasY496YNiCiQDBDMEt2mdohaen2amLTYfpsWiwqE4yHpo652EQHoSa3pIld6Q09dbTSW9m4qUsaT8JQj5aJnTxYLkZFySbd-Ef4xKw%3D%3D&pub=4a1b367933fd867b19b072952f68dceb&camk=H-lBaXMUocKu3kzuwZARtQ%3D%3D&xkcb=SoBo6_M38rtb03UrMZ0ObzkdCdPP&xpse=SoBU6_I38rtVAxWTXx0IbzkdCdPP&xfps=013f34fe-b5c8-4103-a347-1c6fbef1980c&vjs=3
+
+"Entry Level Software Developer"
+
+1) Completed bachelor’s degree in Computer Science, Computer Engineering, Math or other Science major
+2) Excellent verbal and written communication skills
+3) Ability to research and execute solutions based on online guides and tutorials
+4) Technical aptitude and the ability to problem solve
+5) Knowledge of HTML/CSS and Javascript
+6) Strong work ethic, positive attitude and motivation to learn
+7) Ability to work independently as well as in a team environment
+8) High level of professionalism and ethics
