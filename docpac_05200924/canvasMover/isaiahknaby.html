@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>canvas mover</title>
+    <style>
+        #canvas{
+            border: 1px solid black;
+            position: relative;
+            margin: 0 auto;
+            padding: 0;
+            display: block;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
     <canvas id="canvas" width="800" height="600"></canvas>
@@ -11,50 +22,50 @@
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
     const player = {}
 
     player.x = 0;
     player.y = 0;
-    player.w = 170;
-    player.h = 225;
+    player.w = 42.5;
+    player.h = 56.25;
     player.img = new Image();
     player.img.src = 'img/myImage.jpg';
 
-    function update(){
-        window.addEventListener('keydown', function(event){
-            if(event.key == 'd' || event.key == 'D'){
-                console.log('d');
-                player.x ++;
-            } else if(event.key == 'a' || event.key == 'A'){
-                console.log('a');
-                player.x --;
-            } else if(event.key == 'w' || event.key == 'W'){
-                console.log('w');
-                player.y ++;
-            } else if(event.key == 's' || event.key == 'S'){
-                console.log('s');
-                player.y --;
-            }
-        });
-
-        if (player.x < 0){
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w' || event.key === 'W') {
+            player.y--;
+        } else if (event.key === 'a' || event.key === 'A') {
+            player.x--;
+        } else if (event.key === 's' || event.key === 'S') {
+            player.y++;
+        } else if (event.key === 'd' || event.key === 'D') {
+            player.x++;
+        }
+        if (player.x < 0) {
             player.x = 0;
-        } else if (player.y < 0){
+        } else if (player.y < 0) {
             player.y = 0;
-        } else if (player.x + player.w > canvas.width){
+        } else if (player.x + player.w > canvas.width) {
             player.x = canvas.width - player.w;
-        } else if (player.y + player.h > canvas.height){
+        } else if (player.y + player.h > canvas.height) {
             player.y = canvas.height - player.h;
         }
+    });
 
+
+    function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
-        ctx.fillText(player.x, player.y, 10, 10);
-        ctx.fillText("keyboard", 10, 10);
+        ctx.fillStyle = 'red';
+        ctx.font = '15px Arial';
+        ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
+        ctx.fillText("keyboard", 0, 60);
         requestAnimationFrame(update);
         console.log(player.x, player.y);
     }
-    
+
     requestAnimationFrame(update);
 </script>
+
 </html>
