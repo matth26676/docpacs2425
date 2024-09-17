@@ -36,12 +36,11 @@
         }
 
         function update(){
-
             ctx.clearRect(0,0,canvas.width,canvas.height);
             ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
 
             ctx.fillText('keyboard', 10, 10);
-            ctx.fillText('ADD X AND Y');
+            ctx.fillText(`X: ${player.x}  Y: ${player.y}`, 75, 10);
 
             player.xv = keyDown('d') - keyDown('a');
             player.yv = keyDown('s') - keyDown('w');
@@ -53,7 +52,8 @@
                 player.x = 0;
             } else if(player.x + player.w > canvas.width){
                 player.x = canvas.width - player.w;
-            } else if(player.y < 0){
+            }
+            if(player.y < 0){
                 player.y = 0;
             } else if(player.y + player.h > canvas.height){
                 player.y = canvas.height - player.h;
@@ -65,11 +65,13 @@
         update();
 
         document.addEventListener('keydown', function(e) {
-            downKeys[e.key] = true;
+            let key = e.key.toLowerCase();
+            downKeys[key] = true;
         });
 
         document.addEventListener('keyup', function(e) {
-            downKeys[e.key] = false;
+            let key = e.key.toLowerCase();
+            downKeys[key] = false;
         });
 
     </script>
