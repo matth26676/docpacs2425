@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Your Name</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form id="nameForm" action="/" method="POST">
+      <input type="hidden" id="name" name="name">
+    </form>
+
+    <script>
+      // Check if the form has already been submitted
+      const urlParams = new URLSearchParams(window.location.search);
+      const submitted = urlParams.get('submitted');
+
+      if (submitted !== 'true') {
+        // Prompt the user for their name
+        let name = prompt("Please enter your name:");
+        if (!name) {
+          name = "Guest";
+        }
+        // Set the name in the hidden input field
+        document.getElementById('name').value = name;
+        // Append a query parameter to indicate the form has been submitted
+        const form = document.getElementById('nameForm');
+        form.action = '/?submitted=true&name=' + encodeURIComponent(name);
+        // Submit the form
+        form.submit();
+      } else {
+        // Set form action to ?submitted=false for the next reload
+        document.getElementById('nameForm').action += '?submitted=false';
+      }
+    </script>
+
+    <% if (name) { %>
+      <h2>Hello, <%= name %>!</h2>
+    <% } %>
+  </div>
+</body>
+</html>

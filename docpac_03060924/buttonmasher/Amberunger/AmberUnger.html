@@ -1,0 +1,176 @@
+<!DocType html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Hidden elements for gamepad info and button status -->
+  
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #2e2e2e;
+            /* Dark gray background */
+            font-family: 'Cinzel', serif;
+            color: #fff;
+        }
+
+        #game-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        #scorebox,
+        #timerbox,
+        #directionbox {
+            font-size: 4em;
+            margin: 20px 0;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        #directionbox {
+            font-size: 2em;
+            /* Make the direction text smaller */
+        }
+
+        #direction-image {
+            width: 100px;
+            height: 100px;
+            margin: 20px 0;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+
+        #axes {
+            display: flex;
+            flex-direction: column;
+            margin: 20px 0;
+        }
+
+        
+    </style>
+
+</head>
+
+<body>
+    <center>
+        <div id="game-container">
+            <!-- Display the score -->
+            <div id="scorebox">Score = 0</div>
+            <!-- Display the timer -->
+            <div id="timerbox">Time = 21</div>
+            <!-- Display the gamepad axes -->
+            <div id="axes"></div>
+            <!-- Display the direction image -->
+            <img id="direction-image" src="" alt="Direction Image"> <!-- Move this outside directionbox -->
+            <div id="directionbox">
+                <script>
+                    var score = 0;
+                    var direction = 0;
+                    var timer = 21;
+                    var laststate = false;
+                    var way = "";
+                    var isPressed = false;
+                    var wasPressed = false;
+
+                    // Function to refresh the page
+                    function refreshPage(){
+                        window.location.reload();
+                    } 
+
+                    // Change direction every 2 seconds
+                    setInterval(() => {
+                        if (timer > 0) {
+                            way = Math.floor(Math.random() * 4);
+                            let directionImage = document.getElementById("direction-image");
+                            if (way === 0) {
+                                way = "up";
+                                directionImage.src = "up.gif";
+                            } else if (way === 2) {
+                                way = "down";
+                                directionImage.src = "down.gif";
+                            } else if (way === 3) {
+                                way = "left";
+                                directionImage.src = "left.gif";
+                            } else if (way === 1) {
+                                way = "right";
+                                directionImage.src = "right.gif";
+                            }
+                            document.getElementById("directionbox").innerHTML = "Direction = " + way;
+                        } else if (timer == 0) {
+                            let directionImage = document.getElementById("direction-image");
+                            document.getElementById("directionbox").innerHTML = "Game Over"
+                            directionImage.src = "go.gif";
+
+                        } else {
+                            let directionImage = document.getElementById("direction-image");
+                            document.getElementById("directionbox").innerHTML = "Game Over";
+                            directionImage.src = "go.gif";
+                        }
+                    }, 2000);
+
+                    // When a gamepad is connected
+                    window.addEventListener('gamepadconnected', (event) => {
+                        const update = () => {
+                            const output = document.getElementById('axes');
+                            output.innerHTML = ''; // clear the output
+
+                            for (const gamepad of navigator.getGamepads()) {
+                                if (!gamepad) continue;
+
+                                if (gamepad.buttons[ 9].pressed ) { window.location.reload() }
+
+                                if (gamepad.buttons[0 ].pressed != wasPressed) {
+                                    wasPressed = gamepad.buttons[0].pressed;
+                                    if (wasPressed) { // button pressed code
+                                        switch (true) {
+                                            case (gamepad.axes[1] <= -0.8 && way == "up" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[1] >= 0.8 && way == "down" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[0] == 1 && way == "right" && timer > 0):
+                                                score++;
+                                                break;
+                                            case (gamepad.axes[0] == -1 && way == "left" && timer > 0):
+                                                score++;
+                                                break;
+                                        }
+                                    }
+                                }
+                                document.getElementById("scorebox").innerHTML = "Score = " + score;
+                            }
+                            requestAnimationFrame(update);
+                        };
+                        update();
+                    });
+
+                    // Decrease the timer every second
+                    setInterval(() => {
+                        if (timer > 0) {
+                            timer--;
+                        }
+                        document.getElementById("timerbox").innerHTML = "Time = " + timer;
+                    }, 1000);
+
+                    // When a gamepad is connected, update the button status
+                    window.addEventListener("gamepadconnected", function (e) {
+                        var gp = navigator.getGamepads()[e.gamepad.index];
+                        document.getElementById("gpInfo").innerHTML = "score = " + timer;
+
+                   
+                    });
+                </script>
+            </div>
+        </div>
+    </center>
+</body>
+
+</html>

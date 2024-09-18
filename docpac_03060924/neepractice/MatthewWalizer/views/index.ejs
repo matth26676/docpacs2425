@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #mainpage {
+            background-color: aqua;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #subpage {
+            background-color: rgb(34, 121, 7);
+            width: 80vw;
+            height: 80vh;
+            position: relative;
+            top: 10%;
+            left: 10%;
+            border-radius: 20%;
+            border: 5px solid rgb(64, 163, 34);
+        }
+
+        #nameBox {
+            background-color:rgb(0, 255, 42);
+            position: relative;
+            top: 20%;
+            left: 35%;
+            width: 30%;
+            height: 10vh;
+            border-radius: 50%;
+            border: 5px solid rgb(11, 194, 51);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainpage">
+        <div id="subpage">
+            <div id="nameBox">Hello, <%=name%>!</div>
+        </div>
+    </div>
+</body>
+</html>

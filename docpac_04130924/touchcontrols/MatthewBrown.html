@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container {
+            width: 480px;
+            margin: auto;
+            background-color: #666666;
+        }
+
+        #swipeImg {
+            width: 480px;
+            height: auto;
+            position: relative;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <img src="img/levelup01.png" alt="" id="swipeImg">
+    </div>
+</body>
+<script>
+    //CONSTANTS
+    const SWIPE_MIN = 200; //How far you must swipe to trigger a swipe
+
+    //SETUP IMAGE
+    let swipeImg = document.getElementById('swipeImg');
+    //set its style property to its computed style
+    swipeImg.style.top = window.getComputedStyle(swipeImg).top;
+    swipeImg.style.left = window.getComputedStyle(swipeImg).left;
+
+    //LIST OF IMAGES
+    let images = [
+        'img/levelup01.png',
+        'img/levelup02.png',
+        'img/levelup03.png',
+        'img/levelup04.png',
+        'img/levelup05.png',
+        'img/levelup06.png',
+        'img/levelup07.png',
+        'img/levelup08.png',
+        'img/levelup09.png',
+        'img/levelup10.png'
+    ]
+
+    //image index
+    let imgIndex = 0;
+
+    //start and end coordinates of touch
+    let startX = [];
+    let startY = [];
+    let lastX = [];
+    let lastY = [];
+    let endX = [];
+    let endY = [];
+
+    //detect touch on any part of the window
+    swipeImg.addEventListener('touchstart', function () {
+        start(event);
+    });
+    //detect movement of touch
+    swipeImg.addEventListener('touchmove', function () {
+        move(event);
+    });
+    //detect release of touch
+    swipeImg.addEventListener('touchend', function () {
+        end(event);
+    });
+
+    /**********************************************************************************************************************\
+     * After this comment, write the appropriate line of code to achieve each comment.                                    *
+     * Some comments will have multiple lines of code.                                                                    *
+     * Some comments will be one line of code, but use two lines to describe it.                                          *
+     * Indents should match the code blocks.                                                                              *
+    \**********************************************************************************************************************/
+
+    function start(event) {
+    if (event.touches) {
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+        console.log(startX);
+        console.log(startY);
+    } else {
+        startX = [];
+        startY = [];
+    }
+}
+
+    function move(event) {
+        let lastX = event.touches[0].clientX;
+        let lastY = event.touches[0].clientY;
+        const containerWidth = swipeImg.parentElement.clientWidth;
+        const containerHeight = swipeImg.parentElement.clientHeight;
+        const imgWidth = swipeImg.clientWidth;
+        const imgHeight = swipeImg.clientHeight;
+
+        if (lastX != startX && lastY != startY) {
+            let newLeft = parseInt(swipeImg.style.left) + (lastX - startX);
+            newLeft = Math.max(0, Math.min(newLeft, containerWidth - imgWidth)); // Ensure within bounds
+            swipeImg.style.left = newLeft + 'px';
+            swipeImg.style.top = '0px';
+        } else {
+            let newTop = parseInt(swipeImg.style.top) + (lastY - startY);
+            newTop = Math.max(0, Math.min(newTop, containerHeight - imgHeight)); // Ensure within bounds
+            swipeImg.style.top = newTop + 'px';
+            swipeImg.style.left = '0px';
+        }
+        
+        lastX = event.touches[0].clientX;
+        lastY = event.touches[0].clientY;
+    }
+
+    function end(event) {
+    endX = event.changedTouches[0].clientX;
+    endY = event.changedTouches[0].clientY;
+
+    const diffX = Math.abs(startX - endX);
+    const diffY = Math.abs(startY - endY);
+
+    if (diffX > SWIPE_MIN && diffX > diffY) {
+        if (startX > endX) {
+            imgIndex = (imgIndex > 0) ? imgIndex - 1 : images.length - 1;
+        } else {
+            imgIndex = (imgIndex < images.length - 1) ? imgIndex + 1 : 0;
+        }
+        swipeImg.src = images[imgIndex];
+    }
+    else if (diffY > SWIPE_MIN && diffY > diffX) {
+        if (startY < endY) {
+            if (images.length > 0) {
+                const currentImage = images.splice(imgIndex, 1)[0];
+                images.push(currentImage);
+                if (imgIndex >= images.length) {
+                    imgIndex = images.length - 1;
+                }
+                swipeImg.src = images[imgIndex];
+            }
+        } else {
+            if (images.length > 0) {
+                images.splice(imgIndex, 1);
+                if (imgIndex >= images.length) {
+                    imgIndex = images.length - 1;
+                }
+                if (images.length > 0) {
+                    swipeImg.src = images[imgIndex];
+                } else {
+                    swipeImg.src = '';
+                }
+            }
+        }
+    }
+    else if (diffY < SWIPE_MIN && diffY > diffX) {
+        images.push(swipeImg.src);
+        swipeImg.style.top = '0px';
+        swipeImg.style.left = '0px';
+        startX = [];
+        startY = [];
+    }
+}
+
+</script>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <script>
+        function calculate() {
+            const inputNumber1 = Number(document.getElementById("input_1").value);
+            const inputNumber2 = Number(document.getElementById("input_2").value);
+            const dropdownValue = document.getElementById("arithmetic").value;
+            const resultDiv = document.getElementById("result"); 
+
+            // Apply the appropriate arithmetic operator to the two numbers
+            let result;
+            if (dropdownValue == "+") {
+                result = inputNumber1 + inputNumber2;
+            } else if (dropdownValue == "-") {
+                result = inputNumber1 - inputNumber2;
+            } else if (dropdownValue == "*") {
+                result = inputNumber1 * inputNumber2;
+            } else if (dropdownValue == "/") {
+                if (inputNumber2 == 0) {
+                    return resultDiv.innerHTML = "Error!";
+                }
+                result = inputNumber1 / inputNumber2;
+            } else if (dropdownValue == "%") {
+                if (inputNumber2 == 0) {
+                    return resultDiv.innerHTML = "Error!";
+                }
+                result = inputNumber1 % inputNumber2;
+            }
+
+            resultDiv.innerHTML = result;
+        }
+    </script>
+</head>
+<body>
+    <input type="number" id="input_1"/>
+    <input type="number" id="input_2">
+    <div id="result"></div>
+    <select id="arithmetic">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+    </select>
+    <button onclick="calculate()">Calculate</button>
+</body>
+</html>

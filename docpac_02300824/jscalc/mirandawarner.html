@@ -1,13 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>jscalc</title>
 </head>
-<body> 
-    <label for="quantity">quantity:</label>
-    <input type="number" id="quantity" name="quantity" min="0" max="100" step="1"
-    <input type="submit"
+
+<body>
+    <input type="number" id="num1">
+    <input type="number" id="num2">
+    <div id="result"> </div>
+    <select id="operation">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+
+
+    </select>
+    <button onclick="calculate()">Click me</button>
 </body>
+
+<script>
+    function calculate() {
+        let result = 0
+        let num1Box = document.getElementById("num1")
+        let num2Box = document.getElementById("num2")
+        let num1 = num1Box.value
+        let num2 = num2Box.value
+        num1 = Number(num1)
+        num2 = Number(num2)
+
+        let resultBox = document.getElementById('result')
+        let operation = document.getElementById('operation').value
+        if (operation == "+") {
+            result = num1 + num2
+        } else if (operation == "-") {
+            result = num1 - num2
+        }
+        else if (operation == "*") {
+            result = num1 * num2
+        } else if (operation == "/") {
+            //make the result "error" if they try to divide by 0. otherwise do normal operation
+            if (num2 == 0) {
+               result = "Error!"
+            } else {
+                result = num1 / num2
+            }
+
+
+        }
+        else if (operation === "%") {
+            //make the result "error" if they try to divide by 0. otherwise do normal operation
+            if (num2 == 0) {
+             result = "Error!"
+            } else {
+                result = num1 / num2
+            }
+
+        }
+    resultBox.innerHTML =result
+
+    }
+
+
+
+</script>
+
 </html>
