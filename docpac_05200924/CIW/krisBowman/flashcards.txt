@@ -1,13 +1,7 @@
 Incorrect flash cards recorded here:
 
-integrated developement environment
-"A software application that provides a platform where developers can develop software."
+parsing
+"The process of analyzing the code."
 
-perl
-"A script prgramming language commonly used for web server tasks and CGI programs."
-
-react
-"An open-source Javascript library developed by Jordan Walke at Facebook in 2011 for building user interfaces."
-
-semantically
-"A way that relatees to the different meanings of words or other signs and symbols."
+dot notation
+"A reference used to access a property or method of an object
