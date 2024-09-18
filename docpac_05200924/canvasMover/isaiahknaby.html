@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>canvas mover</title>
     <style>
-        #canvas{
+        #canvas {
             border: 1px solid black;
             position: relative;
             margin: 0 auto;
@@ -16,12 +16,16 @@
         }
     </style>
 </head>
+
 <body>
     <canvas id="canvas" width="800" height="600"></canvas>
 </body>
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
 
     const player = {}
 
@@ -32,16 +36,37 @@
     player.img = new Image();
     player.img.src = 'img/myImage.jpg';
 
+    let speed = 1
+
     document.addEventListener('keydown', function (event) {
         if (event.key === 'w' || event.key === 'W') {
-            player.y--;
+            player.y -= speed;
         } else if (event.key === 'a' || event.key === 'A') {
-            player.x--;
+            player.x -= speed;
         } else if (event.key === 's' || event.key === 'S') {
-            player.y++;
+            player.y += speed;
         } else if (event.key === 'd' || event.key === 'D') {
-            player.x++;
+            player.x += speed;
         }
+
+        //checks arrows too
+        if (event.key === 'ArrowUp') {
+            player.y -= speed;
+        } else if (event.key === 'ArrowLeft') {
+            player.x -= speed;
+        } else if (event.key === 'ArrowDown') {
+            player.y += speed;
+        } else if (event.key === 'ArrowRight') {
+            player.x += speed;
+        }
+
+        //speed increase if shift is held
+        if (event.shiftKey) {
+            speed = 2;
+        } else {
+            speed = 1;
+        }
+
         if (player.x < 0) {
             player.x = 0;
         } else if (player.y < 0) {
@@ -53,6 +78,46 @@
         }
     });
 
+    //allows input from gamepad
+    let gamepad = false;
+    window.addEventListener('gamepadconnected', function (e) {
+        gamepad = true;
+        console.log('Gamepad connected', e.gamepad);
+    });
+    window.addEventListener('gamepaddisconnected', function (e) {
+        gamepad = false;
+        console.log('Gamepad disconnected', e.gamepad);
+    });
+
+    function handleGamepadInput() {
+        if (!gamepad) return;
+
+        const gp = navigator.getGamepads()[0];
+        if (!gp) return;
+
+        const leftStickX = gp.axes[0];
+        const leftStickY = gp.axes[1];
+
+        // Deadzone threshold to prevent drift
+        const threshold = 0.1; 
+        if (Math.abs(leftStickX) > threshold) {
+            player.x += leftStickX * speed;
+        }
+        if (Math.abs(leftStickY) > threshold) {
+            player.y += leftStickY * speed;
+        }
+
+        // Ensure player stays within canvas bounds
+        if (player.x < 0) {
+            player.x = 0;
+        } else if (player.y < 0) {
+            player.y = 0;
+        } else if (player.x + player.w > canvas.width) {
+            player.x = canvas.width - player.w;
+        } else if (player.y + player.h > canvas.height) {
+            player.y = canvas.height - player.h;
+        }
+    }
 
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -60,9 +125,32 @@
         ctx.fillStyle = 'red';
         ctx.font = '15px Arial';
         ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
-        ctx.fillText("keyboard", 0, 60);
+        if (onkeypress) {
+            ctx.fillText("keyboard")
+        }
+
+        handleGamepadInput();
+
         requestAnimationFrame(update);
         console.log(player.x, player.y);
+        console.log(speed)
+    }
+
+    requestAnimationFrame(update);
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+        ctx.fillStyle = 'red';
+        ctx.font = '15px Arial';
+        ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
+        if (onkeypress) {
+            ctx.fillText("keyboard")
+        }
+
+        requestAnimationFrame(update);
+        console.log(player.x, player.y);
+        console.log(speed)
     }
 
     requestAnimationFrame(update);
