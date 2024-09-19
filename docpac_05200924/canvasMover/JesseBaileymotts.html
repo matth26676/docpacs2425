@@ -13,47 +13,108 @@
 <script>
     const c = document.getElementById("canvas");
     const ctx = c.getContext("2d");
+    // Player variables
     const player = {
-    x: 0,
-    y: 0,
-    w: 100,
-    h: 193,
-    img: new Image(),
-    }   
+        x: 0,
+        y: 0,
+        w: 100,
+        h: 193,
+        img: new Image(),
+    };
 
-    player.img.src = 'img/SODA!!!!.jpg'
+    player.img.src = 'img/SODA!!!!.jpg';
 
+    // Control Method
+    ctx.fillText("Choose Control Method", c.width / 2, c.height / 2);
+    let playType = '';
+
+    // Update the canvas
+    const update = () => {
+        if ((player.x + player.w) > c.width) {
+            player.x = c.width - player.w;
+        } else if (player.x < 0) {
+            player.x = 0;
+        };
+
+        if ((player.y + player.h) > c.height) {
+            player.y = c.height - player.h;
+        } else if (player.y < 0) {
+            player.y = 0;
+        };
+
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.drawImage(player.img, player.x, player.y);
+        ctx.fillStyle = 'lightgrey';
+        ctx.fillRect(0, 0, 115, 25)
+        ctx.fillStyle = 'black';
+        ctx.fillText('Play Type: ' + playType, 10, 10);
+        ctx.fillText('(' + player.x + ', ' + player.y + ')', 10, 20);
+
+        requestAnimationFrame(update);
+    }
+
+    // Touch controls start touch
+    window.addEventListener('touchstart', function () {
+        const start = (event) => {
+            player.x = Math.round((event.touches[0].clientX - (player.w / 2)));
+            player.y = Math.round((event.touches[0].clientY - (player.h / 2)));
+            playType = "Touch"
+        }
+        start(event);
+        update();
+    });
+
+    // Touch controls move touch
+    window.addEventListener('touchmove', function () {
+        const move = (event) => {
+            player.x = Math.round((event.touches[0].clientX - (player.w / 2)));
+            player.y = Math.round((event.touches[0].clientY - (player.h / 2)));
+        }
+        move(event);
+    });
+
+    const touchStartUpdate = () => {
+        player.x = event.touches[0].clientX;
+        player.y = event.touches[0].clientY;
+    };
+
+    // Key controls
+    window.addEventListener('keydown', (event) => {
+        const keyUpdate = () => {
+            if (event.key == "w") {
+                player.y -= 2;
+            }
+            if (event.key == "a") {
+                player.x -= 2;
+            }
+            if (event.key == "s") {
+                player.y += 2;
+            }
+            if (event.key == "d") {
+                player.x += 2;
+            }
+
+            playType = 'Keyboard'
+            requestAnimationFrame(update);
+        };
+        keyUpdate();
+        update();
+    });
+
+    // Gamepad controls
     window.addEventListener('gamepadconnected', (event) => {
-        const update = () => {
+        const gamepadUpdate = () => {
             const gamepad = navigator.getGamepads()[0];
-            const xAxis = Math.round(gamepad.axes[0] * 100)/100;
-            const yAxis = Math.round(gamepad.axes[1] * 100)/100;
+            const xAxis = Math.round(gamepad.axes[0] * 100) / 100;
+            const yAxis = Math.round(gamepad.axes[1] * 100) / 100;
 
             player.x = Math.floor(player.x + (xAxis * 2));
             player.y = Math.floor(player.y + (yAxis * 2));
 
-            if ((player.x + player.w) > 800 ) {
-                player.x = 800 - player.w;
-            } else if (player.x< 0) {
-                player.x = 0;
-            }
-
-            if ((player.y + player.h) > 600 ) {
-                player.y = 600 - player.h;
-            } else if (player.y < 0) {
-                player.y = 0;
-            }
-
-            ctx.clearRect(0, 0, c.width, c.height);
-            ctx.drawImage(player.img, player.x, player.y);
-            ctx.fillStyle = 'lightgrey';
-            ctx.fillRect(0, 0, 115, 25)
-            ctx.fillStyle = 'black';
-            ctx.fillText('Play Type: Gamepad', 10, 10);
-            ctx.fillText('(' + player.x + ', ' + player.y + ')', 10, 20);
-            
-            requestAnimationFrame(update);
+            playType = 'Gamepad'
+            requestAnimationFrame(gamepadUpdate);
         };
+        gamepadUpdate();
         update();
 
     });
