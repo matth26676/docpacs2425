@@ -23,10 +23,6 @@
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-
-    const touchX = event.touches[0].clientX;
-    const touchY = event.touches[0].clientY;
-
     const player = {}
 
     player.x = 0;
@@ -36,7 +32,7 @@
     player.img = new Image();
     player.img.src = 'img/myImage.jpg';
 
-    let speed = 1
+    let speed = 2
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'w' || event.key === 'W') {
@@ -62,9 +58,9 @@
 
         //speed increase if shift is held
         if (event.shiftKey) {
-            speed = 2;
+            speed = 5;
         } else {
-            speed = 1;
+            speed = 2;
         }
 
         if (player.x < 0) {
@@ -78,46 +74,8 @@
         }
     });
 
-    //allows input from gamepad
-    let gamepad = false;
-    window.addEventListener('gamepadconnected', function (e) {
-        gamepad = true;
-        console.log('Gamepad connected', e.gamepad);
-    });
-    window.addEventListener('gamepaddisconnected', function (e) {
-        gamepad = false;
-        console.log('Gamepad disconnected', e.gamepad);
-    });
+    //detects input from controller
 
-    function handleGamepadInput() {
-        if (!gamepad) return;
-
-        const gp = navigator.getGamepads()[0];
-        if (!gp) return;
-
-        const leftStickX = gp.axes[0];
-        const leftStickY = gp.axes[1];
-
-        // Deadzone threshold to prevent drift
-        const threshold = 0.1; 
-        if (Math.abs(leftStickX) > threshold) {
-            player.x += leftStickX * speed;
-        }
-        if (Math.abs(leftStickY) > threshold) {
-            player.y += leftStickY * speed;
-        }
-
-        // Ensure player stays within canvas bounds
-        if (player.x < 0) {
-            player.x = 0;
-        } else if (player.y < 0) {
-            player.y = 0;
-        } else if (player.x + player.w > canvas.width) {
-            player.x = canvas.width - player.w;
-        } else if (player.y + player.h > canvas.height) {
-            player.y = canvas.height - player.h;
-        }
-    }
 
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -125,9 +83,7 @@
         ctx.fillStyle = 'red';
         ctx.font = '15px Arial';
         ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
-        if (onkeypress) {
-            ctx.fillText("keyboard")
-        }
+        ctx.fillText("keyboard")
 
         handleGamepadInput();
 
@@ -144,9 +100,7 @@
         ctx.fillStyle = 'red';
         ctx.font = '15px Arial';
         ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
-        if (onkeypress) {
-            ctx.fillText("keyboard")
-        }
+        ctx.fillText("keyboard", 0, 10)
 
         requestAnimationFrame(update);
         console.log(player.x, player.y);
