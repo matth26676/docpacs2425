@@ -1,0 +1,4 @@
+A JavaScript developer is a software enginer who specialize in useing JavaScript. They are responsiable for using hardware,
+and software to write, modify, and test programs. They are also responsiable for testing code to find bugs so that they can
+implament fixes. And becoming one is kind of simple. All one needs to do is get a qualification in Computer Science with a 
+focus on software development.
