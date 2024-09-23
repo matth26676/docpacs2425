@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Add Entries</title>
+	<style>
+		form pre {
+			display: inline-block;
+		}
+
+		form input {
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<form action="/view" method="POST">
+		<label for="firstName">First name:</label>
+		<input name="firstName" type="text" >
+
+		<label for="lastName">Last name:</label>
+		<input name="lastName" type="text" >
+
+		<input type="submit">
+	</form>
+</body>
+</html>
