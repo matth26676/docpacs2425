@@ -13,16 +13,58 @@
 			display: inline-block;
 		}
 	</style>
+	<script>
+		// Gets form data as JSON then sends it through a POST request
+		function submit() {
+			const form = document.getElementById("POST");
+			const formData = new FormData(form);
+			const data = {};
+			formData.forEach((value, key) => data[key] = value);
+
+			fetch("/add", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(data)
+			});
+		}
+	</script>
 </head>
 <body>
-	<form action="/view" method="POST">
-		<label for="firstName">First name:</label>
+	<h2>Create account (and give us all your info, thanks)</h2>
+	<form id="POST">
+		<label for="firstName">First Name:</label>
 		<input name="firstName" type="text" >
 
-		<label for="lastName">Last name:</label>
+		<br>
+
+		<label for="lastName">Last Name:</label>
 		<input name="lastName" type="text" >
 
-		<input type="submit">
+		<br>
+
+		<label for="password">Password: </label>
+		<input name="password" type="password" >
+
+		<br>
+
+		<label for="confirmPassword">Confirm password: </label>
+		<input name="confirmPassword" type="password" >
+
+		<br>
+		
+		<label for="confirmPassword">Confirm password: </label>
+		<input name="confirmPassword" type="password" >
+
+		<br>
+
+		<label for="favoriteColor">: </label>
+		<input name="favoriteColor" type="color" >
+
+		<br>
+		
 	</form>
+	<button onclick="submit()">Submit</button>
 </body>
 </html>
