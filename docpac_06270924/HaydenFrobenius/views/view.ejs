@@ -1,0 +1,40 @@
+<style>
+
+    /* ChatGPT is a real G */
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Brand</th>
+        <th>Quantity</th>
+        <th>Note</th>
+    </tr>
+    <% data.data.forEach(order=> { %>
+        <tr>
+            <td>
+                <%= brands[order.brandID] %>
+            </td>
+            <td>
+                <%= order.quantity %>
+            </td>
+            <td>
+                <%= order.note ? order.note : "N/A" %>
+            </td>
+        </tr>
+        <% }); %>
+</table>

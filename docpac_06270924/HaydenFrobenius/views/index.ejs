@@ -12,18 +12,19 @@
 </head>
 <body>
     <h1>YOU BUY SODA</h1>
-    <p>number is literally the only input not on the list but I'm using it anyway. (please don't take points for that)</p>
     <form action="/add" method="POST">
         <select name="brand">
-            <option value="1">Hayden Super Sigma Juice</option>
-            <option value="2">STEVEN!</option>
-            <option value="3">Isaiah Watermelon</option>
-            <option value="4">Yeagermeister Cream</option>
-            <option value="5">Robert квас</option>
-            <option value="6">Jesse Gingerale</option>
+            <% //Dynamically get the brands from the server because that's sigma %>
+            <% for(i = 0; i < brands.length; i++){ %>
+                <option value="<%= i %>"><%= brands[i] %></option>
+            <% } %>
         </select>
+        <input type="text" name="note" placeholder="Note">
         <input type="number" name="quantity" min="1" value="1" id="quantityBox">
         <button type="submit">Place Order</button>
     </form>
+    <% if(locals?.ordered) { %>
+        <p>Thank you for buying Soda.</p>
+    <% } %>
 </body>
 </html>
