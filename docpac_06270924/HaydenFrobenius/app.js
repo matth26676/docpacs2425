@@ -41,8 +41,7 @@ app.get('/view', (req, res) => {
 });
 
 app.get('/add', (req, res) => {
-    let ordered = (req.query.ordered === "true");
-    res.render('add', {brands: brands, ordered: ordered});
+    res.render('add', {brands: brands});
 });
 
 app.post('/add', (req, res) => {
@@ -75,7 +74,7 @@ app.post('/add', (req, res) => {
             fileData = JSON.parse(contents);
             fileData.data.push(formData);
             fs.writeFile(dataFilePath, JSON.stringify(fileData), () => {
-                res.redirect('/add?ordered=true');
+                res.redirect('/');
             });
         });
 
