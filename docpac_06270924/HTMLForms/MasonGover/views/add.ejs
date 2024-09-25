@@ -11,29 +11,13 @@
 
 		form input {
 			display: inline-block;
+			margin: 5px;
 		}
 	</style>
-	<script>
-		// Gets form data as JSON then sends it through a POST request
-		function submit() {
-			const form = document.getElementById("POST");
-			const formData = new FormData(form);
-			const data = {};
-			formData.forEach((value, key) => data[key] = value);
-
-			fetch("/add", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(data)
-			});
-		}
-	</script>
 </head>
 <body>
 	<h2>Create account (and give us all your info, thanks)</h2>
-	<form id="POST">
+	<form action="/add" method="POST" id="POST">
 		<label for="firstName">First Name:</label>
 		<input name="firstName" type="text" >
 
@@ -53,18 +37,33 @@
 		<input name="confirmPassword" type="password" >
 
 		<br>
-		
-		<label for="confirmPassword">Confirm password: </label>
-		<input name="confirmPassword" type="password" >
 
-		<br>
-
-		<label for="favoriteColor">: </label>
+		<label for="favoriteColor">Favorite Color</label>
 		<input name="favoriteColor" type="color" >
 
 		<br>
 		
+		<label for="leastFavoriteColor">Least Favorite Color</label>
+		<input name="leastFavoriteColor" type="color" >
+
+		<br>
+
+		<label for="skibidiLevel">Skibidi Level</label>
+		<input name="skibidiLevel" type="range" >
+
+		<br>
+
+		<label for="sodaLikeness">How much do you like soda?</label>
+		<input name="sodaLikeness" type="range" >
+
+		<br>
+
+		<!-- <label for="sodaLikeness">How much do you like soda?</label>
+		<input name="sodaLikeness" type="range" > -->
+		
+		<input name="isSigma" type="hidden" value="false" >
+		<input name="likesSoda" type="hidden" value="true" >
+		<input type="submit">
 	</form>
-	<button onclick="submit()">Submit</button>
 </body>
 </html>

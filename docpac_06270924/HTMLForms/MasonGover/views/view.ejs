@@ -6,8 +6,17 @@
 	<title>View Entries</title>
 </head>
 <body>
-	<ul>
-		
-	</ul>
+    <h1>View Entries</h1>
+    <ul>
+        <% if (data && Object.keys(data).length > 0) { %>
+			<% for (const key in data) { %>
+				<% const dataValue = data[key]; %>
+				<li><%= key %>: <%= dataValue %></li>
+			<% } %>
+		<% } else { %>
+			<% console.log(Object.keys(data).length) %>
+			<li>No entries found.</li>
+		<% } %>
+    </ul>
 </body>
 </html>
