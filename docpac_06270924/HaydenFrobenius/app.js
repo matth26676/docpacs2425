@@ -21,8 +21,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-    let ordered = (req.query.ordered === "true");
-    res.render('index', {brands: brands, ordered: ordered});
+    res.render('index');
 });
 
 app.get('/view', (req, res) => {
@@ -39,6 +38,11 @@ app.get('/view', (req, res) => {
         res.render('error', {error: err.message});
     }
 
+});
+
+app.get('/add', (req, res) => {
+    let ordered = (req.query.ordered === "true");
+    res.render('add', {brands: brands, ordered: ordered});
 });
 
 app.post('/add', (req, res) => {
@@ -71,7 +75,7 @@ app.post('/add', (req, res) => {
             fileData = JSON.parse(contents);
             fileData.data.push(formData);
             fs.writeFile(dataFilePath, JSON.stringify(fileData), () => {
-                res.redirect('/?ordered=true');
+                res.redirect('/add?ordered=true');
             });
         });
 
