@@ -29,9 +29,6 @@ app.get('/view', (req, res) => {
 
     try {
 
-        let fileData;
-        let ordered = (req.query.ordered === "true");
-
         fs.readFile(dataFilePath, (err, contents) => {
             if(err) throw err;
             let data = JSON.parse(contents);
