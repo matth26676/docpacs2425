@@ -2,22 +2,27 @@ const express = require('express');
 const fs = require('fs');
 const app = express();
 const PORT = 3000;
+//set engine to view ejs
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
+//load index.ejs
 app.get('/', (req, res) => {
     res.render('index');
 });
 
+//load view.ejs
 app.get('/view', (req, res) => {
     const data = JSON.parse(fs.readFileSync('./data.json')).data;
 
     res.render('view', { orders: data });
 });
 
+//load add.ejs
 app.get('/add', (req, res) => {
     res.render('add');
 });
+//results from add
 app.post('/add', (req, res) => {
     try{
         const data = JSON.parse(fs.readFileSync('./data.json')).data;
@@ -35,4 +40,6 @@ app.post('/add', (req, res) => {
         res.render('error', { error: err.message });
     }
 });
+
+//start server
 app.listen(PORT);
