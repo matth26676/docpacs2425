@@ -6,10 +6,13 @@
     <title>Document</title>
 </head>
 <body>
-    <form id="form" method="post" action="/add">
-        <input type="password">
-        <input type="password">
-        <input type="checkbox">
+    <form id="form" method="POST" action="/add">
+        <label for="siteName">Website or Account Name: </label>
+        <input type="text" name="siteName">
+        <label for="user">Username: </label>
+        <input type="text" name="user">
+        <label for="password">Password: </label>
+        <input type="password" name="password">
         <input type="submit" value="Submit">
     </form>
 </body>
