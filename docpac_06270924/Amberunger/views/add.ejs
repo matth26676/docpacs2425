@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Track</title>
+</head>
+<body>
+    <h1>Add a New Track</h1>
+    <form action="/add" method="POST">
+        <label for="title">Title:</label>
+        <input type="text" name="title" required><br><br>
+
+        <label for="artist">Artist:</label>
+        <input type="text" name="artist" required><br><br>
+
+        <label for="genre">Genre (optional):</label>
+        <input type="text" name="genre"><br><br>
+
+        <label for="duration">Duration :</label>
+        <input type="text" name="duration" required><br><br>
+
+      
+
+        <label for="video">YouTube Link:</label>
+        <input type="text" name="video" required><br><br>
+
+        <button type="submit">Add Track</button>
+    </form>
+    <a href="/">Back to Home</a>
+</body>
+</html>

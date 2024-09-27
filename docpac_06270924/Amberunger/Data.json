@@ -1,0 +1,60 @@
+{
+  "users": [
+    {
+      "username": "amber",
+      "password": "$2b$10$nk1mH7C.huGrG6KbG7yvDecuKR3dxsUTss75DdNSOwvzIJPgIbzkW",
+      "isAdmin": false
+    },
+    {
+      "username": "TheCyanHusky",
+      "password": "$2b$10$kwgAbYEToQpdG/Ds6zEsxewPBrDhaTefC/g3EDIPDJXGRUzLJdlQu",
+      "isAdmin": false
+    }
+  ],
+  "tracks": [
+    {
+      "id": 1727441847097,
+      "title": "Harpy hare",
+      "artist": "Yealokre",
+      "duration": "2:59",
+      "image": null,
+      "video": "https://www.youtube.com/watch?v=5-I1lT6Jbdo&list=PLrOwz37QKWGJ-1vJHU2tTMefouPUf6OMr&index=5",
+      "album": null,
+      "genre": null,
+      "user": "amber"
+    },
+    {
+      "id": 1727443294483,
+      "title": "   Yaelokre - \"Harpy Hare\" Remix",
+      "artist": "atonal",
+      "duration": "3:07",
+      "image": null,
+      "video": "https://www.youtube.com/watch?v=p3w71m3qqjs&list=PLrOwz37QKWGJ-1vJHU2tTMefouPUf6OMr&index=1",
+      "album": null,
+      "genre": null,
+      "user": "amber"
+    },
+    {
+      "id": 1727445234798,
+      "title": "Not a Rickroll",
+      "artist": "Rick Astly",
+      "duration": "ur mom",
+      "image": null,
+      "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&embeds_referring_euri=https%3A%2F%2Fwww.bing.com%2F&embeds_referring_origin=https%3A%2F%2Fwww.bing.com&source_ve_path=Mjg2NjY",
+      "album": null,
+      "genre": "Rickroll",
+      "user": "TheCyanHusky"
+    },
+    {
+      "id": 1727445878809,
+      "title": "charlies inferno",
+      "artist": "the handsome devil",
+      "duration": "3:45",
+      "image": null,
+      "video": "https://www.youtube.com/watch?v=lOgfBGfaP6E",
+      "album": null,
+      "genre": null,
+      "user": "amber"
+    }
+  ]
+}
