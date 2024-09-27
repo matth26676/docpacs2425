@@ -8,14 +8,15 @@
 <body>
     <a href="/">Go back</a>
     <ol>
-        <% entriesfor.Each(entry.siteName => { %>
-            <a href="/view?entry=<siteName>"></a>
-            if ()
-
-            Website or Account name: <%= entry.siteName %>,
-            Username: <%= entry.user %>, 
-            Password: <%= entry.password %>
-        <% }); %>
+        <% if (entries.length > 0) { %>
+            <% entries.forEach(entry => { %>
+                <li>
+                    <h3><a href="/view?siteName=<%= entry.siteName %>"><%= entry.siteName %></a></h3>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>No entries found.</p>
+        <% } %>
     </ol>
 </body>
 </html>

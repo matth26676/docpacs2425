@@ -2,26 +2,40 @@
 HTTP Server
 ---------*/
 
-const express=require("express"); // add express module
-const fs = require("fs")
+//add express module
+const express=require("express"); 
 
-const app = express(); //express into object for furture usage
-const PORT = process.env.PORT ||5000; //port number
+//give access to filesystem
+const fs = require("fs");
 
+//express into object for furture usage
+const app = express();
+
+//port number
+const PORT = process.env.PORT ||5000;
+
+//view engine
 app.set("view engine", "ejs");
+
+//encode url
 app.use(express.urlencoded({extended: true}));
 
-// Handle GET request
+// Server Setup
+app.listen(PORT,console.log(`Server started on port ${PORT}`));
+
+/*----------
+GET Requests
+----------*/
+
+//handle index
 app.get("/", (req, res) => { 
     res.render("index"); 
 }) 
 
+//handle add
 app.get("/add", (req, res) => { 
     res.render("add"); 
 }) 
-
-// Server Setup
-app.listen(PORT,console.log(`Server started on port ${PORT}`));
 
 /*--------------
 Password Manager
@@ -46,29 +60,41 @@ app.post("/add", (req, res) => {
         //read data.json and save content to js object
         const data = JSON.parse(fs.readFileSync("data.json"));
 
-        //convert back to string
-        fs.writeFileSync("data.json", JSON.stringify(data));
-
         //push form data to array
         data.data.push({siteName, user, password});
 
-        //redirect back to "/"
-        res.render("index");
+        //convert back to string
+        fs.writeFileSync("data.json", JSON.stringify(data));
 
+        //redirect back to "/"
+        res.redirect("/");
     } catch (err) {
-        res.render("error", {error: err.message})
-    };
-    
+        res.render("error", {error: err.message});
+    };  
 });
 
 //view passwords
 
-app.get("/view", (req, res) => {
-    const {siteName} = req.body;
-    const data = JSON.parse(fs.readFileSync('data.json'));
-    if ("/view".QueryString.Add({siteName})) {
-        res.render('view', { entries: siteName });
-    } else {
-    res.render('view', { entries: data.data });
+app.get("/view", async (req, res) => {
+    try {
+        //read data.json and save content to js object
+        const data = JSON.parse(fs.readFileSync("data.json"));
+
+        //render view for specific entry
+        const {siteName} = req.query;
+        if (siteName) {
+            const entry = data.data.find(item => item.siteName === siteName);
+            if (entry) {
+                res.render("entry", {entry});
+            } else {
+                res.render("error", {error: "Entry not found."});
+            };
+        } else {
+        //siteName not provided
+        res.render("view", {entries: data.data});
+        };
+
+    } catch (err) {
+        res.render("error", {error: "Failed to load data."});
     };
 });
