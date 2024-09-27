@@ -11,13 +11,25 @@ app.get('/', (req, res) => {
   res.render('index', { title: 'Home', message: 'Welcome!' });
 });
 
+app.get('/view', (req, res) => {
+  try {
+    const fileData = JSON.parse(fs.readFileSync('./data.json'));
+    const orders = fileData.data || []; 
+
+    res.render('view', { title: 'View Orders', orders : orders }); 
+  } catch (error) {
+    res.render('error', { error: error.message });
+  }
+});
+
+
 app.get('/add', (req, res) => {
   res.render('add', { title: 'Add', message: 'Add an item!' });
 });
 
 app.post('/add', (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync('./data.json'));
+    const data = JSON.parse(fs.readFileSync('./data.json')).data;
 
     const orderData = {
       item: req.body.item,
@@ -29,7 +41,7 @@ app.post('/add', (req, res) => {
     if (!orderData.amount) throw new Error("Quantity Required");
 
     data.push(orderData);
-    fs.writeFileSync('./data.json', JSON.stringify(data)); // Corrected structure
+    fs.writeFileSync('./data.json', JSON.stringify({data: data})); // Corrected structure
 
     res.redirect('/');
   } catch (error) {
