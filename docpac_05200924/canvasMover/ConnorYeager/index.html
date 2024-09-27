@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmithMover</title>
+</head>
+<body>
+    <canvas id = "canvas" width = "800" height = "600"></canvas>
+</body>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const player = {}
+
+    player.x = 0;
+    player.y = 0;
+    player.h = 80;
+    player.w = 80;
+    player.img = new Image();
+    player.img.src = 'smiffie.jpg';
+
+    let speed = 3
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w' || event.key === 'W') {
+            player.y -= speed;
+        } else if (event.key === 'a' || event.key === 'A') {
+            player.x -= speed;
+        } else if (event.key === 's' || event.key === "S") {
+            player.y += speed;
+        } else if (event.key === 'd' || event.key === 'D') {
+            player.x += speed;
+        }
+        if (player.x < 0) {
+            player.x = 0;
+        } else if (player.y < 0) {
+            player.y = 0;
+        } else if (player.x + player.w > canvas.width) {
+            player.x = canvas.width - player.w;
+        } else if (player.y + player.h > canvas.height) {
+            player.y = canvas.height - player.h;
+        }
+    });
+
+    requestAnimationFrame(update);
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+        ctx.fillStyle = 'black';
+        ctx.font = '15px Arial';
+        ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
+        ctx.fillText("keyboard", 0, 10)
+        requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
+</script>
+</html>
