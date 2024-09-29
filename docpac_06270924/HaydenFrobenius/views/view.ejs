@@ -20,12 +20,16 @@
 
 <table>
     <tr>
+        <th>Entry #</th>
         <th>Brand</th>
         <th>Quantity</th>
         <th>Note</th>
     </tr>
-    <% data.data.forEach(order=> { %>
+    <% data.forEach(order => {%>
         <tr>
+            <td>
+                <a href="/view?entry=<%= order.entryID %>"><%= order.entryID %></a>
+            </td>
             <td>
                 <%= brands[order.brandID] %>
             </td>

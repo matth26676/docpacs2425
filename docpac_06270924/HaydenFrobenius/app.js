@@ -28,21 +28,22 @@ app.get('/', (req, res) => {
 app.get('/view', (req, res) => {
 
     try {
+        let data = JSON.parse(fs.readFileSync(dataFilePath)).data;
+        if ('entry' in req.query) {
+            let entry = +req.query.entry;
+            if (isNaN(entry) || entry < 0 || entry > data[data.length - 1].entryID) throw new Error("Invalid Entry #");
+            data = [data[entry]];
+        }
+        res.render('view', { data: data, brands: brands });
 
-        fs.readFile(dataFilePath, (err, contents) => {
-            if(err) throw err;
-            let data = JSON.parse(contents);
-            res.render('view', {data: data, brands: brands});
-        });
-
-    } catch(err){
-        res.render('error', {error: err.message});
+    } catch (err) {
+        res.render('error', { error: err.message });
     }
 
 });
 
 app.get('/add', (req, res) => {
-    res.render('add', {brands: brands});
+    res.render('add', { brands: brands });
 });
 
 app.post('/add', (req, res) => {
@@ -58,12 +59,12 @@ app.post('/add', (req, res) => {
         console.log(formData);
 
         //Brand ID validation
-        if(typeof formData.brandID === 'undefined') throw new Error("Brand required.");
-        if(typeof brands[formData.brandID] === 'undefined' || isNaN(formData.brandID)) throw new Error("Invalid Brand ID");
+        if (typeof formData.brandID === 'undefined') throw new Error("Brand required.");
+        if (typeof brands[formData.brandID] === 'undefined' || isNaN(formData.brandID)) throw new Error("Invalid Brand ID");
 
         //Quantity validation
-        if(typeof formData.quantity === 'undefined') throw new Error("Quantity required.");
-        if(isNaN(formData.quantity) || formData.quantity <= 0) throw new Error("Invalid Quantity.");
+        if (typeof formData.quantity === 'undefined') throw new Error("Quantity required.");
+        if (isNaN(formData.quantity) || formData.quantity <= 0) throw new Error("Invalid Quantity.");
 
         //As you can probably see, I'm very paranoid about hackers hacking our beloved soda company.
         formData.note.replace('"', '\"');
@@ -71,16 +72,17 @@ app.post('/add', (req, res) => {
         let fileData;
 
         fs.readFile(dataFilePath, (err, contents) => {
-            if(err) throw err;
-            fileData = JSON.parse(contents);
-            fileData.data.push(formData);
-            fs.writeFile(dataFilePath, JSON.stringify(fileData), () => {
+            if (err) throw err;
+            data = JSON.parse(contents).data;
+            formData.entryID = (data.length > 0) ? data[data.length - 1].entryID + 1 : 0;
+            data.push(formData);
+            fs.writeFile(dataFilePath, JSON.stringify({ data: data }), () => {
                 res.redirect('/');
             });
         });
 
-    } catch(err) {
-        res.render('error', {error: err.message});
+    } catch (err) {
+        res.render('error', { error: err.message });
     }
 
 });
