@@ -6,6 +6,7 @@ const app = express();
 const dataFilePath = "./data.json";
 const PORT = 3000;
 
+//Isaiah came up with "Isaiah Watermelon" himself. Please do not report me for being racist.
 const brands = ['Hayden Super Sigma Soda', 'STEVEN!', 'Isaiah Watermelon', 'Yeagermeister Cream', 'Robert квас', 'Jesse Gingerale'];
 
 // Set the view engine to ejs
