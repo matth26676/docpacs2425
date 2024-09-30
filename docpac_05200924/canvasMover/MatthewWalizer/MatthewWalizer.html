@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover</title>
+</head>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <canvas id="gameBox" width="800" height="600" style="background-color: darkolivegreen;"></canvas>
+
+    <script>
+        // creates the canvas as a variable, then creates the player with all the variables related to the player's movement
+        var img = document.getElementById("img")
+        var canvas = document.getElementById('gameBox')
+        var c = canvas.getContext('2d')
+        var wasPressed = false
+        var player = {
+            x:390,
+            y:290,
+            w:20,
+            h:20,
+            img: new Image(),
+            speed: 10,
+            dashSpeed: 3,
+            minSpeed: 10,
+            maxSpeed: 20,
+            accelerationRate: 0.25
+        }
+
+        player.img.src = "Player.gif"
+        // draws the player, changes the font size and font family, 
+        // then alerts the user that they need to plug in a controller for the Canvas Mover to work
+        player.img.onload = function() {
+            c.drawImage(player.img, player.x, player.y, player.w, player.h)
+        }
+        c.font = '20px Verdana'
+        c.fillText('Please plug in a controller to play using the gamepad!', 125, 200)
+        c.fillText('Controls; A: Dash, Left Joystick: Movement, Left Joystick Button: Sprint', 50, 220)
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+
+                // clears the rectangle, then redraws the player, then displays the player's x and y in the top left
+                c.clearRect(0, 0, canvas.width, canvas.height)
+                c.drawImage(player.img, player.x, player.y, player.w, player.h)
+                c.fillText('x: '+Math.round(player.x)+' y: '+Math.round(player.y), 5, 30)
+                
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) continue;
+
+                    // reloads the page when the start button is pressed
+                    if (gamepad.buttons[9].pressed) {
+                        window.location.reload()
+                    }
+
+                    // makes the player dash when the A button is pressed, the dash is greater while sprinting
+                    if (gamepad.buttons[0].pressed != wasPressed) {
+                        wasPressed = gamepad.buttons[0].pressed
+                        if (wasPressed) {
+                            if (gamepad.buttons[10].pressed) {
+                                player.x += ((player.speed/10)+player.dashSpeed)*(gamepad.axes[0] * player.speed)
+                                player.y += ((player.speed/10)+player.dashSpeed)*(gamepad.axes[1] * player.speed)
+                            } else {
+                                player.x += player.dashSpeed*(gamepad.axes[0] * player.speed)
+                                player.y += player.dashSpeed*(gamepad.axes[1] * player.speed)
+                            }
+                        }
+                    }
+
+                    // when the left joystick is pressed, it increases the player's speed but 
+                    // caps at the max speed and decreases while not held but stops decreasing at the min speed
+                    if (gamepad.buttons[10].pressed) {
+                        player.speed += player.accelerationRate
+                        if (player.speed > player.maxSpeed) {
+                            player.speed = player.maxSpeed
+                        }
+                    } else if (!gamepad.buttons[10].pressed) {
+                        player.speed -= 2 * player.accelerationRate
+                        if (player.speed < player.minSpeed) {
+                            player.speed = player.minSpeed
+                        }
+                    }
+
+                    // get the direction of the left joystick and moves the player accordingly
+                    if (gamepad.axes[0]) {
+                        player.x += gamepad.axes[0] * player.speed
+                    }
+                    if (gamepad.axes[1]) {
+                        player.y += gamepad.axes[1] * player.speed
+                    }
+
+                    // prevents the player from going off the canvas
+                    if (player.x+player.w > canvas.width) {
+                        player.x = canvas.width-player.w
+                    }
+                    if (player.x < 0) {
+                        player.x = 0
+                    }
+                    if (player.y < 0) {
+                        player.y = 0
+                    }
+                    if (player.y+player.h > canvas.height) {
+                        player.y = canvas.height-player.h
+                    }
+                }
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+    </script>
+
+</body>
+</html>

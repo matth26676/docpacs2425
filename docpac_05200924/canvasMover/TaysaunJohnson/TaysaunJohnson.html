@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas height="600" width="800" style="border: 1px solid black"></canvas>
+    <script>
+        var canvas = document.querySelector('canvas')
+        var c = canvas.getContext('2d')
+
+        let player = {
+            x: 0,
+            y: 0,
+            w: 50,
+            h: 50,
+            img: new Image(),
+        }
+
+        player.img.src = "icon.png"
+        let speed = 4
+        player.img.onload = function(){
+            c.drawImage(player.img, player.x, player.y, player.w, player.h)
+            c.fillText(`Gamepad, x: ${player.x}, y: ${player.y}`, 10, 10)
+        }
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+                c.clearRect(0, 0, canvas.width, canvas.height)
+                c.fillStyle = player.img
+                c.drawImage(player.img, player.x, player.y, player.w, player.h)
+                c.fillText(`Gamepad, x: ${Math.round(player.x)}, y: ${Math.round(player.y)}`, 10, 10)
+
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) continue;
+                    if (gamepad.axes[1] < -0.05 || gamepad.axes[1] > 0.05) {
+                        player.y += speed * gamepad.axes[1]
+                        console.log(player.y)
+                    } 
+                    if (gamepad.axes[0] < -0.05 || gamepad.axes[0] > 0.05) {
+                        player.x += speed * gamepad.axes[0]
+                        console.log(player.x)
+                    } 
+                }
+
+                if (player.x < 0) {
+                    player.x = 0
+                }
+                if (player.y < 0) {
+                    player.y = 0
+                }
+                if (player.x + player.w > 800) {
+                    player.x = canvas.width - player.w
+                }
+                if (player.y + player.h > 600) {
+                    player.y = canvas.height - player.h
+                }
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+    </script>
+</body>
+</html>
