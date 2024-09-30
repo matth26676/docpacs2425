@@ -4,4 +4,4 @@ parsing
 "The process of analyzing the code."
 
 dot notation
-"A reference used to access a property or method of an object
+"A reference used to access a property or method of an object 
