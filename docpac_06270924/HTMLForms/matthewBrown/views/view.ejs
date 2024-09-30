@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>view.html</title>
+</head>
+<body>
+    <h1>View Users</h1>
+    <ul>
+        <% if (entry) { %>
+            <!-- Display all entries with the matching username -->
+            <% data.forEach(user => { %>
+                <li>Username: <%= user.username %>, Password: <%= user.password %></li>
+            <% }) %>
+        <% } else { %>
+            <!-- Display only the usernames as links if no specific entry is selected -->
+            <% data.forEach(user => { %>
+                <li><a href="/view?entry=<%= user.username %>"><%= user.username %></a></li>
+            <% }) %>
+        <% } %>
+    </ul>
+    <button onclick="window.location.href='/'">Back</button>
+</body>
+</html>
