@@ -8,12 +8,22 @@
 <body>
     <h1>View Entries</h1>
     <ul>
-        <% if (data) { %>
-			<ol>
-				<% for(const subData of data) { %>
-					<li><%= subData.name %> - Quantity: <%= subData.quantity %> - <%= subData.brand %> </li>
-				<% } %>
-			</ol>
+		<% if (data && data.length > 0) { %>
+			<% if (isEntry) { %>
+				<ol>
+					<% for(const subData of data) { %>
+						<li><%= subData.name %> - Quantity: <%= subData.quantity %> - <%= subData.brand %> </li>
+					<% } %>
+				</ol>
+			<% } else { %>
+				<ol>
+					<% for(const subData of data) { %>
+						<li><a href="/view?entry=<%= subData.name %>"> 
+							<%= subData.name %>
+						</a></li>
+					<% } %>
+				</ol>
+			<% } %>
 		<% } else { %>
 			<p>No entries found</p>
 		<% } %>

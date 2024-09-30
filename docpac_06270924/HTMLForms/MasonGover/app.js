@@ -37,8 +37,20 @@ app.post("/add", (req, res) => {
 });
 
 app.get("/view", (req, res) => {
+	const entry = req.query.entry;
 	const jsonData = JSON.parse(fs.readFileSync("data.json")).data;
-	res.render("view.ejs", { data: jsonData });
+	if (!entry) {
+		return res.render("view.ejs", { data: jsonData, isEntry: false });
+	}
+
+	const entryData = []
+	for (const item of jsonData) {
+		if (item.name == entry) {
+			entryData.push(item);
+		}
+	}
+
+	res.render("view.ejs", { data: entryData, isEntry: true });
 });
 
 app.listen(port);
