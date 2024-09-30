@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+<body>
+    <div id="scoreBox">Score: 0</div>
+    <div id="timerBox">Time remaining: 20</div>
+    <div id="directionBox">Direction: Up</div>
+    <script>
+		const name = prompt("What is your name?");
+        const scoreBox = document.getElementById("scoreBox");
+        const timerBox = document.getElementById("timerBox");
+        const directionBox = document.getElementById("directionBox");
+        let score = 0;
+        let timer = 20;
+        let direction = 0;
+        let directionX = 0;
+        let directionY = 0;
+        let sentScore = false;
+        let isHolding = false; // Prevent the player from holding down the A button to get score
+
+        // Can be indexed with the direction variable to get the corresponding string
+        const directionMap = ["Up", "Right", "Down", "Left"];
+        const directionChecks = {
+            0: () => { return directionY == -1 }, // Up
+            1: () => { return directionX == 1 }, // Right
+            2: () => { return directionY == 1 }, // Down
+            3: () => { return directionX == -1 } // Left
+        }; 
+
+        // Gets a random whole number between the minimum and maximum
+        function randomInteger(min, max) {
+            // Works by rounding down after multiplying to get a number from the min to max rather than 0-1
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function addScore() {
+            score += 1;
+            scoreBox.innerHTML = "Score: " + score;
+        }
+
+        // Subtracts 1 from the timer every second
+        setInterval(() => {
+            if (timer > 0) {
+                timer -= 1;
+                timerBox.innerHTML = "Time remaining: " + timer;
+            } else if (!sentScore) {
+                sentScore = true;
+                console.log("Sending score to server");
+                fetch("/hiscore", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name: name, score: score })
+                });
+            }
+        }, 1000);
+
+        // Changes the direction every 2 seconds
+        setInterval(() => {
+            if (timer > 0) {
+                direction = randomInteger(0, 3);
+                directionBox.innerHTML = "Direction: " + directionMap[direction];
+            }
+        }, 2000);
+
+        window.addEventListener("gamepadconnected", (event) => {
+            function update() {
+                // Get the gamepad and ensure the game is still running.
+                const gamepad = navigator.getGamepads()[0];
+                const startButton = gamepad.buttons[9];
+                const AButton = gamepad.buttons[0];
+                
+                // Refresh game when start button is pressed
+                if (startButton.pressed) {
+                    location.reload();
+                }
+
+                // Don't allow players to get score if the timer has hit 0
+                if (timer == 0) {
+                    return requestAnimationFrame(update);
+                }
+
+                directionX = gamepad.axes[0];
+                directionY = gamepad.axes[1];
+                if (AButton.pressed) {
+                    if (!isHolding && directionChecks[direction]()) {
+                        addScore();
+                    }
+                    isHolding = true;
+                } else {
+                    isHolding = false;
+                }
+
+                // Call update for the next frame
+                requestAnimationFrame(update);
+            }
+
+            // Start the update loop
+            update();
+        });
+    </script>
+</body>
+</html>
