@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music share</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/gif" href="/ms.gif">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Song share</h1>
+        <% if (loggedIn) { %>
+            <p>You are logged in as <strong><%= user %></strong></p>
+            <a href="/add" class="btn">Add a Track</a>
+            <a href="/view" class="btn">View Tracks</a>
+            <a href="/logout" class="btn">Log Out</a>
+        <% } else { %>
+            <a href="/login" class="btn">Login</a> or <a href="/register" class="btn">Register</a>
+        <% } %>
+    </div>
+</body>
+</html>
