@@ -4,6 +4,12 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const app = express();
 const port = 3000;
+const favicon = require('serve-favicon');
+
+
+
+
+
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));

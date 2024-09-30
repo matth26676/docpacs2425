@@ -9,6 +9,11 @@
       "username": "TheCyanHusky",
       "password": "$2b$10$kwgAbYEToQpdG/Ds6zEsxewPBrDhaTefC/g3EDIPDJXGRUzLJdlQu",
       "isAdmin": false
+    },
+    {
+      "username": "Anon",
+      "password": "$2b$10$58f4CAs4MURHt4uZs6hJq.tdWwt1EucEXPoXir.jro4hjAAnWvbG2",
+      "isAdmin": false
     }
   ],
   "tracks": [
@@ -55,6 +60,17 @@
       "album": null,
       "genre": null,
       "user": "amber"
+    },
+    {
+      "id": 1727459997677,
+      "title": "Consume Red",
+      "artist": "Ground Zero",
+      "duration": "57:04",
+      "image": null,
+      "video": "https://www.youtube.com/watch?v=BrBoQLkZY2g&t=15s",
+      "album": null,
+      "genre": null,
+      "user": "Anon"
     }
   ]
 }
