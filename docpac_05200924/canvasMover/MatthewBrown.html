@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover</title>
+    <link rel="icon" type="image/x-icon" href="eyeball.png">
+</head>
+
+<body>
+    <canvas id="display" height="600px" width="800px" style="border:1px solid #000000"></canvas>
+</body>
+<script>
+
+    const Player = new Object()
+
+    var keyType = "Undefined"
+
+    Player.currentX = 400
+    Player.currentY = 300
+    Player.width = 40
+    Player.height = 40
+    Player.img = ""
+
+    function requestAnimationUpdate() {
+        var c = document.getElementById("display");
+        var ctx = c.getContext("2d");
+        ctx.font = "30px Arial";
+
+        Player.img = new Image()
+        Player.img.src = "eyeball.png"
+
+        let controlDisplay = "Keypad: " + keyType
+
+        ctx.fillStyle = "#00FFFF"
+        ctx.fillText(controlDisplay, 10, 50);
+        ctx.fillStyle = "#000000"
+        ctx.strokeText(controlDisplay, 10, 50);
+
+        if (Player.currentX < 0) {
+            Player.currentX = 0
+        }
+        if (Player.currentX > 800 - Player.width) {
+            Player.currentX = 800 - Player.width
+        }
+        if (Player.currentY < 0) {
+            Player.currentY = 0
+        }
+        if (Player.currentY > 600 - Player.height) {
+            Player.currentY = 600 - Player.height
+        }
+
+        ctx.drawImage(Player.img, Player.currentX, Player.currentY);
+
+        document.onkeydown = function () {
+            let currentKey = window.event.keyCode;
+            switch (currentKey) {
+                case 40:
+                    Player.currentY = Player.currentY + 2.5
+                    keyType = "Arrow";
+                    break;
+                case 37:
+                    Player.currentX = Player.currentX - 2.5
+                    keyType = "Arrow";
+                    break;
+                case 39:
+                    Player.currentX = Player.currentX + 2.5
+                    keyType = "Arrow";
+                    break;
+                case 38:
+                    Player.currentY = Player.currentY - 2.5
+                    keyType = "Arrow";
+                    break;
+                case 83:
+                    Player.currentY = Player.currentY + 2.5
+                    keyType = "WASD";
+                    break;
+                case 65:
+                    Player.currentX = Player.currentX - 2.5
+                    keyType = "WASD";
+                    break;
+                case 68:
+                    Player.currentX = Player.currentX + 2.5
+                    keyType = "WASD";
+                    break;
+                case 87:
+                    Player.currentY = Player.currentY - 2.5
+                    keyType = "WASD";
+                    break;
+            }
+            event.preventDefault;
+        }
+
+        setInterval(() => {
+            ctx.fillStyle = "#ffffff"
+            ctx.fillRect(0, 0, 800, 800)
+
+            requestAnimationUpdate()
+        }, 100);
+
+    }
+
+    requestAnimationUpdate()
+
+</script>
+
+</html>
