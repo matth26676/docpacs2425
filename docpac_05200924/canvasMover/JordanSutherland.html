@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas width="800" height="600" id="canvas"></canvas>
+
+</body>
+<script>
+    var canvas = document.getElementById("canvas")
+    var ctx = canvas.getContext("2d");
+    var w = false, a = false, s = false, d = false
+    var controllerInput = "Keyboard"
+    var player = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        w: 40,
+        h: 100,
+        img: new Image()
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.keyCode == 87) {
+            w = true
+        } if (event.keyCode == 65) {
+            a = true
+        } if (event.keyCode == 83) {
+            s = true
+        } if (event.keyCode == 68) {
+            d = true
+        }
+
+    });
+
+    document.addEventListener('keyup', function (event) {
+        if (event.keyCode == 87) {
+            w = false
+        } if (event.keyCode == 65) {
+            a = false
+        } if (event.keyCode == 83) {
+            s = false
+        } if (event.keyCode == 68) {
+            d = false
+        }
+
+    });
+
+
+    function callback() {
+        let inputSpeed = 10
+        // pixelWizard from the game "Noita"
+        player.img.src = "pixelWizard.png"
+
+        // Nullifies Strafing
+        if (w && d || w && a || s && a || s & d) {inputSpeed -= inputSpeed / 5}
+
+        // Inputs
+        if (w && player.y > 0) {
+            player.y += -inputSpeed
+        } if (s && player.y < canvas.height - player.h) {
+            player.y += inputSpeed
+        } if (a && player.x > 0) {
+            player.x += -inputSpeed
+        } if (d && player.x < canvas.width - player.w) {
+            player.x += inputSpeed
+        }
+
+        // Eraser
+        ctx.fillStyle = "White"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        // Controller Type
+        ctx.fillStyle = "Black"
+        ctx.fillRect(0, 0, 200, 50)
+        ctx.fillStyle = "White"
+        ctx.font = "40px Arial"
+        ctx.fillText(controllerInput, 15, 40)
+        // Player
+        ctx.fillStyle = "Black"
+        ctx.drawImage(player.img, player.x, player.y, player.w, player.h)
+
+        requestAnimationFrame(callback)
+    }
+
+    requestAnimationFrame(callback)
+
+</script>
+
+</html>
