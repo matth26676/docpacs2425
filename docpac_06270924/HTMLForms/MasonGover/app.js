@@ -2,22 +2,6 @@ const express = require("express");
 const fs = require("fs");
 const app = express();
 const port = 3000;
-const expectedData = [
-	"firstName",
-	"lastName",
-	"password",
-	"confirmPassword",
-	"favoriteColor",
-	"leastFavoriteColor",
-	"skibidiLevel",
-	"sodaLikeness",
-	"isSigma",
-	"likesSoda"
-]
-
-function getData() {
-	return JSON.parse(fs.readFileSync("data.json")) || {};
-}
 
 // Convert from a URL format to a JSON format
 app.use(express.urlencoded({ extended: true }));
@@ -34,21 +18,18 @@ app.get("/add", (req, res) => {
 app.post("/add", (req, res) => {
 	try {
 		const body = req.body;
-		const newData = { data: [] };
-		for (const bodyData in body) {
-			if (!expectedData.includes(bodyData)) {
-				throw new Error(`Unexpected data: ${bodyData}`);
-			}
+
+		// Check form fields
+		if (!body.name || !body.brand || !body.quantity) {
+			throw new Error("Please fill all fields.");
+		}
+		if (body.quantity <= 0) {
+			throw new Error("Quantity must be higher than 0.");
 		}
 
-		for (const expectedData in expectedData) {
-			if (!body[expectedData]) {
-				throw new Error(`Missing data: ${expectedData}`);
-			}
-		}
-
-		newData.data.push(body);
-		fs.writeFileSync("./data.json", JSON.stringify(newData));
+		const data = JSON.parse(fs.readFileSync("./data.json")).data;
+		data.push(body);
+		fs.writeFileSync("./data.json", JSON.stringify({data}));
 		res.redirect("/");
 	} catch(err) {
 		res.render("error.ejs", { error: err });
@@ -56,8 +37,8 @@ app.post("/add", (req, res) => {
 });
 
 app.get("/view", (req, res) => {
-	const jsonData = getData();
-	res.render("view.ejs", { data: jsonData.data[0] });
+	const jsonData = JSON.parse(fs.readFileSync("data.json")).data;
+	res.render("view.ejs", { data: jsonData });
 });
 
 app.listen(port);

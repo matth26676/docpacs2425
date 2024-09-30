@@ -16,53 +16,22 @@
 	</style>
 </head>
 <body>
-	<h2>Create account (and give us all your info, thanks)</h2>
+	<h2>Soda Order</h2>
 	<form action="/add" method="POST" id="POST">
-		<label for="firstName">First Name:</label>
-		<input name="firstName" type="text" >
+		<label for="name">Name:</label>
+		<input name="name" type="text" >
 
-		<br>
+		<select name="brand">
+			<option value="Coke">Coke</option>
+			<option value="Pepsi">Pepsi</option>
+			<option value="Sprite">Sprite</option>
+			<option value="Fanta">Fanta</option>
+			<option value="RC Cola">RC Cola</option>
+		</select>
 
-		<label for="lastName">Last Name:</label>
-		<input name="lastName" type="text" >
+		<label for="quantity">How much soda would you like</label>
+		<input type="number" name="quantity" min="1">
 
-		<br>
-
-		<label for="password">Password: </label>
-		<input name="password" type="password" >
-
-		<br>
-
-		<label for="confirmPassword">Confirm password: </label>
-		<input name="confirmPassword" type="password" >
-
-		<br>
-
-		<label for="favoriteColor">Favorite Color</label>
-		<input name="favoriteColor" type="color" >
-
-		<br>
-		
-		<label for="leastFavoriteColor">Least Favorite Color</label>
-		<input name="leastFavoriteColor" type="color" >
-
-		<br>
-
-		<label for="skibidiLevel">Skibidi Level</label>
-		<input name="skibidiLevel" type="range" >
-
-		<br>
-
-		<label for="sodaLikeness">How much do you like soda?</label>
-		<input name="sodaLikeness" type="range" >
-
-		<br>
-
-		<!-- <label for="sodaLikeness">How much do you like soda?</label>
-		<input name="sodaLikeness" type="range" > -->
-		
-		<input name="isSigma" type="hidden" value="false" >
-		<input name="likesSoda" type="hidden" value="true" >
 		<input type="submit">
 	</form>
 </body>

@@ -8,14 +8,14 @@
 <body>
     <h1>View Entries</h1>
     <ul>
-        <% if (data && Object.keys(data).length > 0) { %>
-			<% for (const key in data) { %>
-				<% const dataValue = data[key]; %>
-				<li><%= key %>: <%= dataValue %></li>
-			<% } %>
+        <% if (data) { %>
+			<ol>
+				<% for(const subData of data) { %>
+					<li><%= subData.name %> - Quantity: <%= subData.quantity %> - <%= subData.brand %> </li>
+				<% } %>
+			</ol>
 		<% } else { %>
-			<% console.log(Object.keys(data).length) %>
-			<li>No entries found.</li>
+			<p>No entries found</p>
 		<% } %>
     </ul>
 </body>
