@@ -15,7 +15,7 @@
         const timerBox = document.getElementById("timerBox");
         const directionBox = document.getElementById("directionBox");
         let score = 0;
-        let timer = 20;
+        let timer = 3;
         let direction = 0;
         let directionX = 0;
         let directionY = 0;
@@ -50,12 +50,17 @@
             } else if (!sentScore) {
                 sentScore = true;
                 console.log("Sending score to server");
-                fetch("/hiscore", {
+                fetch("/hiscores", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ name: name, score: score })
+                }).then((response) => {
+                    console.log("RESPONSE", response.status)
+                    if (response.status == 500) {
+                        location.href = "/error";
+                    }
                 });
             }
         }, 1000);
