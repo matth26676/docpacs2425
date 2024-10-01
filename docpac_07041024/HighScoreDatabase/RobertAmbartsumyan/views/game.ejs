@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+    <style>
+        #restart {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+    <button id="restart" onclick="restart()">RESTART</button>
+    <div id="timerBox"></div>
+    <div id="scoreBox"></div>
+    <div id="directionBox"></div>
+    </center>
+</body>
+<script>
+    //Base game set up
+    const gamepad = navigator.getGamepads()[0]; 
+    let directionBox = document.getElementById('directionBox');
+    let scoreBox = document.getElementById('scoreBox');
+    let timerBox = document.getElementById('timerBox');
+    let previousButtonState = false;
+
+    var score = 0;
+    var timer = 20;
+    var direction = 0;
+    var ranDir;
+    var dirTrue;
+    let timeLeft = true;
+
+    //Checks for controller connectivity then if connected starts game
+    window.addEventListener('gamepadconnected', (event) => {
+        console.log('connected:', event.gamepad.connected);
+        getPlayer();
+        aButtonPress();
+        joystickRight();
+        setInterval(randChange, 2000);
+        setInterval(timerDecrease, 1000);
+    });
+    window.addEventListener('gamepaddisconnected', (event) => {
+        console.log('connected:', event.gamepad.connected);
+        location.reload();
+    });
+
+    //self explanatory function frfr
+    function timerDecrease() {
+        if (timer >= 1) {
+            timer--
+            document.getElementById('timerBox').innerText = `You have ${timer}sec left of the game.`
+            timeLeft = true;
+        } else {
+            timeLeft = false;
+            document.getElementById('timerBox').innerText = `Game Over! Your score is: ${score}`
+            //console.log('Game Over');
+
+        }
+    };
+
+    function highScore(){
+
+         let playerName = prompt('Enter your name here.');
+        console.log(playerName);
+        
+        const highScore = {
+            name: playerName,
+            score: score
+        }
+        console.log(highScore);
+
+    }
+
+    function restart() {
+        location.reload();
+    };
+
+    function randChange() {
+        var directionPrint = {
+            0: 'up',
+            1: 'right',
+            2: 'down',
+            3: 'left'
+        };
+        //Random number between 1-3
+        var randomNumber = Math.floor(Math.random() * 3);
+        //prints the string value
+        directionBox.innerHTML = directionPrint[randomNumber];
+        ranDir = randomNumber;
+        //console.log(ranDir);
+    };
+
+    function joystickRight() {
+
+        for (const gamepad of navigator.getGamepads()) {
+            if (!gamepad) continue;
+            //console.log('hello');
+
+            const [x, y] = [gamepad.axes[0], gamepad.axes[1]];
+            var direction = '';
+            if (x < -0.5) {
+                direction = 3;
+                //console.log('3');
+            } else if (x > 0.5) {
+                //console.log('1');
+                direction = 1;
+            } else if (y < -0.5) {
+                //console.log('0');
+                direction = 0;
+            } else if (y > 0.5) {
+                //console.log('2');
+                direction = 2;
+            }else{
+                direction = -1;
+            }
+
+            //Checks if the left joystick is equal to the random direction chosen
+            dirTrue = (direction == ranDir)
+            //console.log(dirTrue);
+
+            requestAnimationFrame(joystickRight);
+        };
+    };
+
+    function aButtonPress() {
+        //Am i using first controller
+        let gamepad = navigator.getGamepads()[0];
+        
+
+        //Only do this f controller is connected
+        if (dirTrue == true && timer > 0) {
+            const currentButtonState = gamepad.buttons[0].pressed;
+            //console.log('if (gamepad) works');
+
+            if (currentButtonState && !previousButtonState) {
+                //console.log('A BUTTON PRESSED!!!!!');
+                score++
+                document.getElementById('scoreBox').innerHTML = `Your score is: ${score}`
+            }
+            if (previousButtonState && !currentButtonState) {
+                //console.log('A BUTTON NO NO PRESSED!!!');
+            }
+
+            //we updating this jawn to what see if the button is pressed or not
+            previousButtonState = currentButtonState;
+
+        }
+        
+        requestAnimationFrame(aButtonPress);
+    };
+
+</script>
+
+</html>
