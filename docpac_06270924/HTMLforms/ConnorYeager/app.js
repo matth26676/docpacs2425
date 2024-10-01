@@ -22,7 +22,7 @@ app.get('/add', (req, res) => {
 });
 app.post('/add', (req, res) => {
     try{
-        const data = JSON.parse(fs.readFileSync('./data.json'));
+        const data = JSON.parse(fs.readFileSync('./data.json')).data;
 
         const orderData = {
             brand: req.body.brand,
@@ -30,8 +30,8 @@ app.post('/add', (req, res) => {
         }
 
         if(orderData.brand === '') throw new Error("Brand required")
-        if(orderData.quantity > 2000) throw new Error("Too much soda")
-        if(orderData.quantity) throw new Error("Quantity Required")
+        if(orderData.quantity > 2000) throw new Error("Too much clothing")
+        if(orderData.quantity === '') throw new Error("Quantity Required")
         
         data.push(orderData);
 
