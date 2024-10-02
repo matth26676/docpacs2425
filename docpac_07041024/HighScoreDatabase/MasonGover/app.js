@@ -36,7 +36,6 @@ app.get("/hiscores", (req, res) => {
 
 app.post("/hiscores", (req, res) => {
     try {
-        throw new Error("nop")
         const body = req.body;
         if (body.score === null || body.name === null) {
             throw new Error("Score and name is required.")
