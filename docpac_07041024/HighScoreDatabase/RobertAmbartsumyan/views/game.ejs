@@ -65,15 +65,21 @@
 
     function highScore(){
 
-         let playerName = prompt('Enter your name here.');
+         let name = prompt('Enter your name here.');
         console.log(playerName);
         
         const highScore = {
             name: playerName,
             score: score
         }
+
         console.log(highScore);
 
+        let xhr = new XMLHttpRequest();
+        
+        xhr.open('POST', '/hiscores', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(highScore));
     }
 
     function restart() {
