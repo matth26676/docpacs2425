@@ -6,14 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Button Masher</title>
     <style>
+        body {
+            background: linear-gradient(to bottom, rgb(189, 93, 212), #2b038a);
+            height: 100vh;
+        }
+
+        h1 {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            color: #000000;
+        }
+
+        div {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            padding: 5px;
+            color: #000000;
+        }
+
         #restart {
             cursor: pointer;
+            background-color: #4CAF50;
         }
     </style>
 </head>
 
 <body>
     <center>
+        <h1>Connect controller and press "A" to start.</h1>
         <button id="restart" onclick="restart()">RESTART</button>
         <div id="timerBox"></div>
         <div id="scoreBox"></div>
@@ -28,8 +48,8 @@
     let timerBox = document.getElementById('timerBox');
     let previousButtonState = false;
 
-    var score = 30;
-    var timer = 20;
+    var score = 0;
+    var timer = 30;
     var direction = 0;
     var ranDir;
     var dirTrue;
@@ -45,6 +65,7 @@
         joystickRight();
         randChangeint = setInterval(randChange, 2000);
         timerDecreaseint = setInterval(timerDecrease, 1000);
+
     });
     window.addEventListener('gamepaddisconnected', (event) => {
         console.log('connected:', event.gamepad.connected);
