@@ -4,12 +4,8 @@ const app = express();
 const sql3 = require('sqlite3').verbose();
 const PORT = 3000;
 
-const maxLength = 15;
-let name = req.body.name;
-let score = req.body.score;
-
 //Middleware for the db
-express.use(express.json());
+app.use(express.json());
 
 //thx co-piolet
 var db = new sql3.Database('database.db');
@@ -27,7 +23,7 @@ app.get('/game', (req, res) => {
     res.render('game');
 });
 
-app.get('/highscores', (req, res) => {
+app.get('/hiscores', (req, res) => {
      try{
         //sqlite code to get score
         db.all('SELECT name, score FROM scores ORDER BY score DESC', (err, rows) => {
@@ -38,41 +34,56 @@ app.get('/highscores', (req, res) => {
             rows.sort();
             rows.reverse();
             //How did co-piolet know I wanted this line?
-            rows = rows.slice(0, 10);
+            rows = rows.splice(0, 10);
 
-            res.render('highscores', { scores: rows });
+            res.render('hiscores', { scores: rows });
         });
      } catch (err) {
          res.render('error', { error: err});
      }
 });
 
-app.post('/highscores', (req, res) => {
+app.post('/hiscores', (req, res) => {
     try{
-        if (name.length > maxLength) {
-            throw new Error(`Name is over ${maxLength} characters.`);
+        
+        let name = req.body.name;
+        let score = req.body.score;
+        let tooLong = 15;
+        //console.log(name);
+        //console.log(score);
+
+        if (name.length <= 0) {
+            throw new Error(`Name does not exist. ummm be better`);
         } 
+        //console.log(name);
+
+        if (name.length > tooLong) {
+            throw new Error(`Name is too long. keep it under ${tooLong} silly.`);
+        }
         
         if (score <= 0) {
             throw new Error('Score has to be over 0.');
         }
+        
+        //console.log(score);
 
         let ip = req.ip;
+        //console.log(ip);
 
         db.run('INSERT INTO scores (ip, name, score) VALUES (?, ?, ?)', [ip, name, score], (err) => {
-            if (err) {
-            throw err;
-            }
-            res.redirect('/highscores');
+            if (err) {throw err}
         });
+        //console.log('done');
+
+        res.status(300)
 
 
     } catch (err) {
-        res.render('error', { error: err });
+        res.render('error', { error: err});
     }
 });
 
 //Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server on http://localhost:${PORT}`);
 });

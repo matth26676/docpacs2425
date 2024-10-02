@@ -14,16 +14,19 @@
 
         th,td {
             padding: 12px, 20px;
+            text-align: left;
+            border-bottom: 1px solid #000000;
         }
 
         th {
-            font-size: 16px;
+            font-size: 24px;
             text-transform: uppercase;
+            text-align: left;
         }
 
         td {
-            font-size: 12px;
-            color: #523333;
+            font-size: 20px;
+            color: #000000;
         }
         /*I was told not to leak anyone ip*/
     </style>
@@ -32,13 +35,11 @@
     <h2>Game High Scores</h2>
     <table>
         <tr>
-            <th>User #</th>
             <th>Name</th>
             <th>Score</th>
         </tr>
         <% scores.forEach(entry => {%>
             <tr>
-                <td><%= entry.uid %></td>
                 <td><%= entry.name %></td>
                 <td><%= entry.score %></td>
             </tr>
