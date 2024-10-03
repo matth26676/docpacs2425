@@ -5,6 +5,9 @@ HTTP Server
 //add express module
 const express=require("express"); 
 
+//add sqlite3 module
+const sqlite3 = require('sqlite3').verbose();
+
 //give access to filesystem
 const fs = require("fs");
 
