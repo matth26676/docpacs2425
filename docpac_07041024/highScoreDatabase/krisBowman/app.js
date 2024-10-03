@@ -1,5 +1,5 @@
 //note to future me: 
-//if using legacy code, make sure to install "node", "express", "ejs", "sqlite3" and "lodash", using the command "npm install [module name]" in the terminal
+//if using legacy code, make sure to install "node", "express", "ejs", and "sqlite3", using the command "npm install [module name]" in the terminal
 //start the server using the command node app.js
 
 /*---------
@@ -12,9 +12,6 @@ const express=require("express");
 
 //add sqlit3 module
 const sqlite3=require("sqlite3")
-
-//add lodash module
-const _=require("lodash");
 
 //turn express into object for furture usage
 const app = express();
