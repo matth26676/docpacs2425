@@ -8,7 +8,13 @@ const PORT = 3000;
 app.use(express.json());
 
 //thx co-piolet
-var db = new sql3.Database('database.db');
+let db = new sql3.Database('database.db', (err) => {
+    if (err) {
+        console.error(err);
+    } else {
+        console.log('Opened database')
+    }
+});
 
 //Server view ejs
 app.set('view engine', 'ejs');
