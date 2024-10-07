@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Lab 2-3</title>
+</head>
+
+<body> 
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+
+<ul id="list"></ul>
+
+<script type="text/javascript">
+<!--
+var a=5;
+var b="5";
+var c=10;
+//-->
+let compare = [a==b, a===b, a!==c, a+b , a+=c];
+let list = document.getElementById("list")
+
+compare.forEach((item) => {
+    if (item == 15) {
+        let val = document.createElement("val");
+        val.innerText = "a";
+        list.appendChild(val) 
+    } else {
+        let val = document.createElement("val");
+        val.innerText = item + ", ";
+        list.appendChild(val)
+    }
+});
+
+</script>
+</body>
+</html>
