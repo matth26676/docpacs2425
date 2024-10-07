@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="/">Go back</a>
+    <ol>
+        <% if (entries.length > 0) { %>
+            <% entries.forEach(entry => { %>
+                <li>
+                    <h3><a href="/view?siteName=<%= entry.siteName %>"><%= entry.siteName %></a></h3>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>No entries found.</p>
+        <% } %>
+    </ol>
+</body>
+</html>
