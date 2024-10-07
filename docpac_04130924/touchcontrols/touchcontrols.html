@@ -4,85 +4,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swipe Through Images</title>
+    <title>Document</title>
     <style>
-        /* Set up a container with a fixed width and center it */
         #container {
             width: 480px;
-            margin: 0 auto;
-            background-color: #666;
-            overflow: hidden;
+            margin: auto;
+            background-color: #666666;
         }
 
-        /* The image element for swiping */
         #swipeImg {
-            width: 100%;
+            width: 480px;
             height: auto;
-            transition: transform 0.3s ease;
-            /* Smooth transition when changing images */
+            position: relative;
+            top: 0px;
+            left: 0px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Image container holding the image that will be swiped -->
     <div id="container">
-        <img src="img/levelup01.png" alt="Swipe Image" id="swipeImg">
+        <img src="img/levelup01.png" alt="" id="swipeImg">
     </div>
-
-    <script>
-        const SWIPE_THRESHOLD = 100; // Minimum swipe distance (in pixels) to trigger a change
-
-        let swipeImg = document.getElementById('swipeImg');
-
-        // Array holding paths to the images we want to swipe through
-        let images = [
-            'img/levelup01.png',
-            'img/levelup02.png',
-            'img/levelup03.png',
-            'img/levelup04.png',
-            'img/levelup05.png',
-            'img/levelup06.png',
-            'img/levelup07.png',
-            'img/levelup08.png',
-            'img/levelup09.png',
-            'img/levelup10.png'
-        ];
-
-        let currentImageIndex = 0; // Track the current image index
-        let startX = 0; // Start X position for swipe
-        let startY = 0; // Start Y position for swipe
-
-        // Handle when the user starts touching the screen
-        swipeImg.addEventListener('touchstart', function (event) {
-            startX = event.touches[0].clientX; // Get the initial X coordinate
-            startY = event.touches[0].clientY; // Get the initial Y coordinate
-        });
-
-        // Optionally, handle 'touchmove' events if needed in the future
-
-        // Handle when the user stops touching the screen
-        swipeImg.addEventListener('touchend', function (event) {
-            let endX = event.changedTouches[0].clientX; // Get the X coordinate when the touch ends
-            let endY = event.changedTouches[0].clientY; // Get the Y coordinate when the touch ends
-
-            // Calculate the swipe distance
-            let diffX = endX - startX;
-            let diffY = endY - startY;
-
-            // Check if it was a horizontal swipe (X movement is greater than Y movement)
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > SWIPE_THRESHOLD) {
-                if (diffX < 0) {
-                    // Swiped left (next image)
-                    currentImageIndex = (currentImageIndex + 1) % images.length; // Loop to the first image if needed
-                } else {
-                    // Swiped right (previous image)
-                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length; // Loop to the last image if needed
-                }
-                swipeImg.src = images[currentImageIndex]; // Update the image source to the new image
-            }
-        });
-    </script>
 </body>
+<script>
+    //CONSTANTS
+    const SWIPE_MIN = 200; //How far you must swipe to trigger a swipe
+
+    //SETUP IMAGE
+    let swipeImg = document.getElementById('swipeImg');
+    //set its style property to its computed style
+    swipeImg.style.top = window.getComputedStyle(swipeImg).top;
+    swipeImg.style.left = window.getComputedStyle(swipeImg).left;
+
+    //LIST OF IMAGES
+    let images = [
+        'img/levelup01.png',
+        'img/levelup02.png',
+        'img/levelup03.png',
+        'img/levelup04.png',
+        'img/levelup05.png',
+        'img/levelup06.png',
+        'img/levelup07.png',
+        'img/levelup08.png',
+        'img/levelup09.png',
+        'img/levelup10.png'
+    ]
+
+    //image index
+    let imgIndex = 0;
+
+    //start and end coordinates of touch
+    let startX = [];
+    let startY = [];
+    let lastX = [];
+    let lastY = [];
+    let endX = [];
+    let endY = [];
+
+    //detect touch on any part of the window
+    swipeImg.addEventListener('touchstart', function () {
+        start(event);
+    });
+    //detect movement of touch
+    swipeImg.addEventListener('touchmove', function () {
+        move(event);
+    });
+    //detect release of touch
+    swipeImg.addEventListener('touchend', function () {
+        end(event);
+    });
+
+    /**********************************************************************************************************************\
+     * After this comment, write the appropriate line of code to achieve each comment.                                    *
+     * Some comments will have multiple lines of code.                                                                    *
+     * Some comments will be one line of code, but use two lines to describe it.                                          *
+     * Indents should match the code blocks.                                                                              *
+    \**********************************************************************************************************************/
+
+    function start(events) {
+        //set the start coordinate of each axis to the touch position
+        //reset the last touch position of each axis to 0
+    }
+
+    function move(event) {
+        //if the touch is not in its initial position, move the image by the amount the touch has moved since the last event
+            //calculate the difference between the start touch and the current touch for each axis
+            //if the absolute value of the X difference is greater than the Y difference
+                // move the image horizontally
+                //reset the vertical position of the image to 0px
+            //else
+            //move the image vertically
+            //reset the horizontal position of the image to 0px
+        //set the last touch position to the current touch position
+    }
+
+    function end(event) {
+        //set the end coordinate of each axis to the touch position
+        //calculate the absolute value of difference between the start touch and the end touch for each axis
+        // if the distance from the start to end on the X axis is greater than the minimum swipe distance and
+        // the difference of the X axis is greater than the Y axis
+            //if the image index is greater than 0
+                //decrement the image index
+                //change the image src property to the previous image in the list
+            //else
+            //set the image index to the last image in the list
+            //change the image src property to the last image in the list
+        // else if the distance from the start to end on the X axis is less than the minimum swipe distance and
+        // the difference of the X axis is greater than the Y axis
+            //if the image index is less than the length of the image list
+                //increment the image index
+                //change the image src property to the next image in the list
+            //else
+            //reset the image index to 0
+            //change the image src property to the first image in the list
+        // else if the distance from the start to end on the Y axis is greater than the minimum swipe distance and
+        // the difference of the Y axis is greater than the X axis
+            //if there is at least one image in the list
+                //remove this image from the list
+                //if the image index is greater than the length of the image list
+                    //decrement the image index
+                //else
+                //change the image src property to the current image in the list
+            //change the image src property to the current image in the list
+        // else if the distance from the start to end on the Y axis is less than the minimum swipe distance and
+        // the difference of the Y axis is greater than the X axis
+            //add this image to the end of the list
+        //reset the horizontal and vertical position of the image to 0px
+        //reset the last touch position of each exis to 0
+    }
+
+</script>
 
 </html>
