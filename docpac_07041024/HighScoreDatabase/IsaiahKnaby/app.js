@@ -5,18 +5,6 @@ const PORT = 3000;
 
 app.set('view engine', 'ejs');
 
-app.get("/", (req, res) => {
-    res.render('index');
-});
-
-app.get("/", (req, res) => {
-    res.render('game');
-});
-
-app.get("/", (req, res) => {
-    res.render('highscore');
-});
-
 let db = new sqlite3.Database('data/basesOfData.db', (err) => {
     if (err) {
         console.error(err);
@@ -25,12 +13,48 @@ let db = new sqlite3.Database('data/basesOfData.db', (err) => {
     }
 });
 
-db.all(`SELECT * FROM cats INNER JOIN users ON users.uid = cats.owner WHERE color = ?;`, 'brown', (err, rows) =>{
-    if (err) {
-        console.error(err);
-    } else {
-        console.log(rows);
+app.get("/", (req, res) => {
+    res.render('index');
+});
+
+app.get("/game", (req, res) => {
+    res.render('game');
+});
+
+app.get("/errors", (req, res) => {
+    res.render('errors');
+});
+
+
+app.get("/highscore", (req, res) => {
+    try {
+        db.all("SELECT * FROM basesOfData ORDER BY score DESC", (err, rows) => {
+            if (err) {
+                console.error(err);
+            } else {
+                rows = rows.slice(0, 10);
+                res.render('highscore', { basesOfData: rows });
+            }
+        });
+    } catch (err) {
+        console.error('error', { error: err.message });
     }
-} )
+});
+
+app.post("/highscore", (req, res) => {
+    try {
+        let name = req.body.name;
+        let score = req.body.score;
+        db.run("INSERT INTO basesOfData (name, score) VALUES (?, ?)", [name, score], (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    } catch (err) {
+        console.error('error', { error: err.message });
+    }
+});
+
+
 
 app.listen(PORT, console.log(`Server is running on port ${PORT}`));
