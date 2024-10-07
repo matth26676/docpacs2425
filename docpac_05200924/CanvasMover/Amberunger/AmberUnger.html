@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover - Multiple Controls</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #gameTitle {
+            font-size: 24px;
+            font-family: 'Arial', sans-serif;
+            color: black;
+            margin-bottom: 10px;
+            border: 2px solid black;
+            /* Border for the title box */
+            padding: 10px;
+            background-color: #f0f0f0;
+            
+
+        canvas {
+            border: 2px solid black;
+            position: relative;
+            /* Ensure that the info box positions relative to the canvas */
+        }
+
+        #inputSelect {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box {
+            position: absolute;
+            top: 0;
+            /* Align to top of the canvas */
+            left: 0;
+            /* Align to left of the canvas */
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
+            /* Ensure padding is included in the element's total width and height */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gameTitle">Canvas Mover Game</div>
+    <select id="inputSelect">
+        <option value="keyboard">Keyboard</option>
+        <option value="gamepad">Gamepad (Controller)</option>
+        <option value="touch">Touch</option>
+    </select>
+    <button id="startGame">Start Game</button>
+    <div style="position: relative;">
+        <canvas id="gameCanvas" width="800" height="600" style="display:none;"></canvas>
+        <div class="info-box">
+            <span id="infoText"></span>
+        </div>
+    </div>
+
+    <script>
+        // Setup canvas
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const infoText = document.getElementById('infoText');
+
+        let score = 0;
+        const particles = [];
+        const particleCount = 5;
+        const particleSize = 60;
+        const particleImg = new Image();
+        particleImg.src = 'Cheese.gif';
+
+        const backgroundImg = new Image();
+        backgroundImg.src = 'floor.gif';
+
+        function spawnParticles() {
+            particles.length = 0;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width - particleSize) + particleSize / 2,
+                    y: Math.random() * (canvas.height - particleSize) + particleSize / 2,
+                    collected: false
+                });
+            }
+        }
+
+        function checkCollisionWithParticle(particle) {
+            const distX = player.x + player.w / 2 - particle.x;
+            const distY = player.y + player.h / 2 - particle.y;
+            const distance = Math.sqrt(distX * distX + distY * distY);
+            return distance < player.w / 2 + particleSize / 2;
+        }
+
+        function updateParticles() {
+            particles.forEach((particle) => {
+                if (!particle.collected && checkCollisionWithParticle(particle)) {
+                    particle.collected = true;
+                    score += 10;
+                }
+
+                if (!particle.collected) {
+                    ctx.drawImage(particleImg, particle.x - particleSize / 2, particle.y - particleSize / 2, particleSize, particleSize);
+                }
+            });
+        }
+
+        const player = {
+            x: 50,
+            y: 50,
+            w: 100,
+            h: 100,
+            speed: 2,
+            img: new Image()
+        };
+        player.img.src = 'rat.gif';
+
+        let controlMode = 'keyboard';
+        let gamepadConnected = false;
+        let gamepad;
+        const keys = { up: false, down: false, left: false, right: false };
+
+        document.getElementById('startGame').addEventListener('click', () => {
+            controlMode = document.getElementById('inputSelect').value;
+
+            document.getElementById('inputSelect').style.display = 'none';
+            document.getElementById('startGame').style.display = 'none';
+            canvas.style.display = 'block';
+            document.querySelector('.info-box').style.display = 'block';
+
+            requestAnimationFrame(gameLoop);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (controlMode === 'keyboard') {
+                if (e.code === 'ArrowUp') keys.up = true;
+                if (e.code === 'ArrowDown') keys.down = true;
+                if (e.code === 'ArrowLeft') keys.left = true;
+                if (e.code === 'ArrowRight') keys.right = true;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (controlMode === 'keyboard') {
+                if (e.code === 'ArrowUp') keys.up = false;
+                if (e.code === 'ArrowDown') keys.down = false;
+                if (e.code === 'ArrowLeft') keys.left = false;
+                if (e.code === 'ArrowRight') keys.right = false;
+            }
+        });
+
+        window.addEventListener("gamepadconnected", (e) => {
+            console.log("Gamepad connected");
+            gamepadConnected = true;
+        });
+
+        window.addEventListener("gamepaddisconnected", (e) => {
+            console.log("Gamepad disconnected");
+            gamepadConnected = false;
+        });
+
+        canvas.addEventListener('touchstart', handleTouch, false);
+        canvas.addEventListener('touchend', () => {
+            keys.up = keys.down = keys.left = keys.right = false;
+        });
+
+        function handleTouch(e) {
+            if (controlMode === 'touch') {
+                const rect = canvas.getBoundingClientRect();
+                const touchX = e.touches[0].clientX - rect.left;
+                const touchY = e.touches[0].clientY - rect.top;
+
+                keys.left = touchX < canvas.width / 3;
+                keys.right = touchX > 2 * canvas.width / 3;
+                keys.up = touchY < canvas.height / 3;
+                keys.down = touchY > 2 * canvas.height / 3;
+            }
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+            let movingLeft = false;
+            let movingRight = false;
+
+            if (controlMode === 'keyboard') {
+                if (keys.up) player.y -= player.speed;
+                if (keys.down) player.y += player.speed;
+                if (keys.left) {
+                    player.x -= player.speed;
+                    movingLeft = true;
+                }
+                if (keys.right) {
+                    player.x += player.speed;
+                    movingRight = true;
+                }
+            } else if (controlMode === 'gamepad' && gamepadConnected) {
+                gamepad = navigator.getGamepads()[0];
+                let moveX = gamepad.axes[0];
+                let moveY = gamepad.axes[1];
+                player.x += moveX * player.speed;
+                player.y += moveY * player.speed;
+
+                movingLeft = moveX < -0.1;
+                movingRight = moveX > 0.1;
+            } else if (controlMode === 'touch') {
+                movingLeft = keys.left;
+                movingRight = keys.right;
+            }
+
+            player.x = Math.max(0, Math.min(player.x, canvas.width - player.w));
+            player.y = Math.max(0, Math.min(player.y, canvas.height - player.h));
+
+            ctx.save();
+            if (movingLeft) {
+                ctx.scale(-1, 1);
+                ctx.drawImage(player.img, -player.x - player.w, player.y, player.w, player.h);
+            } else {
+                ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+            }
+            ctx.restore();
+
+            updateParticles();
+
+            infoText.innerHTML = `Input: ${controlMode}<br>X: ${player.x.toFixed(0)}, Y: ${player.y.toFixed(0)}<br>Score: ${score}`;
+
+            if (controlMode === 'touch') {
+                ctx.strokeStyle = 'red';
+                ctx.strokeRect(0, 0, canvas.width / 3, canvas.height);
+                ctx.strokeRect(2 * canvas.width / 3, 0, canvas.width / 3, canvas.height);
+                ctx.strokeRect(0, 0, canvas.width, canvas.height / 3);
+                ctx.strokeRect(0, 2 * canvas.height / 3, canvas.width, canvas.height / 3);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        setInterval(spawnParticles, 5000);
+    </script>
+</body>
+
+</html>
