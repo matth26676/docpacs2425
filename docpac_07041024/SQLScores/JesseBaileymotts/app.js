@@ -55,12 +55,11 @@ app.post('/highscores', (req, res) => {
         if (req.body.score === null || req.body.username === null) {
             console.error('Score or Userame is null.')
         };
-        // const ip = req.ip
         db.run(
             // Inserts the values from the game into the database after the game is finished
-            'INSERT INTO users (username, score) VALUES (?, ?)', 
+            'INSERT INTO users (ip, username, score) VALUES (?, ?, ?)', 
             // Name and score are taken from the game and corrosponded to the ? marks in the sqlite insert
-            [req.body.username, req.body.score], 
+            [req.ip, req.body.username, req.body.score], 
             // Console logs an error if one is found
             (err) => {
             if (err) {
