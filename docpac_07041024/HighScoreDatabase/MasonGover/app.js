@@ -46,12 +46,9 @@ app.post("/hiscores", (req, res) => {
             if (err) {
                 throw new Error("An error occurred accessing the database.")
             }
-
-            // The score was added successfully
-            res.status(200).send();
         });
     } catch (err) {
-        res.status(500).send();
+        console.error(err);
     }
 });
 

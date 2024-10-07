@@ -56,12 +56,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ name: name, score: score })
-                }).then((response) => {
-                    console.log("RESPONSE", response.status)
-                    if (response.status == 500) {
-                        location.href = "/error";
-                    }
-                });
+                })
             }
         }, 1000);
 
