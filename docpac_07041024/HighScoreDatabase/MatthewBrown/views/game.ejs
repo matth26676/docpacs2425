@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+
+<body>
+    <div id="scoreBox"></div>
+    <div id="timerBox"></div>
+    <div id="directionBox"></div>
+    <div id="axes" style="display: flex; flex-direction: column;"></div>
+    <div id="buttons" style="display: flex; flex-direction: column;"></div>
+    <button onclick="window.location.href='/'">Back</button>
+</body>
+<script>
+    var username = prompt('Enter your username');
+
+    while (username == null || username == '' || username.length > 20 || username.length < 3 || !/^[a-zA-Z0-9]*$/.test(username) || username.includes(' ')) {
+        username = prompt('Enter your username');
+    }
+
+    let score = 0;
+    let timer = 20;
+    let direction = 0;
+    let ranInterval = 1000;
+    let prevButtonState = false;
+    let gameOver = false;
+
+    const updateGame = () => {
+        if (timer > 0) {
+            timer--;
+            document.getElementById('timerBox').innerHTML = timer;
+        } else {
+            document.getElementById('timerBox').innerHTML = 'Game Over';
+            gameOver = true;
+            submitScore();
+            return;
+        }
+
+        ranInterval = Math.floor(Math.random() * 4) * 1000 + 1000;
+        direction = Math.floor(Math.random() * 4);
+
+        if (direction == 0) {
+            document.getElementById('directionBox').innerHTML = 'Up';
+        } else if (direction == 1) {
+            document.getElementById('directionBox').innerHTML = 'Down';
+        } else if (direction == 2) {
+            document.getElementById('directionBox').innerHTML = 'Left';
+        } else if (direction == 3) {
+            document.getElementById('directionBox').innerHTML = 'Right';
+        }
+
+        prevButtonState = false;
+        setTimeout(updateGame, ranInterval);
+    };
+
+    const checkGamepadInput = () => {
+        const gamepad = navigator.getGamepads()[0];
+        if (gamepad) {
+            const buttonPressed = gamepad.buttons[0].pressed;
+            const startButtonPressed = gamepad.buttons[9].pressed;
+
+            if (gameOver && startButtonPressed) {
+                location.reload();
+                return;
+            }
+
+            if (!gameOver && buttonPressed && !prevButtonState) {
+                if (direction == 0 && gamepad.axes[1] < -0.8) {
+                    score++;
+                } else if (direction == 1 && gamepad.axes[1] > 0.8) {
+                    score++;
+                } else if (direction == 2 && gamepad.axes[0] < -0.8) {
+                    score++;
+                } else if (direction == 3 && gamepad.axes[0] > 0.8) {
+                    score++;
+                }
+                document.getElementById('scoreBox').innerHTML = score;
+            }
+            prevButtonState = buttonPressed;
+        }
+        requestAnimationFrame(checkGamepadInput);
+    };
+
+    const submitScore = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/hiscores', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(`name=${username}&score=${score}`);
+    };
+
+    setTimeout(updateGame, ranInterval);
+    requestAnimationFrame(checkGamepadInput);
+
+    window.addEventListener('gamepadconnected', (event) => {
+        const update = () => {
+            const axesOutput = document.getElementById('axes');
+            const buttonsOutput = document.getElementById('buttons');
+            axesOutput.innerHTML = '';
+            buttonsOutput.innerHTML = '';
+
+            for (const gamepad of navigator.getGamepads()) {
+                if (!gamepad) continue;
+
+                for (const [index, axis] of gamepad.axes.entries()) {
+                    axesOutput.insertAdjacentHTML('beforeend',
+                        `<label>Gamepad ${gamepad.index}, Axis ${index}
+                            <progress value=${axis * 0.5 + 0.5}></progress>
+                        </label>`);
+                }
+
+                for (const [index, button] of gamepad.buttons.entries()) {
+                    buttonsOutput.insertAdjacentHTML('beforeend',
+                        `<label>Gamepad ${gamepad.index}, Button ${index}
+                            <progress value=${button.value}></progress>
+                            ${button.touched ? 'touched' : ''}
+                            ${button.pressed ? 'pressed' : ''}
+                        </label>`);
+                }
+            }
+
+            requestAnimationFrame(update);
+        };
+
+        update();
+    });
+
+    setInterval(() => {
+        const gamepad = navigator.getGamepads()[0];
+        if (gamepad) {
+            console.log(gamepad);
+        }
+    }, 1000);
+</script>
+
+</html>

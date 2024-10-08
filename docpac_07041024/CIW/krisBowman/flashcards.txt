@@ -1,0 +1,13 @@
+Incorrect flash cards recorded here:
+
+casting
+"A technique for variable control in which a variable's value is changed from one data type to another."
+
+floating-point calculation
+"A calculation in which the decimal point can move as needed to account for significant digits."
+
+loosely typed language
+"A scripting or programming language that does not require the developer to declare a variable's data type and allows a variable's data type to change. JavaScript is loosely typed."
+
+event bubbling or event capturing
+"Ways in which events are propagated in HTML DOM, which in turn defines the order in which the elements of the DPM recieve the event."

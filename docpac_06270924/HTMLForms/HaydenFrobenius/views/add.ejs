@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soda</title>
+    <style>
+        #quantityBox {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>YOU BUY SODA</h1>
+    <form action="/add" method="POST">
+        <select name="brand">
+            <% //Dynamically get the brands from the server because that's sigma %>
+            <% for(i = 0; i < brands.length; i++){ %>
+                <option value="<%= i %>"><%= brands[i] %></option>
+            <% } %>
+        </select>
+        <input type="text" name="note" placeholder="Note">
+        <input type="number" name="quantity" min="1" value="1" id="quantityBox">
+        <button type="submit">Place Order</button>
+    </form>
+    <% if(locals?.ordered) { %>
+        <p>Thank you for buying Soda.</p>
+    <% } %>
+</body>
+</html>
