@@ -1,0 +1,7 @@
+Incorrect flash cards recorded here:
+
+parsing
+"The process of analyzing the code."
+
+dot notation
+"A reference used to access a property or method of an object 

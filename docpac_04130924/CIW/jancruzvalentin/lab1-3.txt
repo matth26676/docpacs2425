@@ -1,0 +1,23 @@
+Frontend Developer
+Mid-Level Frontend Developer role with 3 to 5.5 years experience at Jio, a leading telecom operator in India with 400 Million+ customers. Full-Time position based in Bengaluru. Salary range: Competitive. Employee count: 51-200.
+
+Qualifications And Skills
+
+Proficiency in HTML, CSS, and JavaScript
+Experience with React.js and Redux
+Strong understanding of Data Structures
+Excellent problem-solving skills
+Ability to work in a team environment
+
+Job Title: Unity Developer
+Required Skills
+
+" Minimum of 5+ years of experience with Unity 3D, C#
+
+" Minimum of 2+ years of experience with Unreal, C++
+
+" Knack for writing clean, readable, and easily maintainable code
+
+" Strong knowledge of object oriented design patterns with C#, 3D Vector math and data structures...
+
+/*All of the ones I'm viewing require minimum 2-3 years of work in some kind of programming language as well as communication skills expirience in development, creative works, and other features. As well most desired a pursuing of degree in Engineering or Computer Science if not have one already*/

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="jermaStuff/jermaBurger2.png">
+    <title>Highscores</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-size: 5vi;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            margin: 10px 0;
+        }
+        b {
+            font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+        }
+        #Return, button {
+            border: 1px solid black;
+            border-radius: 5px;
+            position: fixed;
+            top: 0;
+            font-size: 5vi;
+            font-weight: bold;
+            height: 7vw;
+            width: 100%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Highscores</h1>
+    <ul>
+        <% scores.forEach(function(score, index) { %>
+            <li><b><%= index + 1 %>.</b> <%= score.name %>: <%= score.score %></li>
+        <% }); %>
+    </ul>
+    <p id="highscores"></p>
+
+    <div id="Return">
+        <a href="/"><button>Return</button></a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #leaderboardbox {
+            position: absolute;
+            left: 35%;
+            top: 10%;
+            width: 30%;
+            height: 80%;
+            background-color: aqua;
+            text-align: center;
+        }
+
+        #backbox {
+            position: absolute;
+            left: 43%;
+            top: 2.5%;
+            width: 15%;
+            height: 6%;
+            background-color: blue;
+            border-radius: 10%;
+            color: aqua;
+            align-content: center;
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="leaderboardbox">
+        <div>Top 10 Scores</div> <br>
+        <% for (row of data) { %>
+            User: <%- row.Username %>, Score: <%- row.Score %> <br>
+        <% } %>
+    </div>
+
+    <button id="backbox">
+        <a href="/" id="backbox">Go Back</a>
+    </button>
+</body>
+</html>
