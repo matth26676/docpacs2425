@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Masher</title>
+</head>
+
+<body>
+    <a href="/">Go back</a>
+    <br></br>
+    <div id="scrBox">Score</div>
+    <div id="tmrBox">Timer</div>
+    <div id="dirBox">Direction</div>
+</body>
+
+<script>
+
+    let scr = 0; //creates score variable - default 0
+    let dir = 0; //creates direction variable - default 0
+    let tmr = 5; //creates timer variable - default 20
+
+    let scrBox = document.getElementById("scrBox");
+    let tmrBox = document.getElementById("tmrBox");
+    let dirBox = document.getElementById("dirBox");
+
+    let lastPress = false;
+    let alerted = false;
+    
+    function tmrTick() {
+        if (tmr > 0) {
+            tmr--;
+            tmrBox.innerHTML = tmr;
+            scrBox.innerHTML = scr;
+        };
+        if (tmr == 0 && alerted != true) {
+            alerted = true
+            endGame();
+        };
+
+    };
+
+    setInterval(tmrTick, 1000)
+
+    setInterval(function () {
+        let dir = Math.floor(Math.random() * 4)
+        if (dir == 0) {
+            dirBox.innerHTML = "up"
+        } else if (dir == 1) {
+            dirBox.innerHTML = "right"
+        } else if (dir == 2) {
+            dirBox.innerHTML = "down"
+        } else if (dir == 3) {
+            dirBox.innerHTML = "left"
+        };
+    }, 2000);
+
+    //check if controller is connected
+    window.addEventListener("gamepadconnected", (e) => {
+        const update = () => {
+            const gamepad = navigator.getGamepads();
+
+            for (const gamepad of navigator.getGamepads()) {
+                if (!gamepad) continue;
+                // if "A" button pressed down
+                if (gamepad.buttons[0].pressed && tmr > 0 && lastPress != gamepad.buttons[0].pressed) {
+                    if (dir == 0 && gamepad.axes[1] <= -0.8) {
+                        // if left joystick up
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 1 && gamepad.axes[0] >= 0.8) {
+                        // else if left joystick right
+                        scr++
+                        scrBox.innerHTML = scr
+                    } else if (dir == 2 && gamepad.axes[1] >= 0.8) {
+                        // else if left joystick down
+                        scr++
+                        scrBox.innerHTML = scr
+                    
+                    } else if (dir == 3 && gamepad.axes[0] <= -0.8) {
+                        // else if left joystick left
+                        scr++
+                        scrBox.innerHTML = scr
+                    };
+                };
+
+                lastPress = gamepad.buttons[0].pressed
+
+                if (gamepad.buttons[9].pressed) {
+                    location.reload();
+                };
+            };
+            requestAnimationFrame(update);
+        };
+        update();
+    });
+
+    function endGame() {
+        const score = parseInt(scr);
+        const name = prompt("Enter your name: ");
+
+        if (name) {
+            fetch("/hiscores", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({ name: name, score: score }),
+            })
+            .then(response => {
+                if (response.ok) {
+                alert("Game Over! Your score has been submitted.");
+                } else {
+                throw new Error("Failed to submit score");
+                };
+            })
+            .catch(error => {
+                alert("Error submitting score. Please try again later.");
+            });
+        } else {
+            alert("Name required to submit score.");
+        };
+    };
+</script>
+
+</html>

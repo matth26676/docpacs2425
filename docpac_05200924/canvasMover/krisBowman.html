@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="cv" width="800px" height="600px"></canvas>
+</body>
+
+<script>
+    /*----
+    canvas
+    ----*/
+    const cv = document.getElementById("cv")
+    const ctx = cv.getContext("2d");
+    
+    /*----
+    player
+    ----*/
+
+    //create player object
+    const PLAYER = {};
+
+    //properties for player
+    PLAYER.x = 400;
+    PLAYER.y = 300;
+    PLAYER.w = 25;
+    PLAYER.h = 50;
+    PLAYER.img = document.createElement("img")
+    PLAYER.img.src = "playerScaledUp.png";
+
+    /*---------------
+    keyboard controls
+    ---------------*/
+
+    //events
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    //direction keys
+    let dDown = false;
+    let wDown = false;
+    let aDown = false;
+    let sDown = false;
+
+    //set keys to true when pressed
+    function keyDownHandler(e) {
+        if (e.code === "KeyW") {
+            wDown = true;
+        } else if (e.code === "KeyA") {
+            aDown = true;
+        } else if (e.code === "KeyS") {
+            sDown = true;
+        } else if (e.code === "KeyD") {
+            dDown = true;
+            };
+    };
+    function keyUpHandler(e) {
+        if (e.code === "KeyW") {
+            wDown = false;
+        } else if (e.code === "KeyA") {
+            aDown = false;
+        } else if (e.code === "KeyS") {
+            sDown = false;
+        } else if (e.code === "KeyD") {
+            dDown = false;
+        };
+    };   
+    
+    function update() {
+        //move player on key down
+        if (dDown) {
+            PLAYER.x += 5;
+        } else if (aDown) {
+            PLAYER.x -= 5;
+        };
+
+        if (sDown) {
+            PLAYER.y += 5;
+        } else if (wDown) {
+            PLAYER.y -= 5;
+        };
+        
+        //player cannot leave canvas
+            if (PLAYER.x < 0) {
+                PLAYER.x = 0
+            } else if (PLAYER.y < 0) {
+                PLAYER.y = 0
+            };
+        
+        if (PLAYER.x + PLAYER.w > cv.width) {
+            PLAYER.x = cv.width - PLAYER.w
+        } else if (PLAYER.y + PLAYER.h > cv.height) {
+            PLAYER.y = cv.height - PLAYER.h
+        };
+    };
+
+    /*--
+    draw
+    --*/
+    
+    function draw() {;
+        //erase the screen
+        ctx.clearRect(0, 0, cv.width, cv.height);
+
+        //draw the player
+        ctx.drawImage(PLAYER.img, PLAYER.x, PLAYER.y, PLAYER.w, PLAYER.h);
+
+        //text in top left
+        ctx.strokeText("keyboard (wasd)", 0, 10);
+        ctx.strokeText("x: " + PLAYER.x, 0, 20);
+        ctx.strokeText("y: " + PLAYER.y, 0, 30);
+    };
+
+    function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    };
+
+    PLAYER.img.onload = function() {
+        loop();
+    };
+
+</script>
+
+</html>
