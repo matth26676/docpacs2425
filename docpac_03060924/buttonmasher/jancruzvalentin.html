@@ -42,8 +42,9 @@
     setInterval(
         () => {
             if (timer > 0) {
-                direction = Math.floor(Math.random() * 3);
-                //the range for math was math.random() * (max-min) + min
+                direction = Math.floor(Math.random() * 4);
+                /*the range for math was math.random() * (max-min) + min
+                Math.floor drops the decimal value and random makes it a value between 0- .99...*/
                 if (direction == 0) {
                     direction = "up"
                 } else if (direction == 1) {

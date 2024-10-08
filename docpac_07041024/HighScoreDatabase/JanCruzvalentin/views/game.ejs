@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1 {
+            margin: 20px 525px;
+            text-align: center;
+            width: 300px;
+            border-radius: 25px;
+            border: black 5px;
+            border-style: solid;
+        }
+
+        h2 {
+            margin: auto;
+            text-align: center;
+            width: 50%;
+        }
+
+        div {
+            margin: 20px 575px;
+            text-align: center;
+            width: 200px;
+            border-radius: 25px;
+            background-color: rgb(49, 142, 203);
+            border: black 5px;
+            border-style: solid;
+
+        }
+
+        button {
+            height: 75px;
+            margin: 20px 625px;
+            padding: 10px;
+            border-radius: 25px;
+            background-color: red;
+            text-align: center;
+            font-size: 40px;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Button Holder</h1>
+    <h2>This game is played with arrow keys or WASD controls.Press and hold the button equal
+        to the direction showed to add points.</h2>
+    <h2>Have fun! Press play to start.</h2>
+
+    <button class="play">Play</button>
+    <div id="scoreBox">Current Score is 0</div>
+    <div id="timerBox">Time left is 30</div>
+    <div id="directionBox">The direction is: None</div>
+    <div> <a href="/">Click here to go back</a></div>
+</body>
+
+<script>
+    var xhttps = new XMLHttpRequest()
+    var alerted = true
+    var points = 0
+    var timer = 30
+    var direction = ""
+    var keys = {}
+    const playButton = document.querySelector('.play');
+
+
+    playButton.addEventListener('click', () => {
+        if (timer == 30) {
+            window.addEventListener('keydown', function (e) {
+                //makes a certain key's value as true when pressed
+                keys[e.key] = true;
+            });
+
+            window.addEventListener('keyup', function (e) {
+                //makes the certain key false when released
+                keys[e.key] = false;
+            });
+
+            setInterval(
+                () => {
+                    if (timer > 0) {
+                        timer--;
+                        timerBox.innerText = "Time left is " + timer;
+                        checked = true
+
+                        direction = Math.floor(Math.random() * 4);
+                        /*the range for math was math.random() * (max-min) + min
+                        Math.floor drops the decimal value and random makes it a value between 0- .99...*/
+                        if (direction == 0) {
+                            direction = "Up"
+                        } else if (direction == 1) {
+                            direction = "Right"
+                        } else if (direction == 2) {
+                            direction = "Down"
+                        } else if (direction == 3) {
+                            direction = "Left"
+                        }
+                        //Reminder that directions are currently strings
+                        directionBox.innerText = "The direction is: " + direction;
+
+                    }
+                },
+                1000)
+            //set for every half a second
+
+            function score() {
+                //Checking if button pressed matches the current direction
+                if (keys["ArrowUp"] && direction == "Up" || keys["w"] && direction == "Up") {
+                    if (timer > 0) {
+                        //Add to score 
+                        points++
+                        scoreBox.innerText = "Current Score is " + points;
+                    }
+                }
+                else if (keys["ArrowDown"] && direction == "Down" || keys["s"] && direction == "Down") {
+                    if (timer > 0) {
+                        //Add to score 
+                        points++
+                        scoreBox.innerText = "Current Score is " + points;
+                    }
+                }
+                else if (keys["ArrowRight"] && direction == "Right" || keys["d"] && direction == "Right") {
+                    if (timer > 0) {
+                        //Add to score 
+                        points++
+                        scoreBox.innerText = "Current Score is " + points;
+                    }
+                }
+                else if (keys["ArrowLeft"] && direction == "Left" || keys["a"] && direction == "Left") {
+                    if (timer > 0) {
+                        //Add to score 
+                        points++
+                        scoreBox.innerText = "Current Score is " + points;
+                    }
+                }
+                if (timer == 0 && alerted) {
+                        user = prompt("Congrats your score is " + points + "! May I have your name to log?")
+                        xhttps.open('POST', '/highScore', true);
+                        xhttps.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        xhttps.send(`name=${user}&score=${points}`);
+                        
+                        alerted = false 
+                    }
+                requestAnimationFrame(score)
+            }
+            score()
+
+        }
+    });
+
+
+
+
+</script>
+
+</html>
