@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lab 3-2</title>
+
+<script type="text/javascript">
+<!--
+
+let arg1 = prompt("Enter a value for arg1: ");
+let arg2 = prompt("Enter a value for arg2: ");
+/******************************************************
+Define a function that takes arguments on function call
+******************************************************/
+function myFunction(arg1, arg2) {
+  alert(`The value of arg1 is ${arg1} and the value of arg2 is ${arg2}`);
+}
+/******************************************************
+Define a function that takes returns a value
+******************************************************/
+function myFunction1(){
+    return "This is a return value";
+}
+//-->
+</script>
+
+</head>
+
+<body>
+
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+
+<!-- Add an onclick event handler to call the function -->
+
+<form name="myForm">
+<input type="button" value="Call Function with arguments" onclick="myFunction(arg1, arg2)"/><br />
+<input type="button" value="Call Function with return" onclick="myFunction1()"/>
+</form>
+
+</body>
+</html>
