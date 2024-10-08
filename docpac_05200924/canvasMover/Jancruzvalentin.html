@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover</title>
+</head>
+
+<body>
+    <canvas id="canvaser" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
+</body>
+<script>
+    //player stuff
+    const player = {}
+
+    player.currentX = 100;
+    player.currentY = 100;
+    //making it a square?
+    player.width = 100;
+    player.height = 100;
+    player.img = new Image()
+    player.spd = 2
+    player.fillText = "Keyboard"
+
+    player.img.src = "star.png"
+
+    var canvas = document.getElementById("canvaser")
+    var ctx = canvas.getContext("2d")
+    var keys = {}
+
+    window.addEventListener('keydown', function (e) {
+        keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', function (e) {
+        keys[e.key] = false;
+    });
+
+    //moving and checking if rect is in bounds
+    function move() {
+        //works with arrows and WASD
+        if (keys["ArrowUp"] || keys["w"]) {
+            player.currentY -= player.spd;
+        }
+        else if (keys["ArrowDown"] || keys["s"]) {
+            player.currentY += player.spd;
+        }
+        else if (keys["ArrowRight"] || keys["d"]) {
+            player.currentX += player.spd;
+        }
+        else if (keys["ArrowLeft"] || keys["a"]) {
+            player.currentX -= player.spd;
+        }
+
+        if (player.currentX < 0) {
+            player.currentX = 0;
+        }
+        if (player.currentY < 0) {
+            player.currentY = 0;
+        }
+        if (player.currentX + player.width > canvas.width) {
+            player.currentX = canvas.width - player.width;
+        }
+        if (player.currentY + player.height > canvas.height) {
+            player.currentY = canvas.height - player.height;
+        }
+        requestAnimationFrame(move)
+    }
+    move()
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillText(player.fillText + "and your current coordinates (" + player.currentX + "," + player.currentY+ ")", 10, 10)
+        ctx.drawImage(player.img, player.currentX, player.currentY, player.width, player.height);
+
+        requestAnimationFrame(update);
+    }
+
+    update();
+
+
+
+
+    //requestAnimationFrame(update)
+</script>
+
+</html>

@@ -1,0 +1,145 @@
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    font-family: 'Press Start 2P', sans-serif;
+    background: #f0f0f0; /* Soft gray background for an earthy feel */
+    color: #333; /* Dark text color for better readability */
+    margin: 0;
+    padding: 0;
+    background-image: url('https://images.unsplash.com/photo-1599681994742-b5b57e6e09c1');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+header {
+    background-color: rgba(205, 192, 175, 0.9); /* Soft beige background with transparency */
+    color: #ffffff; /* White text color */
+    padding: 2em 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #ffffff; /* White color to stand out against the soft background */
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.5); /* Reduced glow effect */
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin: 0 20px;
+}
+
+header nav ul li a {
+    color: #ffffff; /* White text color */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: color 0.3s, transform 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #d49a6a; /* Earthy brown color */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Define earthy colors for each section */
+section:nth-of-type(1) {
+    background-color: rgba(220, 220, 200, 0.9); /* Soft earth tone */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+section:nth-of-type(2) {
+    background-color: rgba(220, 200, 180, 0.9); /* Light beige */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+section:nth-of-type(3) {
+    background-color: rgba(240, 230, 210, 0.9); /* Very light brown */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+section:nth-of-type(4) {
+    background-color: rgba(200, 240, 200, 0.9); /* Soft green */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+section:nth-of-type(5) {
+    background-color: rgba(200, 220, 240, 0.9); /* Soft blue */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+section:nth-of-type(6) {
+    background-color: rgba(220, 200, 240, 0.9); /* Light lavender */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+/* Additional styling for track cards */
+.track-card {
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    font-family: 'Press Start 2P', sans-serif;
+    background: #ffeb80; /* Pastel yellow background */
+    color: #333; /* Dark text color for better readability */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 100vh; /* Full height of the viewport */
+}
+
+.container {
+    max-width: 800px; /* Limit the container width */
+    background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    padding: 40px; /* More padding for aesthetics */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center text */
+}
+
+h1 {
+    font-size: 2.5em; /* Larger title */
+    color: #865d4d; /* Earthy brown color */
+    margin-bottom: 20px; /* Space below title */
+}
+
+.btn {
+    display: inline-block;
+    background-color: #865d4d; /* Button color */
+    color: #ffffff;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 10px 0; /* Space between buttons */
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background-color: #6b4f3e; /* Darker on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Optional: Additional styles for links */
+a {
+    color: #865d4d; /* Earthy brown for regular links */
+}

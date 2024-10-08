@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>High scores</title>
+	<style>
+		table, tr, th, td {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<% if (scores) { %>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Score</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% scores.forEach((score) => { %>
+					<tr>
+						<td><%= score.name %></td>
+						<td><%= score.score %></td>
+					</tr>
+				<% }); %>
+			</tbody>
+		</table>
+	<% } else { %>
+		<p>No high scores yet!</p>
+	<% } %>
+</body>
+</html>

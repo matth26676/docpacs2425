@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas mover</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+            position: relative;
+            margin: 0 auto;
+            padding: 0;
+            display: block;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const player = {}
+
+    player.x = 0;
+    player.y = 0;
+    player.w = 42.5;
+    player.h = 56.25;
+    player.img = new Image();
+    player.img.src = 'img/hayden.jpg';
+
+    let speed = 2
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w' || event.key === 'W') {
+            player.y -= speed;
+        } else if (event.key === 'a' || event.key === 'A') {
+            player.x -= speed;
+        } else if (event.key === 's' || event.key === 'S') {
+            player.y += speed;
+        } else if (event.key === 'd' || event.key === 'D') {
+            player.x += speed;
+        }
+
+        //checks arrows too
+        if (event.key === 'ArrowUp') {
+            player.y -= speed;
+        } else if (event.key === 'ArrowLeft') {
+            player.x -= speed;
+        } else if (event.key === 'ArrowDown') {
+            player.y += speed;
+        } else if (event.key === 'ArrowRight') {
+            player.x += speed;
+        }
+
+        //speed increase if shift is held
+        if (event.shiftKey) {
+            speed = 5;
+        } else {
+            speed = 2;
+        }
+
+        if (player.x < 0) {
+            player.x = 0;
+        } else if (player.y < 0) {
+            player.y = 0;
+        } else if (player.x + player.w > canvas.width) {
+            player.x = canvas.width - player.w;
+        } else if (player.y + player.h > canvas.height) {
+            player.y = canvas.height - player.h;
+        }
+    });
+
+    requestAnimationFrame(update);
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+        ctx.fillStyle = 'red';
+        ctx.font = '15px Arial';
+        ctx.fillText(`(${player.x}, ${player.y})`, 0, 30);
+        ctx.fillText("keyboard", 0, 10)
+        requestAnimationFrame(update);
+        console.log(player.x, player.y);
+        console.log(speed)
+    }
+
+    requestAnimationFrame(update);
+</script>
+
+</html>

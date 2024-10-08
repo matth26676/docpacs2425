@@ -1,0 +1,10 @@
+{
+    "Import nodeJS module": {
+        "prefix": "mod",
+        "body": [
+            "const ${1:moduleName} = require('${1:moduleName}')",
+            "$2"
+        ],
+        "description": "Import nodeJS module"
+    }
+}
