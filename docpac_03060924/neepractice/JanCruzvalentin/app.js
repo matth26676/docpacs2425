@@ -17,7 +17,7 @@ app.get('/endpoint', (req, res) => {
         name = req.query.name;
     }
     
-    let Jan = "Hello, Jan!"; 
+    let Jan = "Jan!"; 
     
     res.render('hello', { name: Jan });
 });
