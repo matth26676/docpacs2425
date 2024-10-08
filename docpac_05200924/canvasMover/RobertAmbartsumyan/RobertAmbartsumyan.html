@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvasMover</title>
+    <style>
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<canvas id="canvas"></canvas>
+
+<body>
+
+    <div id="keyboard">
+
+    </div>
+
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 800;
+    canvas.height = 600;
+
+    var w = false;
+    var a = false;
+    var s = false;
+    var d = false;
+
+
+
+    class Player {
+        constructor(x, y, w, h) {
+            this.x = x;
+            this.y = y;
+            this.w = 45;
+            this.h = 65;
+            this.img = new Image();
+            this.img.src = 'sprite/cactus.png';
+        }
+
+        physics() {
+            if (w == true) {
+                this.y += -5;
+            }
+            if (a == true) {
+                this.x += -5;
+            }
+            if (s == true && this.y + this.h < canvas.height) {
+                this.y += 5;
+            }
+            if (d == true && this.x + this.w < canvas.width) {
+                this.x += 5;
+            }
+
+            if (this.x < 0) {
+                this.x = 0;
+            } 
+            if (this.y < 0) {
+                this.y = 0;
+            }
+        }
+
+        draw() {
+            ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+        }
+
+        update() {
+            this.physics();
+            
+            document.getElementById('keyboard').innerHTML = `Your controls are -> Keyboard and your x and y cords are (${this.x}, ${this.y})`;
+        }
+    }
+
+    ctx.imageSmoothingEnabled = false;
+    let player = new Player(125, 425, 25, 25);
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w') {
+            //console.log('W pressed');
+            w = true;
+        }
+        if (event.key === 'a') {
+            //console.log('A pressed');
+            a = true;
+        }
+        if (event.key === 's') {
+            //console.log('S pressed');
+            s = true;
+        }
+        if (event.key === 'd') {
+            //console.log('D pressed');
+            d = true;
+        }
+    });
+    document.addEventListener('keyup', function (event) {
+        if (event.key === 'w') {
+            //console.log('W pressed');
+            w = false;
+        }
+        if (event.key === 'a') {
+            //console.log('A pressed');
+            a = false;
+        }
+        if (event.key === 's') {
+            //console.log('S pressed');
+            s = false;
+        }
+        if (event.key === 'd') {
+            //console.log('D pressed');
+            d = false;
+        }
+    });
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        player.update();
+        player.draw();
+
+        requestAnimationFrame(update);
+    }
+
+    update();
+</script>
+
+</html>

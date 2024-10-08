@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chase Clicker</title>
+    <link rel="icon" type="image/x-icon" href="StormbeastSmall.png">
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #targetBox {
+            position: fixed;
+            cursor: pointer;
+        }
+
+        #timerBox {
+            margin: auto;
+            text-align: center;
+            width: 20%;
+            border: 3px rgb(216, 195, 99);
+            padding: 10px;
+        }
+
+        #scoreBox {
+            background-color: rgb(45, 45, 45);
+            margin: 0;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            /* border: 9px rgb(216, 195, 99); */
+            padding: 0px;
+            align-items: center;
+            justify-content: center;
+            text-size-adjust: 45px;
+            font-size: xx-large;
+
+        }
+
+        .visible {
+            display: flex;
+        }
+
+        .hidden {
+            display: none;
+
+        }
+
+        button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+        }
+    </style>
+</head>
+
+<body>
+    <% for (row of data) { %>
+        <%- row.user_name %> has a cat named <%- row.cat_name %><br>
+    <% } %>
+
+
+    <div id="scoreBox" class="hidden">Score: 0 </div>
+    <div id="scoreBox2" class="hidden"> <button onclick="restart()"; >Retry?</button> </div> <!--Should display restart button below-->
+    <div id="timerBox">Time Remaining: 5<!-- Default == 30 --></div>
+    <div id="targetBox"><button onclick="targetClicked()"><img src="StormbeastSmall.png" alt=""></button></div>
+</body>
+<script>
+    const user_name = prompt("What is your name?")
+    var scoreBox = document.getElementById("scoreBox");
+    var scoreBox2 = document.getElementById("scoreBox2");
+    var timerBox = document.getElementById("timerBox");
+    var targetBox = document.getElementById("targetBox");
+
+    var score = 0
+    var timer = 4 // Default == 30
+    var tagretX = 0
+    var targetY = 0
+    var gameEnded = false
+
+    function placeTarget() {
+        let winX = window.innerWidth;
+        let winY = window.innerHeight;
+        tagretX = Math.floor(Math.random() * winX) -20;
+        tagretY = Math.floor(Math.random() * winY) -20;
+        targetBox.style.left = tagretX + "px";
+        targetBox.style.top = tagretY + "px";
+
+    }
+
+    placeTarget();
+
+    function targetClicked() {
+        if (timer > 0) {
+            score++;
+            scoreBox.innerText = "Score: " + score;
+            placeTarget();
+            //return()
+        }
+    }
+
+    setInterval(
+        () => {
+            if (timer != 0) {
+                timer--;
+                timerBox.innerText = "Time Remaining: " + timer;
+            }
+
+            else {
+                targetBox.classList.add("hidden")
+                scoreBox.classList.remove("hidden")
+                scoreBox.classList.add("visible")
+                scoreBox2.classList.remove("hidden")
+                scoreBox2.classList.add("visible")
+
+                if (!gameEnded) {
+                    gameEnded = true;
+                    fetch("/sendScore", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ 
+                            score: score,
+                            user_name: user_name,
+                            ip: req.ip,
+                        })
+                    });
+                }
+            }
+        },
+        1000
+    )
+    
+    function restart() {
+        timer = 30 + 1
+        score = 0
+        placeTarget();
+        targetBox.classList.remove("hidden")
+        targetBox.classList.add("visible")
+        scoreBox.classList.remove("visible")
+        scoreBox.classList.add("hidden")
+        scoreBox2.classList.remove("visible")
+        scoreBox2.classList.add("hidden")
+        // targetBox.style.display = "hidden"
+        // targetBox.style.display = "block" 
+
+
+        gameEnded = false;
+        scoreBox.innerText = "Score: " + score;
+
+    }
+
+</script>
+
+
+</html>
