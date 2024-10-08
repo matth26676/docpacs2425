@@ -1,0 +1,32 @@
+Javascript Role requirments:
+
+Javascript Developer
+Source 1:
+A) bachelor's or master's qualification in computer
+science
+B)2+ years experience
+C)"Expert coding skills"
+D)Comprehensive Knowledge of JS
+E)Ability to create high level software
+F)Experience with various JS libraries, Browser markups,
+and compilers
+
+Source 2:
+A) Bachelors degree in programming, software development
+computer science, info tech, comp engineering, or a 
+related field
+B) Certifications 
+C)Expierience in JS frameworks(React, JQuery, HTML5, 
+CSS)
+D)Personal traits such as drive, communication
+leadership
+E)Knowledge of back end prog languages, security 
+protocols, database design and management
+
+Source 3(Indeed):
+A) 3+ years of experience in the field
+B) Bachelors degree in comp science or related
+C) Strong proficiency in server side languages
+such as JS
+(This was a Backend developer job)
+D) Knowledge of Node.js, CSS, React, and/or vue 

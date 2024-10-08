@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+
+    <style>
+        #mainpage {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: cadetblue;
+        }
+
+        #gameBox {
+            top: 10%;
+            left: 10%;
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: darkblue;
+            border-radius: 25%;
+        }
+
+        #scoreBox {
+            position: absolute;
+            width: 20%;
+            height: 24%;
+            font-size: 40px;
+            align-content: center;
+            text-align: center;
+            top: 30%;
+            left: 5%;
+            background-color: dodgerblue;
+            border-radius: 10%;
+        }
+
+        #timerBox {
+            position: absolute;
+            right: 5%;
+            width: 20%;
+            height: 24%;
+            font-size: 40px;
+            align-content: center;
+            text-align: center;
+            top: 30%;
+            border-radius: 10%;
+            background-color: dodgerblue;
+        }
+
+        #directionBox {
+            position: absolute;
+            width: 30vw;
+            height: 30vw;
+            background-color: rgb(5, 0, 75);
+            border: 5px rgb(0, 56, 141) solid;
+            left: 32%;
+            top: 20%;
+            border-radius: 10%;
+        }
+
+        #axes {
+            position: absolute;
+            background-color: white;
+            width: 20%;
+            height: 30%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="mainpage">
+        <div id="gameBox">
+            <div id="scoreBox">Score: 0</div>
+            <div id="timerBox">Time: 20</div>
+            <img id="directionBox" src=""></img>
+        </div>
+    </div>
+
+    <script>
+
+        var score = 0
+        var direction = 0
+        var timer = 3
+        var wasPressed = false
+        var timerBox = document.getElementById('timerBox')
+        var scoreBox = document.getElementById('scoreBox')
+        var directionBox = document.getElementById('directionBox')
+        var username = prompt("Type a username")
+
+        window.addEventListener('gamepadconnected', (event) => {
+            const update = () => {
+
+                for (const gamepad of navigator.getGamepads()) {
+                    if (!gamepad) continue;
+                    if (gamepad.buttons[9].pressed) {
+                        window.location.reload()
+                    }
+
+                    //if (gamepad.buttons[6].pressed) {
+                    //    scorePoint()
+                    //}
+
+                    switch (true) {
+                        case (direction == 0) :
+                            if (gamepad.buttons[3].pressed != wasPressed) {
+                                wasPressed = gamepad.buttons[3].pressed
+                                if (wasPressed) {
+                                    if (gamepad.axes[1] == -1 && direction == 0 && timer > 0) {
+                                        scorePoint()
+                                    }
+                                }
+                            }
+                        break
+                        case (direction == 1) :
+                            if (gamepad.buttons[1].pressed != wasPressed) {
+                                wasPressed = gamepad.buttons[1].pressed
+                                if (wasPressed) {
+                                    if (gamepad.axes[0] == 1 && direction == 1 && timer > 0) {
+                                        scorePoint()
+                                    }
+                                }
+                            }
+                        break
+                        case (direction == 2) :
+                            if (gamepad.buttons[0].pressed != wasPressed) {
+                                wasPressed = gamepad.buttons[0].pressed
+                                if (wasPressed) {
+                                    if (gamepad.axes[1] == 1 && direction == 2 && timer > 0) {
+                                        scorePoint()
+                                    }
+                                }
+                            }
+                        break
+                        case (direction == 3) :
+                            if (gamepad.buttons[2].pressed != wasPressed) {
+                                wasPressed = gamepad.buttons[2].pressed
+                                if (wasPressed) {
+                                    if (gamepad.axes[0] == -1 && direction == 3 && timer > 0) {
+                                        scorePoint()
+                                    }
+                                }
+                            }
+                        break
+                    }
+                }
+                requestAnimationFrame(update);
+            };
+            update();
+        });
+
+        function randomDirection() {
+            direction = Math.floor(Math.random() * 4)
+            directionBox.innerText = direction
+            if (direction == 0) {
+                directionBox.src = 'gamematerials/YellowArrowUp.gif'
+            } else if (direction == 1) {
+                directionBox.src = 'gamematerials/RedArrowRight.gif'
+            } else if (direction == 2) {
+                directionBox.src = 'gamematerials/GreenArrowDown.gif'
+            } else if (direction == 3) {
+                directionBox.src = 'gamematerials/BlueArrowLeft.gif'
+            } else {
+                direction == 0
+                directionBox.src = 'gamematerials/YellowArrowUp.gif'
+            }
+        }
+
+        function scorePoint() {
+            score++
+            scoreBox.innerText = 'Score: ' + score
+            randomDirection()
+        }
+
+        randomDirection()
+
+        let timerinterval = setInterval(() => {
+            if (timer > 0) {
+                timer--
+            } else {
+                let sendscore = new XMLHttpRequest()
+                sendscore.open("POST", "/hiscore", true)
+                let senddata = {Name: username, Score: score}
+                sendscore.send(JSON.stringify(senddata))
+                clearInterval(timerinterval)
+            }
+            timerBox.innerText = 'Time: ' + timer
+        }, 1000);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/gif" href="/favicon.gif">
+</head>
+<body>
+    <div class="container">
+        <% if (isPlaying) { %>
+            <h1>Game Time!</h1>
+            <% if (loggedIn) { %>
+                <p>Welcome back, <strong><%= username %></strong>! Get ready to play!</p>
+                <!-- Game logic or canvas can go here -->
+                <div id="gameContainer">
+                    <!-- Your game rendering logic -->
+                    <canvas id="gameCanvas"></canvas>
+                </div>
+                <a href="/hiscores" class="btn">View High Scores</a>
+                <a href="/logout" class="btn">Log Out</a>
+            <% } else { %>
+                <p>You need to <a href="/login" class="btn">Login</a> to play the game.</p>
+            <% } %>
+        <% } else { %>
+            <h1>Welcome to the Game Hub</h1>
+            <% if (loggedIn) { %>
+                <p>You are logged  <strong><%= username %></strong></p>
+                <a href="/game" class="btn">Play the Game</a>
+                <a href="/hiscores" class="btn">View High Scores</a>
+                <a href="/logout" class="btn">Log Out</a>
+            <% } else { %>
+                <a href="/login" class="btn">Login</a> or <a href="/register" class="btn">Register</a>
+            <% } %>
+        <% } %>
+    </div>
+</body>
+</html>
