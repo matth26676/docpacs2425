@@ -1,0 +1,40 @@
+<style>
+
+    /* ChatGPT is a real G */
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Entry #</th>
+        <th>Name</th>
+        <th>Score</th>
+    </tr>
+    <% scores.forEach(entry => {%>
+        <tr>
+            <td>
+                <%= entry.uid %>
+            </td>
+            <td>
+                <%= entry.name %>
+            </td>
+            <td>
+                <%= entry.score %>
+            </td>
+        </tr>
+        <% }); %>
+</table>
