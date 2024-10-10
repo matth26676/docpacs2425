@@ -55,9 +55,8 @@ app.get('/home', (req, res) => {
     res.render('home', { user: req.query.user, email: req.query.email });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     try {
-        let email = req.body.email;
         let username = req.body.username;
         let password = req.body.password;
 
@@ -73,22 +72,26 @@ app.post('/login', (req, res) => {
             throw new Error(`Password is too small. Do better.`);
         }
 
-        db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
-            if (err) {
-                res.render('error', { error: err.message });
-                return;
-            }
-            if (row) {
-                let decryptedPassword = decrypt(row.password);
-                if (decryptedPassword === req.body.password) {
-                    res.redirect(`/home?user=${users.username}&email=${users.email}}`);
+        let user = await new Promise((resolve, reject) => {
+            db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
+                if (err) {
+                    reject(new Error(err.message));
                 } else {
-                    res.render('error', { error: 'Invalid password' });
+                    resolve(row);
                 }
-            } else {
-                res.render('error', { error: 'User not found' });
-            }
+            });
         });
+
+        if (user) {
+            let decryptedPassword = decrypt(user.password);
+            if (decryptedPassword === req.body.password) {
+                res.redirect(`/home?user=${user.username}&email=${user.email}`);
+            } else {
+                res.render('error', { error: 'Invalid password' });
+            }
+        } else {
+            res.render('error', { error: 'User not found' });
+        }
 
     } catch (error) {
         res.render('error', { error: error.message });
