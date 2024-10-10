@@ -2,12 +2,12 @@ const sqlite3 = require('sqlite3')
 const express = require('express');
 const { error, log } = require('console');
 const fs = require('fs')
-const crypto = require("crypto-js");
+const crypto = require("crypto");
 
 // sets app.js to use expressjs files on port 3000
 const app = express();
 const port = 3000;
-const key = "P@$$w0rdK3y"
+const key = crypto.createCipher('aes-128-cbc', "P@$$w0rdK3y");
 
 // sets app to view files in ejs and to respond with text
 app.set('view engine', 'ejs');
@@ -70,8 +70,9 @@ app.post('/login', (req, res) => {
         } else if (!req.body.password) {
             throw Error("Password isn't valid!")
         } else {
-            let password = crypto.AES.encrypt(req.body.password, key).toString();
-            db.all(`SELECT * FROM Users WHERE Username=? AND Password=?`, req.body.name, password, (err, row) => {
+            let password = key.update(req.body.password, 'utf8', 'hex').toString();
+            let hexpassword = key.final('hex').toString()
+            db.all(`SELECT * FROM Users WHERE Username=? AND Password=?`, req.body.name, hexpassword, (err, row) => {
                 if (err) {
                     res.render('error', {err: err})
                 } else {
@@ -93,8 +94,9 @@ app.post('/signup', (req, res) => {
         } else if (!req.body.password) {
             throw Error("Password isn't valid!")
         } else {
-            let password = crypto.AES.encrypt(req.body.password, key).toString();
-            db.run(`INSERT INTO Users(Username, Email, Password) VALUES(?, ?, ?)`,[req.body.name, req.body.email, password] ,(err, row) => {
+            let password = key.update(req.body.password, 'utf8', 'hex').toString();
+            let hexpassword = key.final('hex').toString()
+            db.run(`INSERT INTO Users(Username, Email, Password) VALUES(?, ?, ?)`,[req.body.name, req.body.email, hexpassword] ,(err, row) => {
                 if (err) {
                     res.render('error', {err: err})
                 } else {
