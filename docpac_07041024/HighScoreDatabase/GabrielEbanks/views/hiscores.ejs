@@ -1,0 +1,13 @@
+<h1>High Scores</h1>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Score</th>
+  </tr>
+  <% scores.forEach(score => { %>
+    <tr>
+      <td><%= score.name %></td>
+      <td><%= score.score %></td>
+    </tr>
+  <% }) %>
+</table>
