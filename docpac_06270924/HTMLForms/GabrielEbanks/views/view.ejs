@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1>Orders</h1>
+    
+    <% if (orders && orders.length > 0) { %> 
+      <ol>
+        <% orders.forEach(order => { %>
+          <li>
+            Item: <%= order.item %>, Amount: <%= order.amount %>
+          </li>
+        <% }) %>
+      </ol>
+    <% } else { %>
+      <p>No orders found!</p>
+    <% } %>
+
+    <a href="/">Back to Home</a>
+  </body>
+</html>
+
