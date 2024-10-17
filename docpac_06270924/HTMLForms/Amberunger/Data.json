@@ -14,6 +14,11 @@
       "username": "Anon",
       "password": "$2b$10$58f4CAs4MURHt4uZs6hJq.tdWwt1EucEXPoXir.jro4hjAAnWvbG2",
       "isAdmin": false
+    },
+    {
+      "username": "bob",
+      "password": "$2b$10$T9IO2NQHRcPuC3WIzgK35e/ilZw/balkigNUYGSf4CKUGcaoHnUM2",
+      "isAdmin": false
     }
   ],
   "tracks": [
@@ -82,6 +87,17 @@
       "album": null,
       "genre": "Christmas?",
       "user": "amber"
+    },
+    {
+      "id": 1729012871148,
+      "title": "asdad",
+      "artist": "ad",
+      "duration": "ad",
+      "image": null,
+      "video": "asd",
+      "album": null,
+      "genre": "asd",
+      "user": "bob"
     }
   ]
 }
