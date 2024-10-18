@@ -4,47 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-
-    <style>
-        #loginform {
-            position: absolute;
-            top: 15%;
-            left: 20%;
-            width: 60%;
-            height: 40%;
-            align-content: center;
-            align-items: center;
-            text-align: center;
-            background-color: aqua;
-            border: 3px, black, solid;
-            border-radius: 10%;
-        }
-
-        #mainpage {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: rgb(0, 150, 100);
-        }
-
-        #button {
-            position: relative;
-            border-radius: 10%;
-        }
-    </style>
 </head>
 <body>
-    <div id="mainpage">
-        <div id="loginform">
-            <a href="/">Go Back</a>
-            <div>Login</div>
-            <form method="post" action="/login">
-                Username: <input type="text" name="name"> <br>
-                Email: <input type="text" name="email"> <br>
-                Password: <input type="password" name="password"> <br>
-                <input type="submit">
-            </form>
-        </div>
-    </div>
+    <form action="/login" method="post">
+        <input name = "user" type="text" placeholder="Username">
+        <input name = "email" type="text" placeholder="Email">
+        <input name = "pass" type="password" placeholder="Password">
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
