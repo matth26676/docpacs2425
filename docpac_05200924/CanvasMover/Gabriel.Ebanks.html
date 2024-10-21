@@ -4,83 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Canvas Mover</title>
 </head>
 
 <body>
     <style>
-        #myCanvas {
-            border: solid 1px;
-            color: red
-        }
+#canvas {
+    height: 600px;
+    width: 800px;
+    border-style:solid;
+    border-color: blueviolet;
+}
     </style>
-    <canvas class="border-glow" id="myCanvas" width="800" height="600">
+    <canvas id="canvas" >
 
     </canvas>
     <script>
-        const player = {
-            x: 100,
-            y: 100,
-            w: 30,
-            h: 30,
-            img: null
+ const player = new Object();
+player.x = "0px";
+player.y = "0px";
+player.w = "10px";
+player.h = "10px";
 
-        }
+charSpeed= 10
 
-        var canvas = document.getElementById('myCanvas')
-        var charSpeed = 10
-        const ctx = canvas.getContext('2d')
+const canvas = document.getElementById('canvas');
 
-        function loadCharImg() {
-            player.img = new Image()
-            player.img.src = "./blackguy.jpg"
-            player.img.onload = function () {
-                drawPlayer()
-            }
-        }
-        function drawPlayer() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.fillStyle = 'white'
-            ctx.drawImage(player.img, player.x, player.y, player.w, player.h)
-            ctx.fillStyle = 'black'
-            ctx.font = '20px Arial'
-            ctx.fillText("Control: Gamepad", 10, 20)
-            ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 40)
-        }
-        window.addEventListener('gamepadconnected', (event) => {
-            console.log('Gamepad connected:', event.gamepad)
-            gameLoop()
-        })
-        function gameLoop() {
-            const gamepads = navigator.getGamepads()
-            const gamepad = gamepads[0]
-            if (gamepad) {
-                player.x += gamepad.axes[0] * charSpeed * 3
-                player.y += gamepad.axes[1] * charSpeed * 3
 
-                if (player.x < 0) {
-                    player.x = 0
-                }
-                if (player.x + player.w > canvas.width) {
-                    player.x = canvas.width - player.w
-                }
+const gamepad = navigator.getGamepads()
+const stickX = gamepad.axes[0]
+const stickY = gamepad.axes[1]
 
-                if (player.y < 0) {
-                    player.y = 0
-                }
-                if (player.y + player.h > canvas.height) {
-                    player.y = canvas.height - player.h
-                }
-                ctx.fillStyle = 'white'
-                ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-                drawPlayer()
-            }
-                           requestAnimationFrame(gameLoop)
-
-        }
-
-        loadCharImg()
 
     </script>
 </body>
