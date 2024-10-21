@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hayden's DND Adventures</title>
+    <style>
+
+    /*Thx co-poilet for css*/
+
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('https://imgs.search.brave.com/KUg58O4FYCOAnOlU9V0g4hrkmg15C8HNGGnWULMHapk/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9tZWRpZXZhbC1z/dHJvbmdob2xkLWFu/Y2llbnQtY2FzdGxl/LXRleHR1cmUtaGln/aC1kZXRhaWxlZC1w/bGFpbi1iYWNrZ3Jv/dW5kLWNvbmNlcHRf/MjcxNDEwLTUwMDcy/LmpwZz9zaXplPTYy/NiZleHQ9anBn');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #f0e68c;
+            font-family: 'MedievalSharp', cursive;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        header {
+            border-bottom: 5px solid #8b4513;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            text-shadow: 3px 3px 7px #000;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .castle-image {
+            width: 100%;
+            max-width: 700px;
+            margin: 20px auto;
+            display: block;
+            border: 7px solid #8b4513;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .content {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border: 3px solid #8b4513;
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #fdf5e6;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 1em;
+            color: #f0e68c;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .banner {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            position: relative;
+        }
+
+        .banner::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 10px;
+            background: url('https://www.publicdomainpictures.net/pictures/30000/velka/stone-pattern-1356642122kXr.jpg') repeat-x;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            .content {
+                padding: 20px;
+            }
+            .content p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="banner"></div>
+        <h1>Hayden's DND Adventures</h1>
+    </header>
+
+    <img src="https://imgs.search.brave.com/XzQdsmIffhoqL5mBFxWDTQA6_XnOE0RS2CrCT4fiypw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTM2/NzcyODM1Ny9waG90/by9jbG9zZS11cC1p/bWFnZS1vZi1hLW1l/dGFsLWQyMC5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9a0ZF/Y18wZGd1TWYtQlZJ/MkRKOUhaSTFTd0Nf/VlRSNUNZQXZYd195/bUpnRT0" alt="Castle Image" class="castle-image">
+
+    <div class="content">
+        <p>In the dark and eerie world of Dungeons & Dragons, Hayden embarks on terrifying quests, facing monstrous creatures and navigating through haunted dungeons. His bravery and cunning are put to the test as he battles the forces of darkness.</p>
+        <p>Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.</p>
+        <p>Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this.</p>
+        <p>But, in a larger sense, we cannot dedicate—we cannot consecrate—we cannot hallow—this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced.</p>
+        <p>It is rather for us to be here dedicated to the great task remaining before us—that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion—that we here highly resolve that these dead shall not have died in vain—that this nation, under God, shall have a new birth of freedom—and that government of the people, by the people, for the people, shall not perish from the earth.</p>
+        <p>—Abraham Lincoln</p>
+    </div>
+</body
