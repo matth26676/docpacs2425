@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
             console.error(err);
         } else {
             console.log(rows);
-            
+
             res.render('index', { data: rows });
         }
     });
