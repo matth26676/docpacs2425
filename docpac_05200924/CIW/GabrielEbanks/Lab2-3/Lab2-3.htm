@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Lab 2-3</title>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <ul id="results"></ul>
+
+    <script type="text/javascript">
+        function displayResult(result) {
+            var list = document.getElementById("results")
+        var listItem = document.createElement("li")
+        listItem.textContent = result;
+        list.appendChild(listItem);
+
+        }
+        <!--
+        var a=5;
+        var b="5";
+        var c=10;
+        //-->
+        var compareValue = (a == b);
+
+        displayResult(compareValue)
+        var compareValueAndType = (a === b);
+        displayResult(compareValueAndType)
+
+        var checkTypeAndValue = (a !== c);
+
+        displayResult(checkTypeAndValue)
+        var AandB = (a + b);
+        displayResult(AandB)
+
+        var addAandC = a + c;
+
+        displayResult(addAandC)
+    </script>
+</body>
+
+</html>
