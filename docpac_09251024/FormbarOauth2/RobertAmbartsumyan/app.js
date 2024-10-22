@@ -9,6 +9,8 @@ const PORT = 3000
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
+app.use(express.json());
+
 const FBJS_URL = 'http://172.16.3.212:420'
 const THIS_URL = 'http://localhost:3000/login'
 //Switch this to your api key frfr mr.smiff
@@ -23,9 +25,9 @@ app.use(session({
 
 //This is ogga bogga middle ware to check for users auth
 function isAuthenticated(req, res, next) {
-    console.log("Checking Auth")
-    if (req.session.user) next()
-    else res.redirect(`/login?redirectURL=${THIS_URL}`)
+    console.log("Checking Auth");
+    if (req.session.user) next();
+    else res.redirect(`/login?redirectURL=${THIS_URL}`);
 }
 
 //Burh
@@ -38,11 +40,10 @@ const db = new sqlite3.Database('data/database.db', (err) => {
 });
 
 app.get('/', isAuthenticated, (req, res) => {
-	res.render('index.ejs')
+	res.render('index.ejs');
 });
 
 app.get('/login', (req, res) => {
-    console.log(req.query.token)
     console.log('Token print');
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token)
@@ -56,28 +57,22 @@ app.get('/login', (req, res) => {
 })
 
 app.get('/profile', isAuthenticated, (req, res) => {
-    try {
-        fetch(`${FBJS_URL}/api/me`, {
-			method: 'GET',
-			headers: {
-				'API': API_KEY,
-				'Content-Type': 'application/json'
-			}
-		})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				res.send(data);
-			})
-    } catch (err) {
-        console.error('Database error: ', err);
-    }
+    res.render('profile.ejs', { username: req.session.user });
 });
 
-// app.post('/profile', isAuthenticated, (req, res) => {
+app.post('/profile', isAuthenticated, (req, res) => {
+    let checked = req.body.checkbox ? 1 : 0;
+    let fb_name = req.session.user;
+    let fb_id = req.session.token.id;
 
-// });
+    db.run('INSERT INTO users (fb_id, fb_name, profile_checked) VALUES (?, ?, ?)', [fb_id, fb_name, Number(checked)], (err) => {
+        if (err) {
+            console.error('Database error: ', err);
+        } else {
+            res.redirect('/profile');
+        }
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
