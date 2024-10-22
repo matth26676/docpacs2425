@@ -54,7 +54,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
-    db.get("SELECT * FROM users WHERE fb_id = ?", [tokenData.fb_id], (err, user) => {
+    db.get("SELECT * FROM users WHERE fb_id = ?", [req.session.token.id], (err, user) => {
         if (err){ res.render('error'); return; }
         res.render('profile', {username: user.fb_name, profileChecked: user.profile_checked});
     });
