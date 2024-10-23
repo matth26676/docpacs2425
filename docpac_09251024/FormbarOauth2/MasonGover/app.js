@@ -74,25 +74,17 @@ app.get("/profile", isAuthenticated, (req, res) => {
 });
 
 app.post("/profile", isAuthenticated, (req, res) => {
-    if (req.session.user && req.body.profileChecked) {
-        db.run("UPDATE users SET profile_checked=1 WHERE fb_id=?;", req.session.token.id, (err) => {
+    if (req.session.user) {
+        const profile_checked = req.body.profileChecked ? 1 : 0;
+        db.run("UPDATE users SET profile_checked=? WHERE fb_id=?;", [profile_checked, req.session.token.id], (err) => {
             if (err) {
                 console.error(err);
                 res.send("An error occurred. Try again later.");
             } else {
                 res.redirect("/profile");
             }
-        });
-    } else {
-        db.run("UPDATE users SET profile_checked=0 WHERE fb_id=?;", req.session.token.id, (err) => {
-            if (err) {
-                console.error(err);
-                res.send("An error occurred. Try again later.");
-            } else {
-                res.redirect("/profile");
-            }
-        });
-    }
+        });  
+    } 
 });
 
 app.listen(3000, () => {
