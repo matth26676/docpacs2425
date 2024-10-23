@@ -13,6 +13,7 @@ let db = new sql.Database('./database.db');
 
 app.set('view engine', 'ejs');
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 app.use(session({
     secret: 'guh',
@@ -38,13 +39,15 @@ app.get('/login', (req, res) => {
         req.session.token = tokenData;
         req.session.user = tokenData.username;
 
-        db.get("SELECT * FROM users WHERE fb_id = ?", [tokenData.fb_id], (err, row) => {
+        db.get("SELECT * FROM users WHERE fb_id = ?", [tokenData.id], (err, row) => {
             if (err){ console.log(err); res.render('error'); return; }
             if(!row){
                 db.run("INSERT INTO users (fb_id, fb_name, profile_checked) VALUES(?,?,?)", [tokenData.id, tokenData.username, 0], (err) => {
                     if(err) res.render('error');
                     res.redirect('/');
                 });
+            } else {
+                res.redirect('/');
             }
         });
 
@@ -56,15 +59,16 @@ app.get('/login', (req, res) => {
 app.get('/profile', isAuthenticated, (req, res) => {
     db.get("SELECT * FROM users WHERE fb_id = ?", [req.session.token.id], (err, user) => {
         if (err){ res.render('error'); return; }
-        res.render('profile', {username: user.fb_name, profileChecked: user.profile_checked});
+        console.log(user.profile_checked);
+        res.render('profile', {user: user});
     });
 });
 
 app.post('/profile', isAuthenticated, (req, res) => {
     let fb_id = req.session.token.id;
-    let checked = (req.body.checkbox == 'checked');
-    db.run("UPDATE users SET profile_checked = ? WHERE fb_id = ?;", [Number(checked), fb_id], (err) => {
+    let checked = (req.body.checkbox === 'checked');
+    db.run("UPDATE users SET profile_checked = ? WHERE fb_id = ?;", [String(checked), fb_id], (err) => {
         if (err){ res.render('error'); return; }
-        res.send(200);
-    })
+        res.redirect('/profile');
+    });
 });
