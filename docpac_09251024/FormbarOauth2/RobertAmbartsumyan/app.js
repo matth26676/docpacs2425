@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken')
-const express = require('express')
-const session = require('express-session')
-const sqlite3 = require('sqlite3')
+const jwt = require('jsonwebtoken');
+const express = require('express');
+const session = require('express-session');
+const sqlite3 = require('sqlite3');
 
-const app = express()
-const PORT = 3000
+const app = express();
+const PORT = 3000;
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -21,14 +21,14 @@ app.use(session({
     secret: 'ThisIsTopMilitarySecret',
     resave: false,
     saveUninitialized: false
-}))
+}));
 
 //This is ogga bogga middle ware to check for users auth
 function isAuthenticated(req, res, next) {
     console.log("Checking Auth");
     if (req.session.user) next();
     else res.redirect(`/login?redirectURL=${THIS_URL}`);
-}
+};
 
 //Burh
 const db = new sqlite3.Database('data/database.db', (err) => {
@@ -49,30 +49,35 @@ app.get('/login', (req, res) => {
         let tokenData = jwt.decode(req.query.token)
         req.session.token = tokenData
         req.session.user = tokenData.username
-        res.redirect('/')
+        res.redirect('/');
     } else {
         console.log('Token not defined');
         res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
     }
-})
+});
 
 app.get('/profile', isAuthenticated, (req, res) => {
     res.render('profile.ejs', { username: req.session.user });
 });
 
 app.post('/profile', isAuthenticated, (req, res) => {
-    let checked = req.body.checkbox ? 1 : 0;
-    let fb_name = req.session.user;
-    let fb_id = req.session.token.id;
 
-    db.run('INSERT INTO users (fb_id, fb_name, profile_checked) VALUES (?, ?, ?)', [fb_id, fb_name, Number(checked)], (err) => {
+    //IM ABOUT TO LOSE MY MIND AHHHHHHHHHH
+    let checked = req.body.checkbox ? 1 : 0;
+    let name = req.session.user;
+    let id = req.session.token.id;
+
+    db.run('INSERT INTO users (fb_id, fb_name, profile_checked) VALUES (?, ?, ?)', [id, name, Number(checked)], (err) => {
         if (err) {
             console.error('Database error: ', err);
         } else {
             res.redirect('/profile');
         }
+        console.log('checked:', checked);
     });
 });
+
+//Insaaneity is doing the same thing over and over again and expecting different results
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
