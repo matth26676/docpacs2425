@@ -75,8 +75,8 @@ app.get("/profile", isAuthenticated, (req, res) => {
 
 app.post("/profile", isAuthenticated, (req, res) => {
     if (req.session.user) {
-        const profile_checked = req.body.profileChecked ? 1 : 0;
-        db.run("UPDATE users SET profile_checked=? WHERE fb_id=?;", [profile_checked, req.session.token.id], (err) => {
+        const profileChecked = req.body.profileChecked ? 1 : 0;
+        db.run("UPDATE users SET profile_checked=? WHERE fb_id=?;", [profileChecked, req.session.token.id], (err) => {
             if (err) {
                 console.error(err);
                 res.send("An error occurred. Try again later.");
