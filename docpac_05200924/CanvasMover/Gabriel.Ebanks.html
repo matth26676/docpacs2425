@@ -12,133 +12,118 @@
 <body>
     <style>
         #canvas {
-            height: 600px;
-            width: 800px;
             border-style: solid;
             border-color: blueviolet;
         }
     </style>
-    <canvas id="canvas">
+    <canvas id="canvas" width="800" height="600">
 
     </canvas>
     <script>
 
-    var player = {
-        x : 100,
-        y  : 100,
-        w  : 20,
-        h  : 20,
-        img  : new Image()
-    }
-        
-
-    player.img.src = "./blackguy.jpg"
-
-
-    window.addEventListener('gamepadconnected',(e) => {
-        function movement() {
-            var gamepad = navigator.getGamepads()[0]
-            if(gamepad.axes[0] < -0.1) {
-                console.log(1)
-            } 
-            if (gamepad.axes[0] > 0.1) {
-                console.log(3)
-            } 
-            if (gamepad.axes[1] > 0.1) {
-                console.log(4)
-            }
-            if (gamepad.axes[1] < -0.1) {
-                console.log(2)
-            }
-
-            requestAnimationFrame(movement) 
-
+        var player = {
+            x: 100,
+            y: 100,
+            w: 50,
+            h: 50,
+            img: new Image()
         }
-        movement()
-    })
+
+
+        player.img.src = "./blackguy.jpg"
+
+
+        window.addEventListener('gamepadconnected', (e) => {
+            function movement() {
+                var gamepad = navigator.getGamepads()[0]
+                // left
+                if (gamepad.axes[0] < -0.5) {
+                    console.log(1)
+                }
+                // right
+                if (gamepad.axes[0] > 0.5) {
+                    console.log(3)
+                }
+                // down
+                if (gamepad.axes[1] > 0.5) {
+                    console.log(4)
+                }
+                // up
+                if (gamepad.axes[1] < -0.5) {
+                    console.log(2)
+                }
+
+                requestAnimationFrame(movement)
+
+            }
+            movement()
+        })
+
+        const charSpeed = 3
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext("2d");
+
+
+        function drawSprite() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.font = "30px serif";
+            ctx.fillStyle = 'black';
+            ctx.fillText("Gamepad", 10, 30);
+            ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 70)
+            ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+            console.log('sprite drawn')
+        }
+
+        window.addEventListener('gamepadconnected', (event) => {
+            console.log('Gamepad connected:', event.gamepad);
+            function movement() {
+                var gamepad = navigator.getGamepads()[0]
+
+                if(gamepad) {
+                    if (gamepad.axes[0] < -0.5) {
+                        player.x -= charSpeed
+                        console.log('left')
+                    }
+
+                    if (gamepad.axes[0] > 0.5) {
+                        player.x += charSpeed
+                        console.log('right')
+                    }
+
+                    if (gamepad.axes[1] < -0.5) {
+                        player.y -= charSpeed
+                        console.log('down')
+                    }
+
+                    if (gamepad.axes[1] > 0.5) {
+                        player.y += charSpeed
+                        console.log('up')
+                    }
+
+                    if (player.x + player.w > canvas.width)
+                        player.x = canvas.width - player.w;
     
-        // const charSpeed = 10
-        // const canvas = document.getElementById('canvas');
-        // const ctx = canvas.getContext("2d");
-
-
-        //         const gamepad = navigator.getGamepads();
-        //         const stickX = gamepad.axes[0];
-        //         const stickY = gamepad.axes[1];
-
-        
-        
-        
-        
-        
-        //         function drawSprite() {
-
-        //     ctx.fillStyle = 'white';
-        //     ctx.clearRect(0, 0, canvas.width, canvas.height)
-        //     ctx.font = "30px serif";
-        //     ctx.fillText("Gamepad", 10, 30);
-        //     ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 40)
-        //     ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
-        //     console.log('sprite draw')
-
-
-        // }
-
-
-
-
-        
-
-
-
-
-        
-        
-        
-        // window.addEventListener('gamepadconnected', (event) => {
-        //     console.log('Gamepad connected:', event.gamepad);
-        //     function movement() {
-        //         console.log(navigator.getGamepads())
-
     
-        //         if (gamepad[0]) {
-        //             player.x += stickX * charSpeed * 2;
-        //             player.y += stickY * charSpeed * 2;
-    
-    
-    
-        //             if (player.x < 0)
-        //                 player.x = 0;
-    
-    
-        //             if (player.y < 0)
-        //                 player.y = 0;
-    
-    
-        //             if (player.x + player.w > canvas.width)
-        //                 player.x = canvas.width - player.w;
-    
-    
-        //             if (player.y + player.h > canvas.height)
-        //                 player.y = canvas.height - player.h;
-    
-        //             drawSprite()
-        //         }
-        //         requestAnimationFrame(movement)
-        //     }
+                    if (player.y + player.h > canvas.height)
+                        player.y = canvas.height - player.h;
+                    
+                    if (player.x < 0) {
+                        player.x = 0
+                    }
 
-        //     movement();
-        // });
+                    if (player.y < 0) {
+                        player.y = 0
+                    }
 
-        // player.img.onload = function () {
-        //     drawSprite();
-        // };
-
-
-
-
+                    drawSprite()
+                    console.log('moving')
+                }
+                requestAnimationFrame(movement)
+            }
+            movement();
+        }
+    );
     </script>
 </body>
 
 </html>
-
