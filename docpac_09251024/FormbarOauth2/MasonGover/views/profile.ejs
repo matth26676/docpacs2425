@@ -7,5 +7,14 @@
 </head>
 <body>
     Hello <%= user %>
+    <form action="/profile" method="post">
+        <% if (checked) { %>
+            <input type="checkbox" name="profileChecked" checked>
+        <% } else { %>
+            <input type="checkbox" name="profileChecked">
+        <% } %>
+
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

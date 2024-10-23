@@ -34,67 +34,65 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-app.get('/login', (req, res) => {
+app.get("/login", (req, res) => {
     if (req.query.token) {
-         let tokenData = jwt.decode(req.query.token);
-         req.session.token = tokenData;
-         req.session.user = tokenData.username;
-         res.redirect('/');
+        let tokenData = jwt.decode(req.query.token);
+        req.session.token = tokenData;
+        req.session.user = tokenData.username;
+
+        db.get("SELECT * FROM users WHERE fb_id=?;", tokenData.id, (err, row) => {
+            if (err) {
+                console.error(err);
+                res.send("An error occurred. Try again later.");
+            } else if (!row) {
+                db.run("INSERT INTO users (fb_name, fb_id, profile_checked) VALUES (?, ?, ?);", [tokenData.username, tokenData.id, 0], (err) => {
+                    if (err) {
+                        console.error("Database error: " + err);
+                        res.send("An error occurred. Try again later.");
+                    } else {
+                        res.redirect("/profile");
+                    }
+                });
+            } else {
+                res.redirect("/profile");
+            }
+        });
     } else {
-         res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
+        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
     };
 });
 
-app.post("/login", (req, res) => {
-    // if (req.body.user && req.body.pass) {
-    //     db.get("SELECT * FROM users WHERE username=?;", req.body.user, (err, row) => {
-    //         if (err) {
-    //             console.error(err);
-    //             res.send("There was an error:\n" + err);
-    //         } else if (!row) {
-    //             // Create a new salt for this user
-    //             const salt = crypto.randomBytes(16).toString("hex");
-
-    //             // Use this salt to "hash" the password
-    //             crypto.pbkdf2(req.body.pass, salt, 1000, 64, "sha512", (err, derivedKey) => {
-    //                 if (err) {
-    //                     res.send("Error hashing password: " + err);
-    //                 } else {
-    //                     const hashedPassword = derivedKey.toString("hex");
-    //                     db.run("INSERT INTO users (username, password, salt) VALUES (?, ?, ?);", [req.body.user, hashedPassword, salt], (err) => {
-    //                         if (err) {
-    //                             res.send("Database error:\n" + err);
-    //                         } else {
-    //                             res.send("Created new user");
-    //                         }
-    //                     });
-    //                 }
-    //             });
-
-    //         } else {
-    //             // Compare stored password with provided password
-    //             crypto.pbkdf2(req.body.pass, row.salt, 1000, 64, "sha512", (err, derivedKey) => {
-    //                 if (err) {
-    //                     res.send("Error hashing password: " + err);
-    //                 } else {
-    //                     const hashedPassword = derivedKey.toString("hex");
-    //                     if (row.password === hashedPassword) {
-    //                         req.session.user = row.username;
-    //                         res.redirect("/profile");
-    //                     } else {
-    //                         res.send("Incorrect password");
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     });
-    // } else {
-    //     res.send("You need a username and password");
-    // }
+app.get("/profile", isAuthenticated, (req, res) => {
+    db.get("SELECT profile_checked FROM users WHERE fb_id=?;", req.session.token.id, (err, row) => {
+        if (err) {
+            console.error(err);
+            res.send("An error occurred. Try again later.");
+        } else {
+            res.render("profile", { user: req.session.user, checked: row.profile_checked });
+        }
+    });
 });
 
-app.get("/profile", isAuthenticated, (req, res) => {
-    res.render("profile", { user: req.session.user });
+app.post("/profile", isAuthenticated, (req, res) => {
+    if (req.session.user && req.body.profileChecked) {
+        db.run("UPDATE users SET profile_checked=1 WHERE fb_id=?;", req.session.token.id, (err) => {
+            if (err) {
+                console.error(err);
+                res.send("An error occurred. Try again later.");
+            } else {
+                res.redirect("/profile");
+            }
+        });
+    } else {
+        db.run("UPDATE users SET profile_checked=0 WHERE fb_id=?;", req.session.token.id, (err) => {
+            if (err) {
+                console.error(err);
+                res.send("An error occurred. Try again later.");
+            } else {
+                res.redirect("/profile");
+            }
+        });
+    }
 });
 
 app.listen(3000, () => {
