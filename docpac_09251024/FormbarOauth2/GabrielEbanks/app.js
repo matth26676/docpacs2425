@@ -1,16 +1,26 @@
 const sqlite3 = require('sqlite3');
 const express = require('express');
 const crypto = require('crypto');
-const e = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const { execFile } = require('child_process');
-
+const THIS_URL = 'http://localhost:3000/login'; // ... or whatever the address to your application is
 const app = express();
+const AUTH_URL = 'http://172.16.3.212:420/oauth'; // Authentication URL
+const API_KEY = 'bd4cf1e837768719675cf8bfa360a3e60348af7898a0b61d385a560323423204a9445d4d25bedc5ec4b34626b89598474e45152a9f4ce523d444b0887cf90ed4'; // Replace with your actual API key
+
 
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }))
+
+
+function isAuthenticated(req, res, next) {
+	console.log("Checking Auth")
+	if (req.session.user) next()
+	else res.redirect(`/login?redirectURL=${THIS_URL}`)
+}
+
 app.use(session({
     secret: 'africanbootyscratcher',
     resave: false,
@@ -27,13 +37,27 @@ const db = new sqlite3.Database('data/database.db', (err) => {
     }
 });
 
-app.get('/', (req, res) => {
-    res.render('index');
+app.get('/', isAuthenticated, (req, res) => {
+    try {
+         res.render('index.ejs', {user : req.session.user})
+    }
+    catch (error) {
+         res.send(error.message)
+    }
 });
 
 app.get('/login', (req, res) => {
-    res.render('login');
-});
+	console.log(req.query.token)
+	if (req.query.token) {
+		let tokenData = jwt.decode(req.query.token)
+		req.session.token = tokenData
+		req.session.user = tokenData.username
+		res.redirect('/')
+	} else {
+		res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+        console.log('working')
+	}
+})
 
 app.post('/login', (req, res) => {
     console.log(req.body)
@@ -89,17 +113,16 @@ app.post('/login', (req, res) => {
 
 })
 
-app.get('/home', isAuthenticated, (req, res) => {
+// app.get('/home', isAuthenticated, (req, res) => {
 
-    res.render('home.ejs', { user: req.session.user })
+//     res.render('home.ejs', { user: req.session.user })
 
-})
+// })
 
-function isAuthenticated(req, res, next) {
-    if (req.session.user) next()
-    else res.redirect('/login')
-};
 
 app.listen(3000, () => {
     console.log(`Server started on port 3000`);
 });
+
+
+// 5.	If the project requires you to provide a login, create an entry with the username “testuser” and the password “password123!”
