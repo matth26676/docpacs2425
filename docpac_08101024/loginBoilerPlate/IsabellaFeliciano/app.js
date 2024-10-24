@@ -1,3 +1,4 @@
+
 const sqlite3 = require('sqlite3');
 const express = require('express');
 const crypto = require('crypto');
@@ -109,3 +110,6 @@ app.get('/home', isAuthenticated, (req, res) => {
 app.listen(3000, () => {
     console.log(`Server started on port 3000`);
 });
+
+
+
