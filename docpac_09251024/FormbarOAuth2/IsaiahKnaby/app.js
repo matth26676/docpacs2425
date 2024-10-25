@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 
 app.set('view engine', 'ejs');
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = new sqlite3.Database('data/database.db', (err) => {
@@ -61,7 +62,7 @@ app.get('/login', (req, res) => {
     };
 });
 
-app.post('/profile'), (req, res) => {
+app.post('/profile', (req, res) => {
     if (req.body.profile_checked) {
         db.run(`UPDATE users SET profile_checked = 1 WHERE fb_name = ?`, [req.session.user], (err) => {
             if (err) {
@@ -75,7 +76,9 @@ app.post('/profile'), (req, res) => {
             }
         });
     }
-}
+
+    res.redirect('/profile');
+});
 
 
 app.listen(port, () => {
