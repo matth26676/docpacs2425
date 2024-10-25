@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1>games</h1>
+    
+    <% if (games && games.length > 0) { %> 
+      <ol>
+        <% games.forEach(game => { %>
+          <li>
+            Item: <%= game.item %>, Amount: <%= game.amount %>
+          </li>
+        <% }) %>
+      </ol>
+    <% } else { %>
+      <p>No games found!</p>
+    <% } %>
+
+    <a href="/">Back to Home</a>
+  </body>
+</html>
