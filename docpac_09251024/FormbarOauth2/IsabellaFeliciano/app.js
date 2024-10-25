@@ -78,6 +78,7 @@ app.get('/login', (req, res) => {
                         res.send("There was an error:\n" + err);
                     }
                 });
+                // redirecting to profiles page after successful login
                 res.redirect('/profiles');
             } else {
                 res.redirect('/profiles');
@@ -85,7 +86,7 @@ app.get('/login', (req, res) => {
         })
 
         // redirecting to home page after successful login
-    } else if(req.session.user) {
+    } else if (req.session.user) {
         res.redirect('/profiles');
     } else {
         res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
@@ -98,7 +99,7 @@ app.post("/profiles", (req, res) => {
         if (err) {
             console.error(err)
         }
-    } )
+    })
 })
 
 // route to handle logout
