@@ -66,6 +66,8 @@ app.get('/profile', isAuthenticated, (req, res) => {
 						if (row) {
 							let profile_checked = row.profile_checked
 							res.render('profile', { data: data, profile_checked: profile_checked });
+						} else {
+							res.render('profile', { data: data, profile_checked: 0 });
 						}
 					}
 				});
