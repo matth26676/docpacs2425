@@ -1,87 +1,128 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Canvas Mover</title>
 </head>
+
 
 <body>
     <style>
-        #myCanvas {
-            border: solid 1px;
-            color: red
+        #canvas {
+            border-style: solid;
+            border-color: blueviolet;
         }
     </style>
-    <canvas class="border-glow" id="myCanvas" width="800" height="600">
+    <canvas id="canvas" width="800" height="600">
 
     </canvas>
     <script>
-        const player = {
+
+        var player = {
             x: 100,
             y: 100,
-            w: 30,
-            h: 30,
-            img: null
-
+            w: 50,
+            h: 50,
+            img: new Image()
         }
 
-        var canvas = document.getElementById('myCanvas')
-        var charSpeed = 10
-        const ctx = canvas.getContext('2d')
 
-        function loadCharImg() {
-            player.img = new Image()
-            player.img.src = "./blackguy.jpg"
-            player.img.onload = function () {
-                drawPlayer()
+        player.img.src = "./blackguy.jpg"
+
+
+        window.addEventListener('gamepadconnected', (e) => {
+            function movement() {
+                var gamepad = navigator.getGamepads()[0]
+                // left
+                if (gamepad.axes[0] < -0.5) {
+                    console.log(1)
+                }
+                // right
+                if (gamepad.axes[0] > 0.5) {
+                    console.log(3)
+                }
+                // down
+                if (gamepad.axes[1] > 0.5) {
+                    console.log(4)
+                }
+                // up
+                if (gamepad.axes[1] < -0.5) {
+                    console.log(2)
+                }
+
+                requestAnimationFrame(movement)
+
             }
-        }
-        function drawPlayer() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.fillStyle = 'white'
-            ctx.drawImage(player.img, player.x, player.y, player.w, player.h)
-            ctx.fillStyle = 'black'
-            ctx.font = '20px Arial'
-            ctx.fillText("Control: Gamepad", 10, 20)
-            ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 40)
-        }
-        window.addEventListener('gamepadconnected', (event) => {
-            console.log('Gamepad connected:', event.gamepad)
-            gameLoop()
+            movement()
         })
-        function gameLoop() {
-            const gamepads = navigator.getGamepads()
-            const gamepad = gamepads[0]
-            if (gamepad) {
-                player.x += gamepad.axes[0] * charSpeed * 3
-                player.y += gamepad.axes[1] * charSpeed * 3
 
-                if (player.x < 0) {
-                    player.x = 0
-                }
-                if (player.x + player.w > canvas.width) {
-                    player.x = canvas.width - player.w
-                }
+        const charSpeed = 3
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext("2d");
 
-                if (player.y < 0) {
-                    player.y = 0
-                }
-                if (player.y + player.h > canvas.height) {
-                    player.y = canvas.height - player.h
-                }
-                ctx.fillStyle = 'white'
-                ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-                drawPlayer()
-            }
-                           requestAnimationFrame(gameLoop)
-
+        function drawSprite() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.font = "30px serif";
+            ctx.fillStyle = 'black';
+            ctx.fillText("Gamepad", 10, 30);
+            ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 70)
+            ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
+            console.log('sprite drawn')
         }
 
-        loadCharImg()
+        window.addEventListener('gamepadconnected', (event) => {
+            console.log('Gamepad connected:', event.gamepad);
+            function movement() {
+                var gamepad = navigator.getGamepads()[0]
 
+                if(gamepad) {
+                    if (gamepad.axes[0] < -0.5) {
+                        player.x -= charSpeed
+                        console.log('left')
+                    }
+
+                    if (gamepad.axes[0] > 0.5) {
+                        player.x += charSpeed
+                        console.log('right')
+                    }
+
+                    if (gamepad.axes[1] < -0.5) {
+                        player.y -= charSpeed
+                        console.log('down')
+                    }
+
+                    if (gamepad.axes[1] > 0.5) {
+                        player.y += charSpeed
+                        console.log('up')
+                    }
+
+                    if (player.x + player.w > canvas.width)
+                        player.x = canvas.width - player.w;
+    
+    
+                    if (player.y + player.h > canvas.height)
+                        player.y = canvas.height - player.h;
+                    
+                    if (player.x < 0) {
+                        player.x = 0
+                    }
+
+                    if (player.y < 0) {
+                        player.y = 0
+                    }
+
+                    drawSprite()
+                    console.log('moving')
+                }
+                requestAnimationFrame(movement)
+            }
+            movement();
+        }
+    );
     </script>
 </body>
 
