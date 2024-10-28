@@ -19,7 +19,7 @@ app.use(session({
 }))
 
 // Sets up the database that will hold the users
-const db = new sqlite3.Database('data/database.db', (err) => {
+const db = new sqlite3.Database('data/database.db', (err) => { 
     if (err) {
         console.log(err);
     } else {
