@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chat</title>
+    <script>
+        let ws = new WebSocket('ws://localhost:443');
+
+        ws.onmessage = (message) => {
+            let chat = document.getElementById('chat');
+            let div = document.createElement('div');
+            div.innerText = message.data;
+            chat.appendChild(div);
+        }
+    </script>
 </head>
+<style>
+    #chat {
+        height: 500px;
+        width: 500px;
+        border: 1px solid black;
+        overflow-y: scroll;
+    }
+    #message {
+        width: 500px;
+    }
+    #chat div {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
 <body>
+    <div id="chat">
+
+    </div>
+    <form action="/chat" method="POST">
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
 </body>
 <script>
+
 </script>
 </html>

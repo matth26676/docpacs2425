@@ -1,34 +1,49 @@
-const { name } = require('ejs');
-const express = require('express');
+const express = require('express')
+const app = express()
 const PORT = 3000;
-const app = express();
 const sqlite3 = require('sqlite3');
+
 const http = require('http').Server(app);
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ server: http });
+const { WebSocketServer } = require('ws')
+const wss = new WebSocketServer({ port: 443 })
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-const db = new sqlite3.Database('data/database.db', (err) => {
-    if (err) {
-        console.error('Database opening error: ', err);
-    } else {
-        console.log('Database opened');
-    }
+wss.on('connection', ws => {
+    console.log('New client connected!');
+    ws.send('connection established');
+    ws.on('close', () => console.log('Client has disconnected!'));
+    ws.on('message', data => {
+        sockserver.clients.forEach(client => {
+            console.log(`distributing message: ${data}`);
+            client.send(`${data}`);
+        });
+    });
+    ws.onerror = function () {
+        console.log('websocket error')
+    };
 });
+
+function usserHere(req, res, next) {
+    let name = req.query.name;
+    if (name) {
+        console.log('all good');
+        next();
+    } else {
+        console.log('Redirecting');
+        res.redirect('/');
+    }
+}
 
 app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/chat', (req, res) => {
+app.get('/chat', usserHere, (req, res) => {
     res.render('chat');
-    let name = req.query.name;
-    console.log(name);
 });
 
 http.listen(PORT, () => { console.log(`Server started on http://localhost:3000`); });
