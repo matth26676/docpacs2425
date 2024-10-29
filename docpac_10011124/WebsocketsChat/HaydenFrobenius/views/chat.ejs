@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            display: flexbox;
+        }
+
+        #messagesContainer {
+            width: calc(100vw - 217px);
+            height: 90vh;
+            background-color: #fff;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: -10px 0 15px rgba(40, 40, 40, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            float: right;
+        }
+
+        #usersContainer {
+            width: 200px;
+            background-color: #eee;
+            padding: 3rem;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            height: 100vh;
+            float: left;
+        }
+
+        #messageBox {
+            font-size: 2em;
+            width: 60%;
+        }
+
+        #sendBtn {
+            background: #3498db;
+            background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+            background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+            background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+            background-image: -o-linear-gradient(top, #3498db, #2980b9);
+            background-image: linear-gradient(to bottom, #3498db, #2980b9);
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 20px;
+            padding: 10px 20px 10px 20px;
+            text-decoration: none;
+            width: 100px;
+            height: 50px;
+        }
+
+        #sendBtn:hover {
+            cursor: pointer;
+            background: #3cb0fd;
+            background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+            text-decoration: none;
+        }
+
+        #userList {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="usersContainer">
+        <ul id="userList">
+        </ul>
+    </div>
+    <div id="messagesContainer">
+    </div>
+    <input type="text" id="messageBox">
+    <button id="sendBtn">Send</button>
+    <script>
+        const socket = new WebSocket('ws://localhost:3000');
+        const localName = `<%= name %>`;
+
+        let messagesContainer = document.getElementById('messagesContainer');
+        let usersContainer = document.getElementById('usersContainer');
+        let userList = document.getElementById('userList');
+        let messageBox = document.getElementById('messageBox');
+        let sendBtn = document.getElementById('sendBtn');
+
+        const msgTemplate = `<%- include('message') %>`;
+        const userTemplate = `<%- include('userlisting') %>`;
+
+        socket.addEventListener('open', () => {
+            console.log('Connected to the server');
+            let msg = {
+                type: 'join',
+                data: {name: localName}
+            }
+            socket.send(JSON.stringify(msg));
+        });
+
+        socket.addEventListener('message', (event) => {
+            let msg = JSON.parse(String(event.data));
+            let data = msg.data
+
+            switch (msg.type) {
+                case 'message':
+                    addNewMessage(data.name, data.content);
+                    console.log(`${data.name} sent "${data.content}"`);
+                    break;
+                case 'join':
+                    addUser(data.name);
+                    console.log(`${data.name} joined`);
+                    break;
+                case 'leave':
+                    removeUser(data.name);
+                    console.log(`${data.name} left`);
+                    break;
+            }
+        });
+
+        sendBtn.addEventListener('click', (event) => {
+            let msg = {
+                name: localName,
+                content: messageBox.value
+            }
+
+            let data = {
+                type: 'message',
+                data: msg
+            }
+
+            socket.send(JSON.stringify(data));
+            messageBox.value = '';
+        });
+
+        function addNewMessage(name, content){
+            const msgHtml = msgTemplate.replace('NAME', name).replace('CONTENT', content);
+            messagesContainer.innerHTML += msgHtml;
+        }
+
+        function addUser(name){
+            const userHtml = userTemplate.replace('NAME', name);
+            userList.innerHTML += userHtml
+        }
+
+        function removeUser(name){
+            const userHtml = userTemplate.replace('NAME', name);
+            userList.innerHTML = userList.innerHTML.replace(userHtml, '');
+        }
+
+    </script>
+</body>
+
+</html>
