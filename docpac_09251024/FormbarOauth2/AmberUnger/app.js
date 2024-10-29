@@ -5,8 +5,9 @@ const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('data/database.db');
 
 // Constants
-const FBJS_URL = 'http://172.16.3.212:420';
+const FBJS_URL = 'http://172.16.3.100:420';
 const THIS_URL = 'http://localhost:3000/login';
+
 const app = express();
 const PORT = 3000;
 
@@ -22,36 +23,67 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to check if the user is authenticated
 function isAuthenticated(req, res, next) {
-    console.log("Checking Auth");
-    console.log('Session Data:', req.session); // Log the session data
-    if (req.session.user) {
-        next();
-    } else {
-        res.redirect(`/login?redirectURL=${encodeURIComponent(req.originalUrl)}`);
-    }
-}
+    if (req.session.user) next()
+    else res.redirect('/login')
+};
 
 // Set the view engine to EJS
 app.set('view engine', 'ejs');
 
 // Define routes
-app.get('/', (req, res) => {
-    res.redirect('/login'); // Redirect to the login page
-});
+app.get('/', isAuthenticated, (req, res) => {
+    console.log("Root")
+    try {
+        fetch(`${FBJS_URL}/api/me`, {
+            method: 'GET',
+            headers: {
+
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                res.send(data);
+            })
+    }
+    catch (error) {
+        res.send(error.message)
+    }
+})
 
 app.get('/login', (req, res) => {
-    console.log('Login route hit');
-    console.log('Token:', req.query.token);
+    console.log(req.query.token);
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
-        console.log('Decoded Token Data:', tokenData); // Log the decoded token data
         req.session.token = tokenData;
-        req.session.user = tokenData.username; // Ensure this matches the token data structure
-        req.session.userId = tokenData.id; // Store id in session
-        console.log('Session Data:', req.session); // Log the session data
-        res.redirect('/profile'); // Redirect to /profile after setting the session
+        req.session.user = tokenData.username;
+
+        // Ensure tokenData contains the password field
+        const fbId = tokenData.password || tokenData.fb_id || 'default_password'; // Use a default or handle appropriately
+
+        // Check if user exists in the database
+        db.get(`SELECT * FROM users WHERE fb_name = ?`, [tokenData.username], (err, row) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Internal Server Error");
+            } else if (!row) {
+                // If user does not exist, insert into the database
+                db.run(`INSERT INTO users (fb_name, fb_id) VALUES (?, ?)`, [tokenData.username, fbId], (err) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send("Internal Server Error");
+                    } else {
+                        res.redirect('/profile');
+                    }
+                });
+            } else {
+                res.redirect('/profile');
+            }
+        });
     } else {
-        res.render('login'); // Render the login page if no token is provided
+        res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`);
     }
 });
 
