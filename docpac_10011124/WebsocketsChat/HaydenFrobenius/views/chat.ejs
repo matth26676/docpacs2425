@@ -98,48 +98,27 @@
         const msgTemplate = `<%- include('message') %>`;
         const userTemplate = `<%- include('userlisting') %>`;
 
-        socket.addEventListener('open', () => {
-            console.log('Connected to the server');
-            let msg = {
-                type: 'join',
-                data: {name: localName}
-            }
-            socket.send(JSON.stringify(msg));
-        });
+        socket.onopen = function(){
+            socket.send(JSON.stringify({name: localName}));
+        }
 
-        socket.addEventListener('message', (event) => {
-            let msg = JSON.parse(String(event.data));
-            let data = msg.data
+        socket.onmessage = function(message){
+            let msg = JSON.parse(message.data)
 
-            switch (msg.type) {
-                case 'message':
-                    addNewMessage(data.name, data.content);
-                    console.log(`${data.name} sent "${data.content}"`);
-                    break;
-                case 'join':
-                    addUser(data.name);
-                    console.log(`${data.name} joined`);
-                    break;
-                case 'leave':
-                    removeUser(data.name);
-                    console.log(`${data.name} left`);
-                    break;
+            if(msg.hasOwnProperty('list')){
+                updateUserList(msg.list);
             }
-        });
+            
+            if(msg.hasOwnProperty('text')){
+                addNewMessage(msg.name, msg.text);
+            }
+
+        }
 
         sendBtn.addEventListener('click', (event) => {
-            let msg = {
-                name: localName,
-                content: messageBox.value
-            }
-
-            let data = {
-                type: 'message',
-                data: msg
-            }
-
-            socket.send(JSON.stringify(data));
-            messageBox.value = '';
+            let content = messageBox.value;
+            messageBox.value = "";
+            socket.send(JSON.stringify({name: localName, text: content}));
         });
 
         function addNewMessage(name, content){
@@ -147,14 +126,14 @@
             messagesContainer.innerHTML += msgHtml;
         }
 
-        function addUser(name){
-            const userHtml = userTemplate.replace('NAME', name);
-            userList.innerHTML += userHtml
-        }
+        function updateUserList(list){
+            userList.innerHTML = "";
+            for(user of list){
+                
+                const userHtml = userTemplate.replace('NAME', user.name);
+                userList.innerHTML += userHtml
 
-        function removeUser(name){
-            const userHtml = userTemplate.replace('NAME', name);
-            userList.innerHTML = userList.innerHTML.replace(userHtml, '');
+            }
         }
 
     </script>

@@ -15,93 +15,46 @@ let messages = [];
 
 wss.on('connection', (socket) => {
     console.log('connection');
-    socket.name = 'hi';
 
-    
-    for (let [client, name] of clients) {
-        if (client.readyState === WebSocket.OPEN) {
-            let data = {
-                type: 'join',
-                data: {name: name}
-            };
-            socket.send(JSON.stringify(data));
-        }
-    }
 
-    messages.forEach(msg => {
-        let data = {
-            type: 'message',
-            data: msg
-        };
-        socket.send(JSON.stringify(data));
-    });
 
     socket.on('message', (message) => {
-        let msg = JSON.parse(message);
-        let data = msg.data
-
-        console.log(msg);
+        let msg = JSON.parse(String(message));
         
-        switch (msg.type){
-            case 'message':
-                messageSendHandler(socket, data.name, data.content);
-                break;
-            case 'join':
-                joinHandler(socket, data.name);
-                break;
+        if(msg.hasOwnProperty('text')){
+            broadcast(wss, msg);
+        }
+
+        if(msg.hasOwnProperty('name')){
+            socket.name = msg.name;
+            broadcast(wss, userList(wss));
         }
 
     });
 
     socket.on('close', () => {
 
-        leaveHandler(socket, clients.get(socket));
+        broadcast(wss, userList(wss));
 
     });
 });
 
-function messageSendHandler(socket, name, content) {
-
-    let newMsg = {
-        type: 'message',
-        data: {name: name, content: content}
-    }
-
-    messages.push(newMsg.data);
-    sendToAllClients(newMsg);
+function broadcast(wss, message){
+    console.log(message)
+    wss.clients.forEach((client) => {
+        client.send(JSON.stringify(message));
+    });
 }
 
-function joinHandler(socket, name) {
-
-    clients.set(socket, name);
-
-    let newMsg = {
-        type: 'join',
-        data: {name: name}
-    }
-
-    sendToAllClients(newMsg);
-}
-
-function leaveHandler(socket, name) {
-
-    clients.delete(socket);
-
-    let newMsg = {
-        type: 'leave',
-        data: {name: name}
-    }
-
-    sendToAllClients(newMsg);
-}
-
-function sendToAllClients(data){
-
-    for (let [client, name] of clients) {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(data));
+function userList(wss){
+    let list = [];
+    wss.clients.forEach((client, index) => {
+        if(client.hasOwnProperty('name')){
+            list.push(client);
         }
-    }
+    });
+
+    return {list: list};
 }
 
 app.get('/', (req, res) => {
