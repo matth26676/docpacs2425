@@ -1,49 +1,78 @@
-const express = require('express')
-const app = express()
-const PORT = 3000;
-const sqlite3 = require('sqlite3');
+const express = require('express');
+const app = express();
 
-const http = require('http').Server(app);
-const { WebSocketServer } = require('ws')
-const wss = new WebSocketServer({ port: 443 })
+//WebSocket
+const { WebSocketServer } = require('ws');
+const http = require('http');
+const { name } = require('ejs');
+const { title } = require('process');
+const wss = new WebSocketServer({ port: 443 });
+
+const PORT = 3000;
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-app.use(express.static('public'));
+//WebSocket connection
+wss.on('connection', (ws) => {
+    console.log(`New usser connected.`);
 
-wss.on('connection', ws => {
-    console.log('New client connected!');
-    ws.send('connection established');
-    ws.on('close', () => console.log('Client has disconnected!'));
-    ws.on('message', data => {
-        sockserver.clients.forEach(client => {
-            console.log(`distributing message: ${data}`);
-            client.send(`${data}`);
-        });
+    ws.on('message', (message) => {
+        message = message.toString('utf8');
+        console.log(`WE GOT : ${message}`);
+        if (message.text) {
+            broadcast(wss, JSON.stringify({ user: ws.name, text: message.text }));
+        };
     });
-    ws.onerror = function () {
-        console.log('websocket error')
-    };
 });
 
-function usserHere(req, res, next) {
+function broadcast(wss, message) {
+    wss.clients.forEach((client) => {
+        client.send(message);
+    });
+}
+
+function userList() {
+    let users = [];
+    for (let client of wss.clients) {
+        if (client.name) {
+            users.push(client.name);
+        };
+    };
+    return { list: users };
+};
+
+function nameCheck (req, res, next) {
     let name = req.query.name;
+    //console.log(name);
     if (name) {
-        console.log('all good');
         next();
     } else {
-        console.log('Redirecting');
         res.redirect('/');
     }
 }
 
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+
+//App gets
 app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/chat', usserHere, (req, res) => {
-    res.render('chat');
+app.get('/chat', nameCheck, (req, res) => {
+    let name = req.query.name;
+    res.render('chat', {title: 'Chat', name: name});
 });
 
-http.listen(PORT, () => { console.log(`Server started on http://localhost:3000`); });
+//App posts
+
+const server = http.createServer(app);
+
+//Start server
+server.listen(PORT, function() {
+    console.log(`Server is running on port ${PORT}`);
+});
