@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 700px;
+            overflow-y: scroll;
+        }
+        form {
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        //Lets make this websocket object
+        let ws = new WebSocket("ws://localhost:443");
+
+        //When a message is received do this
+        ws.onmessage = (message) => {
+            message = JSON.parse(message);
+            if (message) {
+                console.log(`${message}`);
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <div id="chat">
+
+    </div>
+    <form id="chatForm">
+        <input type="text" name="messageBox" id="mess" placeholder="Type your message here" required>
+        <input type="submit" value="Send">
+    </form>
+</body>
+
+</html>
