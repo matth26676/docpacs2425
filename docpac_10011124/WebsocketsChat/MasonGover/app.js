@@ -3,12 +3,12 @@ const ws = require("ws");
 
 const app = express();
 const http = require("http").Server(app);
-const wss = new WebSocket.Server({ server: http });
+const wss = new ws.WebSocketServer({ server: http });
 app.set("view engine", "ejs");
 
 function broadcast(wss, message) {
     for (const client of wss.clients) {
-        ws.send(message);
+        client.send(message);
     }
 }
 
@@ -17,9 +17,11 @@ function userList(wss) {
     for (const client of wss.clients) {
         const name = client.name;
         if (name) {
-            users.append(name);
+            users.push(name);
         }
     }
+    
+    return users;
 }
 
 app.get("/", (req, res) => {
@@ -35,8 +37,28 @@ app.get("/chat", (req, res) => {
     res.render("chat", { username: name });
 });
 
-wss.on("connection", () => {
+wss.on("connection", (ws) => {
+    // Handle the names of people joining and their messages
+    ws.on("message", (message) => {
+        message = JSON.parse(message);
+        if (message.name) {
+            ws.name = message.name;
+            broadcast(wss, JSON.stringify({
+                names: userList(wss)
+            }));
+        }
 
+        if (message.text) {
+            broadcast(wss, JSON.stringify({ message: message.text }));
+        }
+    });
+
+    // When a websocket closes, remove the person's name from the list
+    ws.on("close", () => {
+        // Get the new user list without the person who left and send it to every client
+        let users = userList(wss);
+        broadcast(wss, JSON.stringify({ names: users }));
+    });
 });
 
 http.listen(3000, () => {

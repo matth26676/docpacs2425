@@ -22,11 +22,12 @@
         .messagebox {
             position: absolute;
             width: 90%;
-            height: 10%;
+            height: 50px;
             bottom: 0;
         }
 
         .user-list {
+            display: block;
             width: 10%;
         }
 
@@ -40,9 +41,9 @@
 </head>
 <body>
     <div class="chatbox">
-        <div class="messagebox">
+        <input class="messagebox">
 
-        </div>
+        </input>
     </div>
 
     <div class="user-list">
@@ -53,8 +54,31 @@
         </li>
     </div>
     <script>
-        const localName = "<%= username %>";
-        console.log(localName);
+        const name = "<%= username %>";
+        const ws = new WebSocket("ws://localhost:3000");
+        
+        ws.onopen = () => {
+            // Send the name of the user to the server
+            ws.send(JSON.stringify({
+                name
+            }));
+
+            ws.onmessage = (message) => {
+                const data = JSON.parse(message.data);
+                const names = data.names;
+                const message = data.text;
+
+                // Handle users
+                if (names) {
+                    console.log(names);
+                }
+
+                // Handle messages
+                if (message) {
+                    console.log(message);
+                }
+            }
+        };
     </script>
 </body>
 </html>

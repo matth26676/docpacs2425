@@ -6,9 +6,11 @@
     <title>Homepage</title>
 </head>
 <body>
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
-    <br>
-    <button type="submit" onclick="location.href=`/chat?name=${document.getElementById('username').value}`">Submit</button>
+    <form action="/chat" method="get">
+        <label for="name" name="name">Username:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
