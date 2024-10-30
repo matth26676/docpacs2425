@@ -8,6 +8,7 @@ const AUTH_URL = 'http://172.16.3.100:420/oauth'; // ... or the address to the i
 const THIS_URL = 'http://localhost:3000/login'; // ... or whatever the address to your application is
 
 app.set('view engine', 'ejs');
+app.use(express.urlencoded({extended: true}));
 
 let db = new sqlite3.Database('data/formbarData.db', (err) => {
     if (err) {
@@ -53,7 +54,7 @@ app.get('/login', (req, res) => {
         });
 
    } else {
-        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}/login`);
+        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
    };
 });
 
@@ -67,13 +68,22 @@ app.get('/profile', isAuthenticated, (req, res) => {
 });
 
 app.post('/profile', (req, res) => {
-    let fb_id = req.session.token.id;
-    let checked = (req.body.checkbox === 'checked');
-    db.run("UPDATE users SET profile_checked = ? WHERE fb_id = ?;", [String(checked), fb_id], (err) => {
-        if (err){
-         res.render('error'); return; }
-        res.redirect('/profile');
-    });
+    console.log(req.body);
+    
+    if (req.body.profile_checked) {
+        db.run(`UPDATE users SET profile_checked = 1 WHERE fb_name = ?`, [req.session.user], (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+    } else {
+        db.run(`UPDATE users SET profile_checked = 0 WHERE fb_name = ?`, [req.session.user], (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
+    res.redirect('/profile')
 });
 
 app.listen(3000, (err) => {
