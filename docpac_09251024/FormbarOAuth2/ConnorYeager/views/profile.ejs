@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your profile</title>
+</head>
+<body>
+    <form action="/profile" method="POST">
+        <label for="checkbox">THE checkbox: </label>
+        <input type="checkbox" name="checkbox" value="checked" <%= (user.profile_checked === 'true') ? 'checked' : '' %>>
+        <br><br>
+        <button type="submit">Checked</button>
+    </form>
+</body>
+</html>

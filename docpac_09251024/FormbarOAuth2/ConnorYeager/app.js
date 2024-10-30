@@ -29,32 +29,51 @@ app.use(session({
 };
   
 
-app.get('/', isAuthenticated, (req, res) => {
-    try {
-         res.render('index.ejs', {user : req.session.user})
-    }
-    catch (error) {
-         res.send(error.message)
-    }
+app.get('/', (req, res) => {
+     res.render('index');
 });
 
 app.get('/login', (req, res) => {
+    console.log(req.query.token);
     if (req.query.token) {
-         let tokenData = jwt.decode(req.query.token);
-         req.session.token = tokenData;
-         req.session.user = tokenData.username;
-         res.redirect('/');
-    } else {
-         res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
-    };
+        let tokenData = jwt.decode(req.query.token);
+        req.session.token = tokenData;
+        req.session.user = tokenData.username;
+
+        db.get("SELECT * FROM users WHERE fb_id = ?", [tokenData.id], (err, row) => {
+            if (err){ console.log(err); res.render('error'); return; }
+            if(!row){
+                db.run("INSERT INTO users (fb_id, fb_name, profile_checked) VALUES(?,?,?)", [tokenData.id, tokenData.username, 0], (err) => {
+                    if(err) res.render('error');
+                    res.redirect('/');
+                });
+            } else {
+                res.redirect('/');
+            }
+        });
+
+   } else {
+        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}/login`);
+   };
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
-
+    db.get("SELECT * FROM users WHERE fb_id = ?", [req.session.token.id], (err, user) => {
+        if (err){
+         res.render('error'); return; 
+        }
+        res.render('profile', {user: user});
+    });
 });
 
 app.post('/profile', (req, res) => {
-
+    let fb_id = req.session.token.id;
+    let checked = (req.body.checkbox === 'checked');
+    db.run("UPDATE users SET profile_checked = ? WHERE fb_id = ?;", [String(checked), fb_id], (err) => {
+        if (err){
+         res.render('error'); return; }
+        res.redirect('/profile');
+    });
 });
 
 app.listen(3000, (err) => {
