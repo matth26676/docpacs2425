@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        var localName = '<%- name %>'
+    </script>
+    <style>
+.userList {
+  width: 200px;
+  height: 150px;
+  overflow-y: auto;
+  float: right;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <div id="userList">User List
+
+    </div>
+    <div id="messageList">Message List</div>
+    <div> Type Here
+        <input action="/chat" type="text"></input>
+    </div>
+</body>
+
+</html>
