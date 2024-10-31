@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        // create a new websocket object
+        var ws = new WebSocket('ws://localhost:3000');
+        ws.onmessage = (message) => {
+            document.body.innerHTML += message.data;
+        }
+    </script>
+</head>
+
+<body>
+    <form action='/chat?name=1&b=2'>
+        <input type="text" name="name" placeholder="Enter your name">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
