@@ -1,0 +1,11 @@
+{
+  "name": "formbaroauth2",
+  "version": "1.0.0",
+  "description": "A application that connects to formbar.js to use as it's log in",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew E Brown",
+  "license": "ISC"
+}
