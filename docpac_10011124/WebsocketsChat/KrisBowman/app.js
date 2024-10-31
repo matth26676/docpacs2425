@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true })); //encode url
 HTTP Server
 ---------*/
 
-const http = require('http').Server(app); //import http, create http server, and associate it with express
+const http = require('http').Server(app); //import http, create http server and associate it with express
 
 const PORT = process.env.PORT || 1000; //change port number from default
 http.listen(PORT, console.log(`Server started on port ${PORT}`)); //start http server, listen on given port
@@ -22,30 +22,43 @@ WebSocket Server
 --------------*/
 
 const WebSocket = require("ws"); //import WebSocket
-const wss = new WebSocket.Server({server: http}); //create new WebSocket server, attach it to http server
+const wss = new WebSocket.Server({ server: http }); //create new WebSocket server, attach it to http server
 
-wss.client.name = document.getElementById("name").innerHTML
-ws.send(JSON.stringify({name: ws.name}));
+function broadcast(wss, data) {
+    const message = JSON.stringify(data);
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+        };
+    });
+};
+
+function userList(wss) {
+    let users = [];
+    wss.clients.forEach(client => {
+        if (client.name) {
+            users.push(client.name);
+        };
+    });
+    return { list: users };
+};
 
 wss.on("connection", (ws => { //on connection to WebSocket server
-    ws.on("close", () => console.log(`${ws.name} has disconnected.`));
+    ws.on("close", () => console.log(`${ws.name} has disconnected.`)); //user disconnects
+    broadcast(wss, userList(wss)); //reload user list
 
-    function broadcast(wss, message) => {
-        let message = document.getElementById("message").innerHTML
-        ws.send(JSON.stringify({message: ws.message}));
-    };
+    ws.on("message", (data) => {
+        const parsedMsg = JSON.parse(data); //parse incoming message
 
-    function userList(wss) => {
-        let userList = [];
-        array.forEach(wss.client => {
-            if (client.name) {
-                userList.push(client.name)
-            }
-            return users.list = userList
-        });
-    };
+        if (parsedMsg.name) {
+            ws.name = parsedMsg.name;
+            broadcast(wss, userList(wss));
+        };
+        if (parsedMsg.text) {
+            broadcast(wss, { user: ws.name, text: parsedMsg.text });
+        };
+    });
 }));
-
 
 /*---------------
 GET/POST Requests
@@ -56,15 +69,11 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-app.post("/index", (req, res) => {
-
-});
-
 //handle chat
 app.get("/chat", (req, res) => {
-    try {
-        res.render("chat", { user: req.query.user });
-    } catch (error) {
-        res.send(error.message);
-    }
+    const name = req.query.name;
+    if (!name) {
+        return res.redirect("/");
+    };
+    res.render("chat", { name });
 });
