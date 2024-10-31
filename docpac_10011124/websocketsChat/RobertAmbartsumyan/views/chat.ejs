@@ -215,9 +215,12 @@
     function addMessage(name, messages) {
         console.log(name, messages);
         let div = document.createElement('div');
+        //Add class to div
         div.classList.add('message');
+        //Add content to div
         div.innerHTML = `<span>${name}:</span> ${messages}`;
         chat.appendChild(div);
+        //Scroll to the bottom
         chat.scrollTop = chat.scrollHeight;
     };
 </script>

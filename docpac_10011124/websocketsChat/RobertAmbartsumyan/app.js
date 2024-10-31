@@ -37,8 +37,9 @@ wss.on('connection', (ws) => {
         };
     });
 
-    // When user leaves
+    //When user leaves
     ws.on('close', () => {
+        //This is the user that left
         broadcast(wss, { list: userList(wss).list });
     });
 });
