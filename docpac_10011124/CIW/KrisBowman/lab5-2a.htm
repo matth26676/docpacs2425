@@ -27,9 +27,9 @@ function checkGrade(form) {
   the attempts variable is greater than 2.
 *************************************************/
   
-  while (isNaN(myGrade) && ) {
+  while (isNaN(myGrade) && attempts <= 2) {
     myGrade = parseFloat(prompt("Please enter a numerical grade value: ", ""));
-	
+    attempts += 1
   }
   
   if(isNaN(myGrade) && attempts == 3) return;
