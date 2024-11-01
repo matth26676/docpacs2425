@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 
-const AUTH_URL = 'http://172.16.3.212:420/oauth'; // address to the instance of fbjs to connect to
+const AUTH_URL = 'http://172.16.3.100:420/oauth'; // address to the instance of fbjs to connect to
 
 const THIS_URL = 'http://localhost:3000/login'; // the address to your application is
 

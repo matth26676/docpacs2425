@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.urlencoded({extended: true}))
 
-const FBJS_URL = 'http://172.16.3.212:420/oauth'; // ... or the address to the instance of fbjs you wish to connect to
+const FBJS_URL = 'http://172.16.3.100:420/oauth'; // ... or the address to the instance of fbjs you wish to connect to
 const THIS_URL = 'http://localhost:3000/login'; // ... or whatever the address to your application is
 
 app.use(session({
