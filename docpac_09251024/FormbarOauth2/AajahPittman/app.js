@@ -1,70 +1,105 @@
-const sqlite3 = require('sqlite3');
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
+const express = require('express');
+const sqlite3 = require('sqlite3');
 
+const app = express();
+
+//sets view engine to ejs
+app.set('view engine', 'ejs');
+
+app.use(express.urlencoded({ extended: true }));
+
+//defines constants 
 const AUTH_URL = 'http://172.16.3.212:420/oauth';
 const THIS_URL = 'http://localhost:3000/login';
 
-app.get('/', (req, res) => {
-    res.render('index');
-});
-
-app.get('/login', (req, res) => {
-    res.render('login');
-});
-
-app.get('/profile', (req, res) => {
-    res.render('profile');
-});
-
-
+//configures middleware
 app.use(session({
     secret: 'make up a secret string here but never publish it!',
     resave: false,
     saveUninitialized: false
 }))
 
+const db = new sqlite3.Database('data/database.db', (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('It started!');
+    }
+});
+
+//miidleware checks if user is authenticated
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
     else res.redirect('/login')
 };
 
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
+    res.render('index');
+})
+
+//displays user profiles
+app.get('/profile', isAuthenticated, (req, res) => {
     try {
-        res.render('index.ejs', { user: req.session.user })
+        res.render('profile', { user: req.session.user })
     }
     catch (error) {
         res.send(error.message)
     }
 });
 
+//route for login
 app.get('/login', (req, res) => {
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
+        console.log(tokenData);
+        //stores user info
         req.session.user = tokenData.username;
+        req.session.userid = tokenData.id;
 
-        db.get('SELECT * FROM users WHERE fb_id=?;', tokenData.id, (err, row) => {
+        //checks for user in database 
+        db.get('SELECT * FROM users WHERE fb_name=? AND fb_id=?;', [req.session.user, tokenData.id], (err, row) => {
             if (err) {
-                console.err(err);
-                res.send("There's an error!");
-
+                console.error(err);
+                res.send("There was an error:\n" + err);
             } else if (!row) {
-                db.run('INSERT INTO users (fb_name, fb_id, profile_checked) VALUES (?, ?, ?);', [tokenData.username, tokenData.Id, 0], (err) => {
+                //puts new user in database
+                db.run('INSERT INTO users(fb_name, fb_id) VALUES(?, ?)', [req.session.user, tokenData.id], (err) => {
                     if (err) {
-                        console.err("Database error: " + err);
-                        res.send("an error occured");
-                    } else {
-                        res.redirect("/profile");
-                    };
-                };
-            } red.redirect('/profile');
-        }
+                        console.error(err);
+                        res.send("There was an error:\n" + err);
+                    }
+                });
+                res.redirect('/profile');
+            } else {
+                res.redirect('/profile');
+            }
+        })
 
-         res.redirect('/'));
-
+        //goes back to home page after logging in 
+    } else if(req.session.user) {
+        res.redirect('/profile');
     } else {
         res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
     };
+});
+
+app.post("/profile", (req, res) => {
+ 
+    db.run('UPDATE users SET profile_checked = ? WHERE fb_id = ? AND fb_name = ?', [req.body.checkbox, req.session.userid, req.session.user], (err) => {
+        if (err) {
+            console.error(err)
+        } else {
+            res.redirect("/profile")
+        }
+    } )
+})
+
+app.listen(3000, (err) => {
+    if (err) {
+        console.log(err)
+    }
+    console.log(`Server started on port 3000`);
 });
