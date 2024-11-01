@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dora Moves Around</title>
+</head>
+
+<body>
+    <!-- canvas element w border -->
+    <canvas id="canvas" width="800" height="600" style="border:1px solid #5f0135;"></canvas>
+
+    <script>
+        // avatar object
+        var avatar = {
+            x: 0,  // X position of avatar
+            y: 0,  
+            w: 50, 
+            h: 50, 
+            img: new Image() 
+        };
+
+        // set img source
+        avatar.img.src = "dora.png";
+
+        // get canvas and content 
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+
+        function update() {
+            // clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // draw avatar 
+            ctx.drawImage(avatar.img, avatar.x, avatar.y, avatar.w, avatar.h);
+
+            // keeps running
+            requestAnimationFrame(update);
+        }
+
+        update();
+
+        //  move avatar w arrow keys
+        function move(event) {
+            if (event.key == "ArrowUp") {
+                avatar.y -= 5; 
+            }
+            else if (event.key == "ArrowDown") {
+                avatar.y += 5; 
+            }
+            else if (event.key == "ArrowRight") {
+                avatar.x += 5; 
+            }
+            else if (event.key == "ArrowLeft") {
+                avatar.x -= 5; 
+            }
+        }
+
+        document.addEventListener("keydown", move);
+        
+        // avatar stays in canvas 
+        function keepAvatarInBounds() {
+            if (avatar.x < 0) {
+                avatar.x = 0;
+            }
+            if (avatar.y < 0) {
+                avatar.y = 0; 
+            }
+            if (avatar.x + avatar.w > canvas.width) {
+                avatar.x = canvas.width - avatar.w; 
+            }
+            if (avatar.y + avatar.h > canvas.height) {
+                avatar.y = canvas.height - avatar.h;  
+            }
+        }
+ 
+        // keep avatar in boundaries 
+        function update() {
+            keepAvatarInBounds();
+
+            // clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // draw the avatar 
+            ctx.drawImage(avatar.img, avatar.x, avatar.y, avatar.w, avatar.h);
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
+
+
