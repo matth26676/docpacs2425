@@ -20,7 +20,7 @@ const db = new sqlite3.Database('data/database.db', (err) => {
     }
 });
 
-const FBJS_URL = 'http://172.16.3.212:420'
+const FBJS_URL = 'http://172.16.3.100:420'
 const THIS_URL = 'http://localhost:3000/login'
 
 function isAuthenticated(req, res, next) {
