@@ -15,7 +15,7 @@ app.set('views', __dirname + '/views');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const FBJS_URL = 'http://172.16.3.212:420'
+const FBJS_URL = 'http://172.16.3.100:420'
 const THIS_URL = 'http://localhost:3000/login'
 
 //This is the secret key for the session
