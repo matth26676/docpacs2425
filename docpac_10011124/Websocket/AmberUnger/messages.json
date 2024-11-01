@@ -1,0 +1,100 @@
+{
+  "messages": [
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "tell me why",
+      "timestamp": "2024-10-31T14:11:30.632Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "what",
+      "timestamp": "2024-10-31T14:11:37.679Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "tell you what",
+      "timestamp": "2024-10-31T14:12:49.792Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "why is it not running the other people on other computers can be ran",
+      "timestamp": "2024-10-31T14:13:28.376Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "idk",
+      "timestamp": "2024-10-31T14:14:14.977Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "why is it only working on firefox",
+      "timestamp": "2024-10-31T14:14:28.201Z"
+    },
+    {
+      "type": "message",
+      "username": "tuna",
+      "data": "hi people",
+      "timestamp": "2024-10-31T14:15:19.216Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "oh look a tuna fish",
+      "timestamp": "2024-10-31T14:15:39.481Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "i was getting hungry",
+      "timestamp": "2024-10-31T14:15:49.024Z"
+    },
+    {
+      "type": "message",
+      "username": "tuna",
+      "data": "goodbye people",
+      "timestamp": "2024-10-31T14:15:58.376Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "oh they left",
+      "timestamp": "2024-10-31T14:16:13.008Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "that was going to be my lunch",
+      "timestamp": "2024-10-31T14:16:24.146Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "womp womp",
+      "timestamp": "2024-10-31T14:16:33.730Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "lol",
+      "timestamp": "2024-10-31T14:29:17.255Z"
+    },
+    {
+      "type": "message",
+      "username": "Mr.nugget",
+      "data": "whats so funny?",
+      "timestamp": "2024-10-31T14:29:35.885Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "bob forgot his password",
+      "timestamp": "2024-10-31T14:29:50.078Z"
+    }
+  ]
+}
