@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p class="error"><%= (locals?.error) ? error : '' %></p>
+    <form action="/chat" method="get" id="setNameForm">
+        <input type="text" name="name" placeholder="Name" id="nameBox">
+        <button type="submit">go</button>
+    </form>
+
+    <script>
+        let form = document.getElementById('setNameForm');
+        let nameBox = document.getElementById('nameBox');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if(nameBox.value !== ''){
+                form.submit();
+            }
+            
+        });
+    </script>
+</body>
+</html>
