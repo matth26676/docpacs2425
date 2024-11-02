@@ -7,7 +7,7 @@ const { profile } = require('console');
 
 const app = express();
 const PORT = 3000;
-const FBJS_URL = 'http://172.16.3.212:420'
+const FBJS_URL = 'http://172.16.3.100:420'
 const THIS_URL = 'http://localhost:3000/login'
 const API_KEY = '6116102382185455b569e0a2e21603115a5ff12b9cec5f5967d249e4e56fb8f85f0890997f3ab7429c34a67e1a0b2f69e5362fe95a7054953f71bef746faad14'
 

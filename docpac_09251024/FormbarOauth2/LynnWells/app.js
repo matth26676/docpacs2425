@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const sqlite3 = require('sqlite3');
 const session = require('express-session');
-const FBJS_URL = 'http://172.16.3.212:420';
+const FBJS_URL = 'http://172.16.3.100:420';
 const THIS_URL = 'http://localhost:3000/login';
 const API_KEY = 'dab43ffb0ad71caa01a8c758bddb8c1e9b9682f6a987b9c2a9040641c415cb92c62bb18a7769e8509cb823f1921463122ad9851c5ff313dc24d929892c86f86a';
 
