@@ -8,7 +8,7 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
-const AUTH_URL = "http://172.16.3.212:420/oauth";
+const AUTH_URL = "http://172.16.3.100:420/oauth";
 const THIS_URL = "http://localhost:3000/login";
 
 app.use(session({

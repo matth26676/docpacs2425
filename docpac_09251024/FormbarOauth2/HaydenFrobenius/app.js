@@ -5,7 +5,7 @@ const session = require('express-session');
 const sql = require('sqlite3').verbose();
 
 const PORT = 3000;
-const FB_URL = 'http://172.16.3.212:420';
+const FB_URL = 'http://172.16.3.100:420';
 const AUTH_URL = FB_URL + '/oauth';
 const THIS_URL = `http://localhost:3000`;
 
