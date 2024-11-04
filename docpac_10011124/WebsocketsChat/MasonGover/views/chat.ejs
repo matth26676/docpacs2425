@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+        }
+
+        .chatbox {
+            flex: 1;
+            background-color: white;
+        }
+
+        .messagebox {
+            position: absolute;
+            width: 90%;
+            height: 50px;
+            bottom: 0;
+        }
+
+        .user-list {
+            display: block;
+            width: 10%;
+        }
+
+        .user-list li {
+            display: inline-block;
+            list-style-type: none;
+            padding: 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <input class="messagebox">
+
+        </input>
+    </div>
+
+    <div class="user-list">
+        <li>
+            <a href="#">User 1</a>
+            <a href="#">User 1</a>
+            <a href="#">User 1</a>
+        </li>
+    </div>
+    <script>
+        const name = "<%= username %>";
+        const ws = new WebSocket("ws://localhost:3000");
+        
+        ws.onopen = () => {
+            // Send the name of the user to the server
+            ws.send(JSON.stringify({
+                name
+            }));
+
+            ws.onmessage = (message) => {
+                const data = JSON.parse(message.data);
+                const names = data.names;
+                const message = data.text;
+
+                // Handle users
+                if (names) {
+                    console.log(names);
+                }
+
+                // Handle messages
+                if (message) {
+                    console.log(message);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
