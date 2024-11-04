@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Webfiends</title>
+</head>
+<body>
+    <h1>Webfiends</h1>
+    <button id='newGame'>New Game</button>
+    <script>
+        // HTML Elements
+        const newGame = document.getElementById('newGame');
+
+        // Websocket and ClientID variables
+            // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
+        let ws = new WebSocket('ws://localhost:9090');
+        let clientID = null;
+
+        // HTML Events
+        newGame.addEventListener('click', (e) => {
+            // Create the payload for making a new game
+            const payload = {
+                'method': 'create',
+                'clientID': clientID
+            };
+            // Stringify and send the payload
+            ws.send(JSON.stringify(payload));
+        });
+
+        // On recieving a websocket message...
+        ws.onmessage = message => {
+            const response = JSON.parse(message.data);
+            // If the method is connect, assign the client's ID to the connection's client ID and relay if it's successful
+            if (response.method == 'connect') {
+                clientID = response.clientID;
+                console.log(`Client ID Set: ${clientID}`);
+            };
+            // If the method is create...
+        }
+    </script>
+</body>
+</html>
