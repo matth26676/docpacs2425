@@ -25,7 +25,11 @@ function checkGrade(form) {
   enters a number.
 ***********************************************/
 
-
+  while (isNaN(myGrade)) {
+    if (myGrade != Number) {
+      myGrade = parseInt(prompt("Please enter a numerical grade value"))
+    }
+  }
 
 
 

@@ -18,9 +18,9 @@
     while(loopBoolean) {
 	
       myvalue = prompt("Enter data", myvalue);
-	  
-	  
-
+          if (myvalue == null) {
+            break
+          }
           if (myvalue) {
             loopBoolean = false;
             alert (myvalue)

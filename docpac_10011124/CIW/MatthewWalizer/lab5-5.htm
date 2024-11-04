@@ -21,8 +21,9 @@
   Hint: Use the modulus operator (%) and the continue statement
   ********************************************************************/
   for (var i = 1; i <= 100; i++) {
-
-    document.write(i + "<br />");
+    if (i % 7 == 0) {
+      document.write(i + "<br />");
+    } 
   }
 
 //-->

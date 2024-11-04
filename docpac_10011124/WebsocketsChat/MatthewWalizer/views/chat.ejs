@@ -1,65 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <style>
-        #mainpage {
-            position: absolute;
-            background-color: deepskyblue;
-            top: 0%;
-            left: 0%;
-            width: 100%;
-            height: 100%;
+  <script>
+    const ws = new WebSocket('ws://localhost:443/');
+    var name = '<%-username%>'
+    ws.onopen = (open) => {
+      ws.send(JSON.stringify({name: name}))
+    }
+    ws.onmessage = (message) => {
+      var message = JSON.parse(message.data)
+      if (message.list) {
+        document.getElementById('userlist').innerHTML = "Users Online: " + "<br>"
+        for (user in message.list) {
+          document.getElementById('userlist').innerHTML +=
+          message.list[user] + "<br>";
         }
-
-        #userpage {
-            position: absolute;
-            left: 5%;
-            top: 10%;
-            width: 20%;
-            height: 80%;
-            background-color: black;
+      } else {
+        if (message.text) {
+          document.getElementById('messagelog').innerHTML +=
+          'Message from ' + message.name + ': ' + message.text + "<br>";
         }
+      }
+    }; 
+    ws.addEventListener("open", () => {
+      console.log("We are connected");
+    });
+    function sendMessage(event) {
+      var inputMessage = document.getElementById('message')
+      ws.send(JSON.stringify({ name: name, text:inputMessage.value }))
+    }
+  </script>
 
-        #messagepage {
-            position: absolute;
-            left: 30%;
-            top: 10%;
-            width: 65%;
-            height: 80%;
-            background-color: black;
-        }
+  <style>
+    #mainpage {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: aqua;
+    }
 
-        #messagebox {
-            position: relative;
-        }
+    #subpage {
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      height: 92%;
+      width: 96%;
+      border: 5px solid aliceblue;
+      border-radius: 10%;
+      background-color: cadetblue;
+    }
 
-        #messagefield {
-            position: relative;
-            bottom: 0%;
-            left: 0%;
-            background-color: dimgrey;
-        }
+    #message {
+      width: 60%;
+      height: 100%;
+    }
 
-    </style>
+    #messagebutton {
+      width: 50%;
+      height: 30%;
+    }
+
+    #messagebutton:hover {
+      cursor: pointer;
+    }
+
+    #sendmessage {
+      position: absolute;
+      top: 10%;
+      left: 36%;
+      width: 20%;
+      height: 10%;
+      align-content: center;
+      text-align: center;
+    }
+
+    #messagelog {
+      position: absolute;
+      top: 10%;
+      left: 58%;
+      width: 40%;
+      height: 80%;
+      border: 1px solid black;
+      overflow-y: scroll;
+      overflow-x: scroll;
+      background-color: aqua;
+    }
+
+    #userlist {
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      width: 30%;
+      height: 80%;
+      background-color: aquamarine;
+      border: 1px solid black;
+      overflow-y: scroll;
+    }
+  </style>
 </head>
+
 <body>
-    <div id="mainpage">
-        <div id="userpage">
-
-        </div>
-        <div id="messagepage">
-            <div id="messagebox">
-
-            </div>
-            <form action="" method="" id="messagefield">
-                <input type="text" name="message">
-                <input type="submit">
-            </form>
-        </div>
+  <div id="mainpage">
+    <div id="subpage">
+    <div id="sendmessage">
+      <label for="message">Enter Message:</label>
+      <input type="text" id="message" name="message" required><br><br>
+      <button id="messagebutton" onclick="sendMessage()">Send Message</button>
     </div>
+    <div id="messagelog"></div>
+    <div id="userlist"></div>
+    </div>
+  </div>
 </body>
+
+
 </html>
