@@ -37,7 +37,11 @@
                 console.log(`Client ID Set: ${clientID}`);
             };
             // If the method is create...
-        }
+            if (response.method === 'create') {
+                clientID = response.clientID;
+                console.log(`Game ID Set: ${response.game.id}`);
+            };
+        };
     </script>
 </body>
 </html>
