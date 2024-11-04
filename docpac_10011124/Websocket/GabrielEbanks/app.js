@@ -25,29 +25,42 @@ app.get('/chat', (req, res) => {
     }
 });
 
-console.log(wss);
 
-function broadcast(wss, message) {
-    for (const client of wss.clients) {
-        client.send(JSON.stringify(message));
+function broadcast(wsserver, messageToSend) {
+
+    for (const client of wsserver.clients) {
+
+        client.send(JSON.stringify(messageToSend));
     }
 }
 let usernameList = []
 
 function userList(wss) {
 
-    for ( let client of wss.client) {
-       if(client.name) {
-       usernameList.push(client.name);
-       }
-       return {list:usernameList}
-      }
+    for (let client of wss.client) {
+        if (client.name) {
+            usernameList.push(client.name);
+        }
+        return { list: usernameList }
+    }
 }
 console.log(usernameList)
 
-// addEventListener("message", (event) => {
-//     JSON.parse(message)
-//     if (message.text) {
 
-//     }
-// });
+
+wss.on('connection', ws => {
+    console.log('New client connected!')
+    ws.send(JSON.stringify({user: "server" ,message:'connection established'}))
+    ws.on('close', () => console.log('Client has disconnected!'))
+    ws.on('message', data => {
+        data= JSON.parse(data);
+        console.log(data);
+        
+        
+        
+        broadcast(wss, data)
+    })
+    ws.onerror = function () {
+        console.log('websocket error')
+    }
+})
