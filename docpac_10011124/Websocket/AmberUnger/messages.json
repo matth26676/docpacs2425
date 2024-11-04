@@ -95,6 +95,30 @@
       "username": "amber",
       "data": "bob forgot his password",
       "timestamp": "2024-10-31T14:29:50.078Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "welcome to this chat",
+      "timestamp": "2024-11-04T13:59:43.296Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "does anyone here know why my boxs wont move left",
+      "timestamp": "2024-11-04T14:00:55.021Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "no ok",
+      "timestamp": "2024-11-04T14:01:08.664Z"
+    },
+    {
+      "type": "message",
+      "username": "amber",
+      "data": "makes sense i am the onl yperdon here",
+      "timestamp": "2024-11-04T14:01:28.532Z"
     }
   ]
 }
