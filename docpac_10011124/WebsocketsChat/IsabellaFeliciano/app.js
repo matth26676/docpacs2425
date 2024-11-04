@@ -25,20 +25,6 @@ app.get('/chat', (req, res) => {
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
-// WebSocket connection
-wss.on('connection', (ws) => {
-    console.log('Client connected');
-
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
-        message = JSON.parse(message)
-        ws.send(JSON.stringify(message));
-    });
-
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
 
 function broadcast(wss, message) {
     console.log(message)
@@ -59,21 +45,22 @@ function userList(wss) {
     return { list: userList };
 }
 
+// WebSocket connection
 wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const parsedMessage = JSON.parse(message);
 
         if (parsedMessage.text) {
-            broadcast(wss, JSON.stringify(parsedMessage));
+            broadcast(wss, parsedMessage);
         }
 
         if (parsedMessage.name) {
             ws.name = parsedMessage.name;
-            broadcast(wss, JSON.stringify(userList(wss)));
+            broadcast(wss, userList(wss));
         }
     });
 
     ws.on('close', () => {
-        broadcast(wss, JSON.stringify(userList(wss)));
+        broadcast(wss, userList(wss));
     });
 });
