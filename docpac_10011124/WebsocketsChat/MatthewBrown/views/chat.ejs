@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Box</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .userList {
+            width: 150px;
+            float: left;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .mainChat {
+            margin-left: 170px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            min-height: 300px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .messageInput {
+            margin-top: 10px;
+            display: flex;
+        }
+        .messageInput input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-right: none;
+        }
+        .messageInput button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="userList" name="userList"></div>
+    <div class="mainChat" name="mainChat"></div>
+    <div class="messageInput" name="messageInput">
+        <input type="text" id="input" placeholder="Type a message..." spellcheck="true">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        var localName = '<%= localUser %>';
+        const ws = new WebSocket('ws://localhost:3000');
+        ws.onopen = () => {
+            ws.send(JSON.stringify({ name: localName }));
+        };
+        ws.onmessage = (message) => {
+            const parsedMessage = JSON.parse(message.data);
+            if (parsedMessage.list) {
+                const userListDiv = document.querySelector('div[name="userList"]');
+                userListDiv.innerHTML = '';
+                parsedMessage.list.forEach(user => {
+                    const userDiv = document.createElement('div');
+                    userDiv.textContent = user;
+                    userListDiv.appendChild(userDiv);
+                });
+            }
+            if (parsedMessage.text) {
+                const mainChatDiv = document.querySelector('div[name="mainChat"]');
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = `${parsedMessage.user}: ${parsedMessage.text}`;
+                mainChatDiv.appendChild(messageDiv);
+            }
+        };
+        function sendMessage() {
+            const input = document.getElementById('input');
+            if (input.value) {
+                ws.send(JSON.stringify({ text: input.value, name: localName }));
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
