@@ -21,8 +21,12 @@ wss.on("connection", (ws) => {
                 console.log(`${message.name} connected to the server!`);
             }
 
-            if (message.type == "movement") {
-                // @TODO: do all of this
+            if (message.type == "movementStarted") {
+                console.log(`Started on key ${message.key}`);
+            }
+
+            if (message.type == "movementEnded") {
+                console.log(`Ended on key ${message.key}`);
             }
         } catch {}; // Prevent someone from crashing the server by sending malformed data
     });
