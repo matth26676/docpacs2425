@@ -3,33 +3,34 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Webfiends</title>
+    <title>Splat2D</title>
 </head>
 <body>
-    <h1>Webfiends</h1>
+    <h1>Splat2D</h1>
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
     <div id='players'></div>
     <div id='board'></div>
     <script>
-        // HTML Elements
+        //// HTML Elements
         const newGame = document.getElementById('newGame');
         const joinGame = document.getElementById('joinGame');
         const code = document.getElementById('code');
         const players = document.getElementById('players');
         const board = document.getElementById('board');
 
-        // Websocket and ClientID variables
-            // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
+        //// Splatoon 2D Variables
+        // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
         let ws = new WebSocket('ws://localhost:9090');
         let clientID = null;
         let gameID = null;
+        let pColor = null;
 
-        // HTML Events
+        //// HTML Events
         // On clicking join game...
         joinGame.addEventListener('click', (e) => {
-            // Create the payload for joining a game
+            // Create the join payload
             if (gameID === null) {
                 gameID = code.value;
             }
@@ -38,17 +39,17 @@
                 'clientID': clientID,
                 'gameID': gameID
             };
-            // Stringify and send the payload
+            // Stringify and send the join payload
             ws.send(JSON.stringify(payload));
         });
         // On clicking new game...
         newGame.addEventListener('click', (e) => {
-            // Create the payload for making a new game
+            // Create the create payload
             const payload = {
                 'method': 'create',
                 'clientID': clientID
             };
-            // Stringify and send the payload
+            // Stringify and send the create payload
             ws.send(JSON.stringify(payload));
         });
 
@@ -80,16 +81,53 @@
                     div.style.width = '12.5rem';
                     div.style.background = c.color;
                     div.textContent = c.clientID;
-                    // Append the players div with the client's div
+                    // If the client's ID matches, the current client, their player color is the client's color
+                    if (c.clientID === clientID) pColor = c.color;
+                    // Append the client's div to the players div
                     players.appendChild(div);
                 });
                 // While the board div has elements, remove the first element
                 while (board.firstChild) board.removeChild(board.firstChild);
-
+                // Start i at 0. While i is less than the game balls, increment i by 1 and...
                 for (let i = 0; i < game.balls; i++) {
+                    // Create a button element and assign an ID and Tag
                     const box = document.createElement('button')
                     box.id = 'b'+i;
-                }
+                    box.tag = i+1;
+                    // Style the button
+                    box.textContent = i+1;
+                    box.style.width = '4.5rem';
+                    box.style.height = '4.5rem';
+                    // Add clicking functionality to the button
+                    box.addEventListener('click', (e) => {
+                        // Set the clicked box to the player color
+                        box.style.background = pColor;
+                        // Create the play payload
+                        const payload = {
+                            'method': 'play',
+                            'clientID': clientID,
+                            'gameID': gameID,
+                            'boxID': box.tag,
+                            'color': pColor
+                        }
+                        // Stringify and send the play payload
+                        ws.send(JSON.stringify(payload));
+                    });
+                    // Append the box to the board. If there are eight boxes already, break
+                    // Results in a 8 x 8 grid
+                    board.appendChild(box);
+                    if (((i + 1) % 8) === 0) board.appendChild(document.createElement('br'));
+                };
+                //If the method is update...
+                if (response.method === 'update') {
+                    // For box of game states
+                    for (const b of Object.keys(response.game.state)) {
+                        const boxID = response.game.state[b];
+                        const boxObj = document.getElementById['b'+boxID];
+                        boxObj.style.backgroundColor = color;
+                    };
+
+                };
             };
         };
     </script>

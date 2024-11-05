@@ -1,5 +1,5 @@
 // The moment I understood the weakness of my flesh, it disgusted me. I craved the strength and certainty of steel. I aspired to the purity of the blessed machine.
-// 1:21:12, https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
+// 1:38:48, https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
 
 // Set up the variables
 const { response } = require('express');
@@ -44,10 +44,10 @@ wss.on('request', (request) => {
             // Add the game ID to the games object
             games[gameID] = {
                 'id': gameID,
-                'balls': 20,
+                'boxes': 64,
                 'clients': []
             };
-            // Create the create payload for the game 
+            // Create the create payload 
             const payload = {
                 'method': 'create',
                 'game': games[gameID]
@@ -62,31 +62,53 @@ wss.on('request', (request) => {
             const clientID = result.clientID;
             const gameID = result.gameID;
             const game = games[gameID];
-            // If there are more than 4 players...
-            if (game.clients.length >= 4) {
+            // If there are more than 5 players...
+            if (game.clients.length >= 5) {
                 // Notify that the maximum amount of players has been reached
                 console.log(`Game (${gameID}) is at maximum capacity.`)
                 return;
             }
             // Set the color for the player depending on which they are
-                // 1 is Red, 2 is Green, 3 is Blue, and 4 is Yellow
-            const color = {'0': 'Red', '1': 'Green', '2': 'Blue', '3': 'Yellow'}[game.clients.length]
+            // 1 is Red, 2 is Yellow, 3 is Green, 4 is Cyan, 5 is Purple 
+            const color = {'0': '#ff0000', '1': '#ffff00', '2': '#00ff00', '3': '#00ffff', '4': '#ff00ff'}[game.clients.length]
             // Add that client to the game
             game.clients.push({
                 'clientID': clientID,
                 'color': color
-            })
-            // Create the join payload for the client
+            });
+            // If there are more than one clients, start the game
+            if (game.clients.length > 1) update();
+            // Create the join payload
             const payload = {
                 'method': 'join',
                 'game': game
-            }
+            };
 
             // For each client in the game...
             game.clients.forEach((c) => {
                 // Send a stringified payload to each client to notify that a new client has joined
                 clients[c.clientID].connection.send(JSON.stringify(payload));
             });
+        };
+        // If the method is play... 
+        if (result.method === 'play') {
+            // Set the IDs for the client and the game
+            const clientID = result.clientID;
+            const gameID = result.gameID;
+            const boxID = result.boxID;
+            // Assign the state of the game 
+            const state = games[gameID].state;
+            // If there is no state, assign an empty object to state
+            if (!state) state = {};
+            // Assigns the client's color to the box and updates the state
+            state[boxID] = result.color;
+            games[gameID] = state;
+            const game = game[gameID]
+            // Create the play payload
+            const payload = {
+                'method': 'play',
+                'game': game
+            }
         }
     });
     // Generate a new client id
@@ -102,9 +124,30 @@ wss.on('request', (request) => {
     };
     // Send the stringified payload (client connect)
     connection.send(JSON.stringify(payload));
-})
+});
 
-// Randomly create a hex string 4 characters long
+// Create a function to update the game
+const update = () => {
+    // For game of games..
+    // Loops through all the keys ( {'gameID':, gameID} )
+    for (const g of Object.keys(games)) {
+        // Set the game from the games object
+        const game = games[g];
+        // Create the update payload
+        const payload = {
+            'method': 'update',
+            'game': game
+        };
+        // For each client in games...
+        game.clients.forEach((c) => {
+            // Stringify and send the update payload
+            clients[c.clientID].connection.send(JSON.stringify(payload));
+        });
+    };
+    setTimeout(update(), 500);
+};
+
+// Create a function to randomly create a hex string 4 characters long
 const S4 = () => {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1); 
 };
