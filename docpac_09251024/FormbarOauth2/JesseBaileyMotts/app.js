@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const sqlite3 = require('sqlite3');
 const PORT = 3000;
-const AUTH_URL = 'http://172.16.3.212:420/oauth';
+const AUTH_URL = 'http://172.16.3.100:420/oauth';
 const THIS_URL = 'http://localhost:3000/login';
 
 // Sets up the view engine, url encoded, and session

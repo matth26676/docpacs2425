@@ -6,7 +6,7 @@ const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const { error, profile } = require("console");
-const AUTH_URL = 'http://172.16.3.212:420/oauth'; // ... or the address to the instance of fbjs you wish to connect to
+const AUTH_URL = 'http://172.16.3.100:420/oauth'; // ... or the address to the instance of fbjs you wish to connect to
 const THIS_URL = 'http://localhost:3000/login'; // ... or whatever the address to your application is
 const db = new sqlite3.Database(`theDatabase.db`, (err) => {
 	if (err) {
