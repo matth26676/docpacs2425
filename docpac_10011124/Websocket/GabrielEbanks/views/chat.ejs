@@ -16,13 +16,14 @@
             float: left;
             border-style: solid;
         }
-
         #messages {
             width: 70%;
             height: 300px;
             border-style: solid;
+            overflow-y: auto;
         }
     </style>
+
 
 </head>
 
@@ -69,6 +70,7 @@
         event.preventDefault();
     }
     document.getElementById('input-form').addEventListener('submit', sendMessage);
+
 </script>
 
 </html>
