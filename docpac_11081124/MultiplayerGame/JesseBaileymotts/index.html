@@ -8,16 +8,40 @@
 <body>
     <h1>Webfiends</h1>
     <button id='newGame'>New Game</button>
+    <button id='joinGame'>Join Game</button>
+    <input type='text' id='code'>
+    <div id='players'></div>
+    <div id='board'></div>
     <script>
         // HTML Elements
         const newGame = document.getElementById('newGame');
+        const joinGame = document.getElementById('joinGame');
+        const code = document.getElementById('code');
+        const players = document.getElementById('players');
+        const board = document.getElementById('board');
 
         // Websocket and ClientID variables
             // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
         let ws = new WebSocket('ws://localhost:9090');
         let clientID = null;
+        let gameID = null;
 
         // HTML Events
+        // On clicking join game...
+        joinGame.addEventListener('click', (e) => {
+            // Create the payload for joining a game
+            if (gameID === null) {
+                gameID = code.value;
+            }
+            const payload = {
+                'method': 'join',
+                'clientID': clientID,
+                'gameID': gameID
+            };
+            // Stringify and send the payload
+            ws.send(JSON.stringify(payload));
+        });
+        // On clicking new game...
         newGame.addEventListener('click', (e) => {
             // Create the payload for making a new game
             const payload = {
@@ -31,15 +55,41 @@
         // On recieving a websocket message...
         ws.onmessage = message => {
             const response = JSON.parse(message.data);
-            // If the method is connect, assign the client's ID to the connection's client ID and relay if it's successful
+            // If the method is connect...
             if (response.method == 'connect') {
+                // Assign and relay the client ID
                 clientID = response.clientID;
                 console.log(`Client ID Set: ${clientID}`);
             };
             // If the method is create...
             if (response.method === 'create') {
-                clientID = response.clientID;
+                // Assign and relay the game ID
+                gameID = response.game.id;
                 console.log(`Game ID Set: ${response.game.id}`);
+            };
+            // If the method is join...
+            if (response.method === 'join') {
+                // Assign the game
+                game = response.game;
+                // While the players div has elements, remove the first element
+                while (players.firstChild) players.removeChild(players.firstChild);
+                // For each client in the game...
+                game.clients.forEach((c) => {
+                    // Create a div element, style it, and add into it the client ID
+                    const div = document.createElement('div');
+                    div.style.width = '12.5rem';
+                    div.style.background = c.color;
+                    div.textContent = c.clientID;
+                    // Append the players div with the client's div
+                    players.appendChild(div);
+                });
+                // While the board div has elements, remove the first element
+                while (board.firstChild) board.removeChild(board.firstChild);
+
+                for (let i = 0; i < game.balls; i++) {
+                    const box = document.createElement('button')
+                    box.id = 'b'+i;
+                }
             };
         };
     </script>

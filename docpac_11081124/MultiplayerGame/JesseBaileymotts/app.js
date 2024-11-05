@@ -1,7 +1,8 @@
 // The moment I understood the weakness of my flesh, it disgusted me. I craved the strength and certainty of steel. I aspired to the purity of the blessed machine.
-// 59:13, https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
+// 1:21:12, https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
 
 // Set up the variables
+const { response } = require('express');
 const http = require('http');
 const app = require('express')();
 const ws = require('websocket').server;
@@ -43,7 +44,8 @@ wss.on('request', (request) => {
             // Add the game ID to the games object
             games[gameID] = {
                 'id': gameID,
-                'balls': 20
+                'balls': 20,
+                'clients': []
             };
             // Create the create payload for the game 
             const payload = {
@@ -54,9 +56,42 @@ wss.on('request', (request) => {
             const con = clients[clientID].connection;
             con.send(JSON.stringify(payload));
         };
+        // If the method is join...
+        if (result.method === 'join'){
+            // Set the IDs and the Game
+            const clientID = result.clientID;
+            const gameID = result.gameID;
+            const game = games[gameID];
+            // If there are more than 4 players...
+            if (game.clients.length >= 4) {
+                // Notify that the maximum amount of players has been reached
+                console.log(`Game (${gameID}) is at maximum capacity.`)
+                return;
+            }
+            // Set the color for the player depending on which they are
+                // 1 is Red, 2 is Green, 3 is Blue, and 4 is Yellow
+            const color = {'0': 'Red', '1': 'Green', '2': 'Blue', '3': 'Yellow'}[game.clients.length]
+            // Add that client to the game
+            game.clients.push({
+                'clientID': clientID,
+                'color': color
+            })
+            // Create the join payload for the client
+            const payload = {
+                'method': 'join',
+                'game': game
+            }
+
+            // For each client in the game...
+            game.clients.forEach((c) => {
+                // Send a stringified payload to each client to notify that a new client has joined
+                clients[c.clientID].connection.send(JSON.stringify(payload));
+            });
+        }
     });
     // Generate a new client id
     const clientID = guid();
+    // Where the client is in the clients object, set the connection
     clients[clientID] = {
         connection: connection
     };
