@@ -6,6 +6,7 @@
     "http": "^0.0.1-security",
     "io": "^1.5.3",
     "jsonwebtoken": "^9.0.2",
+    "path": "^0.12.7",
     "socket.io": "^4.8.1",
     "sqlite3": "^5.1.7",
     "ws": "^8.18.0"
