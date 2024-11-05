@@ -18,16 +18,25 @@ const BOARD_HEIGHT = canvas.height;
 const COLS = 7;
 const ROWS = 6;
 
-const PIECE_SIZE = BOARD_WIDTH / COLS;
+const PIECE_WIDTH = (BOARD_WIDTH / COLS) / 2;
+const PIECE_HEIGHT = (BOARD_HEIGHT / ROWS) / 2;
+
+const GHOST_PIECE_OPACITY = 0.5;
 
 const GRID_THICKNESS = 4;
+
+const PLAYER_COLORS = ['#f00', '#00f'];
 
 let board = new Array(ROWS).fill(0).map(() => new Array(COLS).fill(0));
 
 let socket = io();
 
-let mouseX = 0;
-let mouseY = 0;
+let ghostPiece = {
+    col: 0,
+    row: 0,
+};
+
+let currentTurn = 1;
 
 socket.on('playerConnected', function (data) {
 
@@ -38,48 +47,97 @@ socket.on('playerDisconnected', function (data) {
 });
 
 function gameStart(){
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeyDown);
 }
 
-function onMouseMove(event){
-    let rect = canvas.getBoundingClientRect();
-    mouseX = event.clientX - rect.left;
-    mouseY = event.clientY - rect.top;
+function onKeyDown(event){
+    let key = event.key.toLowerCase(); // lol
+    switch (key){
+        case 'a':
+        case 'arrowleft':
+            ghostPiece.col--;
+            break;
+        case 'd':
+        case 'arrowright':
+            ghostPiece.col++;
+            break;
+        case ' ':
+            dropPiece(ghostPiece.col);
+            break;
+    }
 }
 
-function onClick(event){
-        
+function getLowestAvailableRow(col){
+    for(let i = ROWS - 1; i >= 0; i--){
+        if(board[i][col] === 0){
+            return i;
+        }
+    }
+    return -1;
 }
 
-function drawBoard(){
+function dropPiece(col){
+    let row = getLowestAvailableRow(col);
+    if(row === -1){
+        return;
+    }
+    board[row][col] = currentTurn;
+
+    currentTurn = currentTurn === 1 ? 2 : 1;
+}
+
+function drawGrid(){
     
     ctx.lineThickness = GRID_THICKNESS;
-    let pieceWidth = BOARD_WIDTH / COLS;
-    let pieceHeight = BOARD_HEIGHT / ROWS;
+
     for(let i = 0; i < ROWS; i++){
         for(let j = 0; j < COLS; j++){
-            ctx.strokeRect(j * pieceWidth, i * pieceHeight, pieceWidth, pieceHeight);
+            ctx.strokeRect(j * PIECE_WIDTH * 2, i * PIECE_HEIGHT * 2, PIECE_WIDTH * 2, PIECE_HEIGHT * 2);
         }
     }
 
+    ctx.lineThickness = 1;
+
 }
 
-function drawPiece(x,y,c,a){
+function drawBoard(){
+    for(let i = 0; i < ROWS; i++){
+        for(let j = 0; j < COLS; j++){
+            let player = board[i][j];
+            if(player !== 0){
+                drawPiece(j, i, PLAYER_COLORS[player - 1], 1);
+            }
+        }
+    }
+}
+
+function drawPiece(col, row, c, a){
+
+    let x = col * (PIECE_WIDTH * 2);
+    let y = row * (PIECE_HEIGHT * 2);
     ctx.beginPath();
-    ctx.arc(x + PIECE_SIZE / 2, y + PIECE_SIZE / 2, PIECE_SIZE/2, 0, Math.PI * 2);
+    ctx.arc(x + PIECE_WIDTH, y + PIECE_HEIGHT, PIECE_WIDTH, 0, Math.PI * 2);
     ctx.fillStyle = c;
-    ctx.alpha = a;
+    ctx.globalAlpha = a;
     ctx.fill();
     ctx.closePath();
-    ctx.alpha = 1;
+    ctx.globalAlpha = 1;
     ctx.fillStyle = '#000';
 }
 
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
-    drawPiece(0,0,'#f00', 0.5);
+    drawGrid();
+
+    if(ghostPiece.col < 0){
+        ghostPiece.col = 0;
+    } else if(ghostPiece.col >= COLS){
+        ghostPiece.col = COLS - 1;
+    }
+
+    ghostPiece.row = getLowestAvailableRow(ghostPiece.col);
+    drawPiece(ghostPiece.col, ghostPiece.row, PLAYER_COLORS[currentTurn - 1], GHOST_PIECE_OPACITY);
     requestAnimationFrame(update);
 }
 update();

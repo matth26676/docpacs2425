@@ -10,6 +10,8 @@ app.use(express.urlencoded({extended: true}));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 serv.listen(PORT);
 
+let games = new Map();
+
 function randomHexColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
