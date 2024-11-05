@@ -18,12 +18,19 @@
             border: 1px solid black;
         }
     </style>
+    <script src="public/js/socket.io.js"></script>
 </head>
 
 <body>
     <canvas id="canvas"></canvas>
-    <script src="public/socket.io.js"></script>
-    <script src="public/main.js"></script>
+
+    <script>
+        const GAME_CODE = `<%- gameCode %>`;
+        const MY_TURN = Number(`<%- myTurn %>`);
+        let board = JSON.parse(`<%- board %>`);
+    </script>
+
+    <script src="public/js/main.js"></script>
 </body>
 
 </html>

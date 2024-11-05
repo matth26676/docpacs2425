@@ -15,8 +15,8 @@ const lerp = (x, y, a) => x * (1 - a) + y * a;
 
 const BOARD_WIDTH = canvas.width;
 const BOARD_HEIGHT = canvas.height;
-const COLS = 7;
-const ROWS = 6;
+const COLS = board[0].length;
+const ROWS = board.length;
 
 const PIECE_WIDTH = (BOARD_WIDTH / COLS) / 2;
 const PIECE_HEIGHT = (BOARD_HEIGHT / ROWS) / 2;
@@ -27,7 +27,7 @@ const GRID_THICKNESS = 4;
 
 const PLAYER_COLORS = ['#f00', '#00f'];
 
-let board = new Array(ROWS).fill(0).map(() => new Array(COLS).fill(0));
+console.log(board);
 
 let socket = io();
 
@@ -38,19 +38,32 @@ let ghostPiece = {
 
 let currentTurn = 1;
 
-socket.on('playerConnected', function (data) {
+let message = 'Waiting for opponent';
 
+socket.emit('playerConnected', {gameCode: GAME_CODE});
+
+socket.on('opponentConnected', function(data){
+    alert('game start');
+    startGame();
 });
 
-socket.on('playerDisconnected', function (data) {
-
+socket.on('newTurn', function(data){
+    currentTurn = data.turn;
+    message = (currentTurn === MY_TURN) ? 'Your turn' : 'Opponent\'s turn';
+    ghostPiece.col = Math.round(COLS / 2);
+    ghostPiece.row = 0;
 });
 
-function gameStart(){
+function startGame(){
     document.addEventListener('keydown', onKeyDown);
 }
 
 function onKeyDown(event){
+
+    if(currentTurn !== MY_TURN){
+        return;
+    }
+
     let key = event.key.toLowerCase(); // lol
     switch (key){
         case 'a':
@@ -62,28 +75,9 @@ function onKeyDown(event){
             ghostPiece.col++;
             break;
         case ' ':
-            dropPiece(ghostPiece.col);
+            socket.emit('dropPiece', {gameCode: GAME_CODE, col: ghostPiece.col});
             break;
     }
-}
-
-function getLowestAvailableRow(col){
-    for(let i = ROWS - 1; i >= 0; i--){
-        if(board[i][col] === 0){
-            return i;
-        }
-    }
-    return -1;
-}
-
-function dropPiece(col){
-    let row = getLowestAvailableRow(col);
-    if(row === -1){
-        return;
-    }
-    board[row][col] = currentTurn;
-
-    currentTurn = currentTurn === 1 ? 2 : 1;
 }
 
 function drawGrid(){
@@ -125,20 +119,30 @@ function drawPiece(col, row, c, a){
     ctx.fillStyle = '#000';
 }
 
-function update() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBoard();
-    drawGrid();
-
+function drawGhostPiece(){
     if(ghostPiece.col < 0){
         ghostPiece.col = 0;
     } else if(ghostPiece.col >= COLS){
         ghostPiece.col = COLS - 1;
     }
 
-    ghostPiece.row = getLowestAvailableRow(ghostPiece.col);
     drawPiece(ghostPiece.col, ghostPiece.row, PLAYER_COLORS[currentTurn - 1], GHOST_PIECE_OPACITY);
+}
+
+function drawMessage(){
+    ctx.font = '30px Arial';
+    ctx.fillText(message, 10,30);
+}
+
+function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawBoard();
+    drawGrid();
+    drawGhostPiece();
+    drawMessage();
+
     requestAnimationFrame(update);
 }
+
 update();
-gameStart();
