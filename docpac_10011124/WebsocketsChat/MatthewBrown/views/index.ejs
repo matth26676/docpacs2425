@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form action="/chat" method="GET" name="myForm" onsubmit="return validateForm()">
+        <input type="text" placeholder="Enter Your Chat Name!" name="localUser">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+<script>
+    function validateForm() {
+        var x = document.forms["myForm"]["localUser"].value;
+        if (x == "") {
+            alert("Name must be filled out");
+            return false;
+        }
+    }
+</script>
+</html>
