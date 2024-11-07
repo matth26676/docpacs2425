@@ -1,6 +1,6 @@
 body {
     background-color: white;
-    color: black;
+    color: rgb(14, 12, 46);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,7 +25,7 @@ body {
     font-size: 48px;
 }
 
-#canvas {
+#cv {
     margin-top: 10px;
-    background-color: black;
+    background-color: rgb(14, 12, 46);
 }
