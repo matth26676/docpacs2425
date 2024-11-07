@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TALK</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            display: flexbox;
+        }
+
+        #messagesContainer {
+            width: calc(100vw - 217px);
+            height: 90vh;
+            background-color: #fff;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: -10px 0 15px rgba(40, 40, 40, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            float: right;
+        }
+
+        #usersContainer {
+            width: 200px;
+            background-color: #eee;
+            padding: 3rem;
+            text-align: center;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            height: 100vh;
+            float: right;
+        }
+
+        #messageBox {
+            font-size: 2em;
+            width: 60%;
+        }
+
+        #send {
+            background: #3498db;
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 20px;
+            padding: 10px 20px 10px 20px;
+            text-decoration: none;
+            width: 100px;
+            height: 50px;
+        }
+
+        #userList {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="usersContainer">
+        <ul id="userList">
+        </ul>
+    </div>
+    <div id="messagesContainer">
+    </div>
+    <input type="text" id="messageBox">
+    <button id="send">Send</button>
+    <script>
+        let messagesContainer = document.getElementById('messagesContainer');
+        let usersContainer = document.getElementById('usersContainer');
+        let userList = document.getElementById('userList');
+        let messageBox = document.getElementById('messageBox');
+        let send = document.getElementById('send');
+
+        const socket = new WebSocket('ws://localhost:3000');
+        const localName = `<%= name %>`;
+
+        const msgTemplate = `<%- include('message') %>`;
+        const userTemplate = `<%- include('userlisting') %>`;
+
+        socket.onopen = function(){
+            socket.send(JSON.stringify({name: localName}));
+        }
+
+        socket.onmessage = function(message){
+            let msg = JSON.parse(message.data)
+
+            if(msg.hasOwnProperty('list')){
+                updateUserList(msg.list);
+            }
+            
+            if(msg.hasOwnProperty('text')){
+                addNewMessage(msg.name, msg.text);
+            }
+
+        }
+
+        send.addEventListener('click', (event) => {
+            let content = messageBox.value;
+            messageBox.value = "";
+            socket.send(JSON.stringify({name: localName, text: content}));
+        });
+        function updateUserList(list){
+            userList.innerHTML = "";
+            for(user of list){
+                
+                const userHtml = userTemplate.replace('NAME', user.name);
+                userList.innerHTML += userHtml
+
+            }
+        }
+
+        function addNewMessage(name, content){
+            const msgHtml = msgTemplate.replace('NAME', name).replace('CONTENT', content);
+            messagesContainer.innerHTML += msgHtml;
+        }
+    </script>
+</body>
+
+</html>
