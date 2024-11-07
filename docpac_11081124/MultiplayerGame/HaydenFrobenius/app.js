@@ -15,6 +15,7 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, 'shared')))
 serv.listen(PORT);
 
 const ROWS = 6;
@@ -29,34 +30,114 @@ function randomHexColor() {
 
 let io = require('socket.io')(serv, {});
 io.sockets.on('connection', function (socket) {
+
     socket.on('playerConnected', function (data) {
         let gameCode = data.gameCode;
         let game = games.get(gameCode);
+        let myTurn;
 
         if(game.player1 === null){
 
             game.player1 = socket.id;
+            myTurn = 1;
             socket.join(gameCode);
-            console.log('player1 connected to game ' + gameCode);
+
+        } else if(game.player2 === null){
+
+            game.player2 = socket.id;
+            myTurn = 2;
+            socket.join(gameCode);
+
+            io.to(gameCode).emit('newTurn', {turn: 1});
+            io.to(gameCode).emit('startGame', {board: game.board.board});
 
         } else {
 
-            game.player2 = socket.id;
-            socket.join(gameCode);
-            io.to(game.player1).emit('opponentConnected');
-            console.log('player2 connected to game ' + gameCode);
+            return; //don't worry about it
+
+        }
+
+        game.board = new Board(ROWS, COLS);
+        let board = game.board.board;
+
+        socket.emit('init', {board: board, myTurn: myTurn});
+
+        console.log(socket.id + ' connected to game ' + gameCode);
+
+    });
+
+    socket.on('ghostPieceMove', function(data){
+        let gameCode = data.gameCode;
+        //console.log(`move ghost piece to col: ${data.col}`)
+        io.to(gameCode).emit('moveGhostPiece', {col: data.col});
+    });
+
+    socket.on('pieceDrop', function(data){
+        let gameCode = data.gameCode;
+        let game = games.get(gameCode);
+        let board = game.board;
+
+        board.dropPiece(data.col, data.turn);
+
+        io.to(gameCode).emit('updateBoard', {newBoard: board.board});
+
+        game.turn = (game.turn === 1) ? 2 : 1;
+
+        let win = board.checkWin();
+        
+        if (win) {
+            io.to(gameCode).emit('win', {winner: win});
+        } else {
+            io.to(gameCode).emit('newTurn', {turn: game.turn});
         }
 
     });
 
     socket.on('disconnect', function(){
-        io.emit('playerDisconnected', {id: socket.id});
+        let gamesArray = Array.from(games);
+        let index = gamesArray.findIndex(([gameCode, game]) => game.player1 === socket.id || game.player2 === socket.id);
+
+        if(index === -1){
+            return; //don't worry about it
+        }
+
+        let gameCode = gamesArray[index][0];
+        let game = games.get(gameCode);
+
+        game.board = new Board(ROWS, COLS);
+        game.turn = 1;
+
+        if (game.player1 === socket.id) {
+
+            io.to(gameCode).emit('hostDisconnected');
+            game.player1 = game.player2; // player2 becomes host if host leaves
+            game.player2 = null;
+
+        } else if(game.player2 === socket.id){
+
+            io.to(gameCode).emit('opponentDisconnected');
+            game.player2 = null;
+
+        }
+
+        if(!game.player1 && !game.player2){
+            games.delete(gameCode);
+        }
+
+        io.to(game.player1).emit('init', {board: game.board.board, myTurn: game.turn});
+
+        console.log(socket.id + ' disconnected from game ' + gameCode);
+
     });
 
 });
 
 app.get('/', (req, res) => {
     res.render('index');
+});
+
+app.get('/joingame', (req, res) => {
+    res.render('joingame');
 });
 
 app.get('/game', (req, res) => {
@@ -68,14 +149,27 @@ app.get('/game', (req, res) => {
     }
 
     let game = games.get(gameCode);
-    let board = game.board.board;
-    let myTurn = game.player1 === null ? 1 : 2;
 
-    res.render('game', {gameCode : gameCode, myTurn: myTurn, board: JSON.stringify(board)});
+    //this causes a bug where the websocket doesn't clear the player before this check happens
+    //so if you refresh your page in the middle of a game, it will say the game is full
+    //I figured it was more important to be able to refresh your page so I commented it out.
+
+    /*if(game.player1 && game.player2){
+        res.send('Game Full');
+        return;
+    }*/
+
+    res.render('game', {gameCode : gameCode});
 });
 
 app.get('/creategame', (req, res) => {
-    const gameCode = generateKey();
+    let gameCode = generateKey();
+
+    // make sure key is unique
+    while(games.has(gameCode)){ 
+        gameCode = generateKey();
+    }
+
     let game = {
         player1: null,
         player2: null,

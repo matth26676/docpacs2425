@@ -4,6 +4,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = 690; // DO NOT TOUCH
 canvas.height = 570;
 
+let modal = document.getElementById('modal');
+let modalText = document.getElementById('modal-text');
+
 /*
     spongebob patrick
     squidward sandy
@@ -12,22 +15,21 @@ canvas.height = 570;
 */
 
 const lerp = (x, y, a) => x * (1 - a) + y * a;
+const clamp = (x, i, a) => (x < i) ? i : (x > a) ? a : x;
 
 const BOARD_WIDTH = canvas.width;
 const BOARD_HEIGHT = canvas.height;
-const COLS = board[0].length;
-const ROWS = board.length;
+let COLS;
+let ROWS;
 
-const PIECE_WIDTH = (BOARD_WIDTH / COLS) / 2;
-const PIECE_HEIGHT = (BOARD_HEIGHT / ROWS) / 2;
+let PIECE_WIDTH;
+let PIECE_HEIGHT;
 
-const GHOST_PIECE_OPACITY = 0.5;
+let GHOST_PIECE_OPACITY = 0.5;
 
-const GRID_THICKNESS = 4;
+let GRID_THICKNESS = 4;
 
-const PLAYER_COLORS = ['#f00', '#00f'];
-
-console.log(board);
+let PLAYER_COLORS = ['#f00', '#00f'];
 
 let socket = io();
 
@@ -37,55 +39,129 @@ let ghostPiece = {
 };
 
 let currentTurn = 1;
+let gameRunning = false;
+
+let board;
+let myTurn;
 
 let message = 'Waiting for opponent';
 
-socket.emit('playerConnected', {gameCode: GAME_CODE});
+socket.emit('playerConnected', { gameCode: GAME_CODE });
 
-socket.on('opponentConnected', function(data){
-    alert('game start');
-    startGame();
+socket.on('init', function (data) {
+    board = data.board;
+    myTurn = data.myTurn;
+    console.log(board);
+
+    COLS = board[0].length;
+    ROWS = board.length;
+
+    PIECE_WIDTH = (BOARD_WIDTH / COLS) / 2;
+    PIECE_HEIGHT = (BOARD_HEIGHT / ROWS) / 2;
 });
 
-socket.on('newTurn', function(data){
+socket.on('opponentConnected', function (data) {
+});
+
+socket.on('hostDisconnected', function (data) {
+    endGame('Host Disconnected');
+});
+
+socket.on('opponentDisconnected', function (data) {
+    endGame('Opponent Disconnected');
+});
+
+socket.on('startGame', startGame);
+
+
+socket.on('newTurn', function (data) {
     currentTurn = data.turn;
-    message = (currentTurn === MY_TURN) ? 'Your turn' : 'Opponent\'s turn';
-    ghostPiece.col = Math.round(COLS / 2);
+    message = (currentTurn === myTurn) ? 'Your turn' : 'Opponent\'s turn';
+    ghostPiece.col = Math.floor(COLS / 2);
     ghostPiece.row = 0;
 });
 
-function startGame(){
+socket.on('moveGhostPiece', function (data) {
+    ghostPiece.col = data.col;
+});
+
+socket.on('updateBoard', function (data) {
+    board = data.newBoard;
+});
+
+socket.on('win', function (data) {
+    let winner = (data.winner === myTurn) ? 'You' : 'Opponent';
+    let grammar = (data.winner === myTurn) ? '' : 's';
+    endGame(`${winner} Win${grammar}`);
+});
+
+function startGame(data) {
+    hideModal();
+    board = data.board;
     document.addEventListener('keydown', onKeyDown);
+    gameRunning = true;
 }
 
-function onKeyDown(event){
+function endGame(outcomeMessage) {
 
-    if(currentTurn !== MY_TURN){
+    if (!gameRunning) return
+
+    message = '';
+    showModal(outcomeMessage);
+
+    gameRunning = false;
+}
+
+function showModal(text) {
+    modalText.innerText = text;
+    modal.style.display = 'block';
+}
+
+function hideModal() {
+    modal.style.display = 'none';
+}
+
+function onKeyDown(event) {
+
+    if (currentTurn !== myTurn || !gameRunning) {
         return;
     }
 
     let key = event.key.toLowerCase(); // lol
-    switch (key){
+    switch (key) {
         case 'a':
         case 'arrowleft':
-            ghostPiece.col--;
+            // decrements and clamps
+            ghostPiece.col = clamp(ghostPiece.col - 1, 0, COLS - 1);
+            socket.emit('ghostPieceMove', { gameCode: GAME_CODE, col: ghostPiece.col });
             break;
         case 'd':
         case 'arrowright':
-            ghostPiece.col++;
+            // increments and clamps
+            ghostPiece.col = clamp(ghostPiece.col + 1, 0, COLS - 1);
+            socket.emit('ghostPieceMove', { gameCode: GAME_CODE, col: ghostPiece.col });
             break;
         case ' ':
-            socket.emit('dropPiece', {gameCode: GAME_CODE, col: ghostPiece.col});
+            socket.emit('pieceDrop', { gameCode: GAME_CODE, col: ghostPiece.col, turn: myTurn });
             break;
     }
 }
 
-function drawGrid(){
-    
+function getLowestAvailableRow(col) {
+    for (let i = ROWS - 1; i >= 0; i--) {
+        if (board[i][col] === 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function drawGrid() {
+
     ctx.lineThickness = GRID_THICKNESS;
 
-    for(let i = 0; i < ROWS; i++){
-        for(let j = 0; j < COLS; j++){
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
             ctx.strokeRect(j * PIECE_WIDTH * 2, i * PIECE_HEIGHT * 2, PIECE_WIDTH * 2, PIECE_HEIGHT * 2);
         }
     }
@@ -94,18 +170,18 @@ function drawGrid(){
 
 }
 
-function drawBoard(){
-    for(let i = 0; i < ROWS; i++){
-        for(let j = 0; j < COLS; j++){
+function drawBoard() {
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
             let player = board[i][j];
-            if(player !== 0){
+            if (player !== 0) {
                 drawPiece(j, i, PLAYER_COLORS[player - 1], 1);
             }
         }
     }
 }
 
-function drawPiece(col, row, c, a){
+function drawPiece(col, row, c, a) {
 
     let x = col * (PIECE_WIDTH * 2);
     let y = row * (PIECE_HEIGHT * 2);
@@ -119,19 +195,17 @@ function drawPiece(col, row, c, a){
     ctx.fillStyle = '#000';
 }
 
-function drawGhostPiece(){
-    if(ghostPiece.col < 0){
-        ghostPiece.col = 0;
-    } else if(ghostPiece.col >= COLS){
-        ghostPiece.col = COLS - 1;
-    }
+function drawGhostPiece() {
 
-    drawPiece(ghostPiece.col, ghostPiece.row, PLAYER_COLORS[currentTurn - 1], GHOST_PIECE_OPACITY);
+    ghostPiece.row = getLowestAvailableRow(ghostPiece.col);
+    let color = PLAYER_COLORS[currentTurn - 1];
+
+    drawPiece(ghostPiece.col, ghostPiece.row, color ? color : '#000', GHOST_PIECE_OPACITY);
 }
 
-function drawMessage(){
+function drawMessage() {
     ctx.font = '30px Arial';
-    ctx.fillText(message, 10,30);
+    ctx.fillText(message, 10, 30);
 }
 
 function update() {
@@ -139,9 +213,9 @@ function update() {
 
     drawBoard();
     drawGrid();
-    drawGhostPiece();
+    if (gameRunning) drawGhostPiece();
     drawMessage();
-
+    console.log('crazy');
     requestAnimationFrame(update);
 }
 
