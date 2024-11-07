@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="/login">Login</a>
+    <h1>Profile</h1>
+    <p>Welcome to your profile</p>
+    <form action="" method="post">
+        <%= data.username %> <br>
+        <input type="checkbox" name="checkbox">
+        <input type="submit" value="Update">
+        <% if (profile_checked) {%>
+            <ul>
+                <% for (key in data) { %>
+                    <li><%= key %>: <%= data[key] %></li>
+                <% } %>
+            </ul>
+        <% } %>
+    </form>
+</body>
+</html>
