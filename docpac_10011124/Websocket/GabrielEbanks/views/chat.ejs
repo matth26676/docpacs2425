@@ -16,32 +16,61 @@
             float: left;
             border-style: solid;
         }
-
-        #messageList {
+        #messages {
             width: 70%;
             height: 300px;
             border-style: solid;
+            overflow-y: auto;
         }
     </style>
-    <script>
-        function newDoc() {
-            let textBoxContent = document.getElementById('chatInput');
-            if (textBoxContent.value) {
-                // CODE MESSAGE STUFF HERE
-            } else {
-                alert('Type a Message');
-            }
-        }
-    </script>
+
+
 </head>
 
 <body>
     <div id="userList">User List</div>
-    <div id="messageList">Message List</div>
-    <div>Type Here
-        <input name="username" type="text" id="chatInput" class="required">
-        <button onclick="newDoc()">Send</button>
-    </div>
+
+
+    <div id="messages"></div>
+
+
+    <!-- <div>Type Here
+        <input name="typeBox" type="text" id="chatInput" class="required">
+        <input type="submit" onclick="newDoc()" value="Send"/>
+    </div> -->
+    <form id="input-form">
+        <label for="message">Enter Message:</label>
+        <input type="text" id="message" name="message"><br><br>
+        <input type="submit" value="Send">
+    </form>
+
+
+
+
 </body>
+<script>
+    const webSocket = new WebSocket('ws://localhost:443/');
+    webSocket.onmessage = (event) => {
+        console.log(event.data);
+
+        let message = JSON.parse(event.data)
+        console.log(message);
+        
+        document.getElementById('messages').innerHTML +=
+            message.user+ ': ' + message.message + "<br>";
+
+    };
+    webSocket.addEventListener("open", () => {
+        console.log("We are connected");
+    });
+    function sendMessage(event) {
+        var inputMessage = document.getElementById('message')
+        webSocket.send(JSON.stringify({ user:localName,message: inputMessage.value }))
+        inputMessage.value = ""
+        event.preventDefault();
+    }
+    document.getElementById('input-form').addEventListener('submit', sendMessage);
+
+</script>
 
 </html>
