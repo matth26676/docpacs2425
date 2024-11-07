@@ -20,6 +20,7 @@ const clients = {};
 const games = {};
 
 // Create the websocket server
+// My socks are soggy and gross!
 const wss = new ws({
     'httpServer': httpServer
 });
@@ -33,7 +34,7 @@ wss.on('request', (request) => {
     connection.on('close', () => console.log('Closed'));
     // On recieving a message, JSON parse the message and save it to result
     connection.on('message', (message) => {
-        // This assumes all the messages being sent by the clients are JSON which is bad practice, but for simplicities sake, I am assuming all the clients will be good little webfiends
+        // This assumes all the messages being sent by the clients are JSON which is bad practice, but for simplicities sake, I am assuming all the clients will be good little webfiends. Webfriends, if you will
         const result = JSON.parse(message.utf8Data);
         console.log(result);
         // If the method is create...
@@ -92,23 +93,17 @@ wss.on('request', (request) => {
         };
         // If the method is play... 
         if (result.method === 'play') {
-            // Set the IDs for the client and the game
-            const clientID = result.clientID;
+            // Set the IDs for the game and box, and assign the box's color
             const gameID = result.gameID;
             const boxID = result.boxID;
+            const color = result.color;
             // Assign the state of the game 
-            const state = games[gameID].state;
+            let state = games[gameID].state;
             // If there is no state, assign an empty object to state
             if (!state) state = {};
-            // Assigns the client's color to the box and updates the state
-            state[boxID] = result.color;
-            games[gameID] = state;
-            const game = game[gameID]
-            // Create the play payload
-            const payload = {
-                'method': 'play',
-                'game': game
-            }
+            // Assign the client's color to the box and update the game state
+            state[boxID] = color;
+            games[gameID].state = state;
         }
     });
     // Generate a new client id
@@ -129,7 +124,7 @@ wss.on('request', (request) => {
 // Create a function to update the game
 const update = () => {
     // For game of games..
-    // Loops through all the keys ( {'gameID':, gameID} )
+    // Loop through all the keys ( {'gameID':, gameID} )
     for (const g of Object.keys(games)) {
         // Set the game from the games object
         const game = games[g];
@@ -139,12 +134,13 @@ const update = () => {
             'game': game
         };
         // For each client in games...
-        game.clients.forEach((c) => {
+        console.log(payload);
+        game.clients.forEach(c => {
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
         });
     };
-    setTimeout(update(), 500);
+    setTimeout(update, 500);
 };
 
 // Create a function to randomly create a hex string 4 characters long

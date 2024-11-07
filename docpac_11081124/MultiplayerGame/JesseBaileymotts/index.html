@@ -89,7 +89,7 @@
                 // While the board div has elements, remove the first element
                 while (board.firstChild) board.removeChild(board.firstChild);
                 // Start i at 0. While i is less than the game balls, increment i by 1 and...
-                for (let i = 0; i < game.balls; i++) {
+                for (let i = 0; i < game.boxes; i++) {
                     // Create a button element and assign an ID and Tag
                     const box = document.createElement('button')
                     box.id = 'b'+i;
@@ -120,10 +120,13 @@
                 };
                 //If the method is update...
                 if (response.method === 'update') {
+                    // If there is no game state, return
+                    if (!response.game.state) return;
                     // For box of game states
                     for (const b of Object.keys(response.game.state)) {
-                        const boxID = response.game.state[b];
-                        const boxObj = document.getElementById['b'+boxID];
+                        const color = response.game.state[b];
+                        console.log(color);
+                        const boxObj = document.getElementById['b' + b];
                         boxObj.style.backgroundColor = color;
                     };
 
