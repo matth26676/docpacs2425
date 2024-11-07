@@ -22,35 +22,39 @@ app.get("/chat", (req, res) => {
 });
 
 function broadcast(wss, message) {
-    for (client in wss.client) {
+    for (client of wss.clients) {
         client.send(JSON.stringify(message));
     }
 };
 
 function userList(wss) {
     let usr = []
-    for (client in wss.client) {
+    for (client of wss.clients) {
         if (client.hasOwnProperty("name")) {
-            usr.append(client)
+            usr.push(client.name)
         };
     };
     return { list: usr }
 };
 
 wss.on("connection", (ws) => {
+    ws.send(JSON.stringify({ name: "Server", text: "welcome to Chat!" }));
+    broadcast(wss, userList(wss))
+
     ws.on("message", (message) => {
         message = JSON.parse(message)
-        if (message.text) {
-            broadcast(ws, message)
+        
+        if (message.hasOwnProperty("text")) {
+            broadcast(wss, message)
         };
 
-        if (message.name) {
-            ws.client.name = message.name
-            broadcast(ws, userList(ws))
+        if (message.hasOwnProperty("name")) {
+            ws.name = message.name
+            broadcast(wss, userList(wss))
         };
     });
 });
 
 wss.on("close", () => {
-    broadcast(ws, userList(ws))
+    broadcast(wss, userList(wss))
 });
