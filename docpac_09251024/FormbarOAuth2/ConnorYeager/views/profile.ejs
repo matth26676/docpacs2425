@@ -6,9 +6,11 @@
     <title>Your profile</title>
 </head>
 <body>
+<%= user %> 
+
     <form action="/profile" method="POST">
         <label for="checkbox">THE checkbox: </label>
-        <input type="checkbox" name="checkbox" value="checked" <%= (user.profile_checked === 'true') ? 'checked' : '' %>>
+        <input type="checkbox" name="profile_checked" value="checked">
         <br><br>
         <button type="submit">Checked</button>
     </form>
