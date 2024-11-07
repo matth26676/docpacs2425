@@ -77,16 +77,47 @@ io.sockets.on('connection', function (socket) {
         let game = games.get(gameCode);
         let board = game.board;
 
-        board.dropPiece(data.col, data.turn);
+        let col = data.col;
+        let row = board.getLowestAvailableRow(col);
+        let turn = data.turn;
+
+        console.log(`piece dropped at col: ${col}, row: ${row}, turn: ${turn}`);
+
+        //just some guard clauses
+
+        //not your turn
+        if(game.turn !== data.turn){
+            console.log('not your turn');
+            return;
+        }
+
+        //space isn't empty
+        if(board.getCell(data.col, 0) !== 0){
+            console.log('space not empty');
+            return;
+        }
+
+        //position is out of bounds
+        if(col < 0 || col >= COLS || row < 0 || row >= ROWS){
+            console.log('position out of bounds');
+            return;
+        }
+
+        board.dropPiece(col, row, turn);
 
         io.to(gameCode).emit('updateBoard', {newBoard: board.board});
 
+        if(board.checkFull()){
+            io.to(gameCode).emit('gameEnd', {winner: null});
+            return;
+        }
+
         game.turn = (game.turn === 1) ? 2 : 1;
 
-        let win = board.checkWin();
+        let winner = board.checkWin();
         
-        if (win) {
-            io.to(gameCode).emit('win', {winner: win});
+        if (winner) {
+            io.to(gameCode).emit('gameEnd', {winner: winner});
         } else {
             io.to(gameCode).emit('newTurn', {turn: game.turn});
         }
