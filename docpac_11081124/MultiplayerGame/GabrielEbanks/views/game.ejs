@@ -6,154 +6,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canvas Mover</title>
+
+    <style>
+        #startGame {
+            width: 90px;
+            height: 30px;
+            border: black;
+            margin: 150px auto;
+            background-color: rgb(162, 0, 255);
+
+
+        }
+
+        #startGameDiv {
+            width: 100px;
+            margin: auto;
+        }
+
+
+
+
+        #button1Div {
+            border-style: solid;
+            border-color: rgb(61, 43, 226);
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+
+        }
+
+
+        #button2Div {
+            border-style: solid;
+            border-color: rgb(226, 110, 43);
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            right: 0;
+
+
+        }
+
+        #button1 {
+            border-style: solid;
+            border-color: rgb(61, 43, 226);
+            width: 300px;
+            height: 300px;
+
+
+
+        }
+
+        #button2 {
+            border-style: solid;
+            border-color: rgb(226, 110, 43);
+            width: 300px;
+            height: 300px;
+
+        }
+    </style>
 </head>
 
 
 <body>
-    <style>
-        #canvas {
-            border-style: solid;
-            border-color: blueviolet;
-        }
-    </style>
-    <canvas  id="canvas" width="800" height="600">
 
-    </canvas>
-    <button onclick='toggleCanvas' id="canvasButton">Show Canvas</button>
+
+    <div id="bigDiv">
+        <div id='button1Div'>
+            <button onclick="scoreUp1()" id="button1">p1</button>
+        </div>
+
+
+        <div id='button2Div'>
+            <button onclick="scoreUp2()" id="button2">p2</button>
+        </div>
+    </div>
+
+
+    <div id='startGameDiv'>
+        <button onclick="startGame()" id="startGame"> Click here to start game </button>
+    </div>
+
+
 </body>
 
-
-
-    <script>
-
-function toggleCanvas() {
-    // get the clock
-    var canvas = document.getElementById('canvas');
-
-    // get the current value of the clock's display property
-    var displaySetting = canvas.style.display;
-
-    // also get the clock button, so we can change what it says
-    var clockButton = document.getElementById('clockButton');
-
-    // now toggle the clock and the button text, depending on current state
-    if (displaySetting == 'block') {
-      // clock is visible. hide it
-      myClock.style.display = 'none';
-      // change button text
-      clockButton.innerHTML = 'Show clock';
+<script>
+    function scoreUp1() {
+        console.log('p1 clicked')
     }
-    else {
-      // clock is hidden. show it
-      myClock.style.display = 'block';
-      // change button text
-      clockButton.innerHTML = 'Hide clock';
+
+    function scoreUp2() {
+        console.log('p2 clicked')
     }
-  }
 
-//=====================================================================================>
-        var player = {
-            x: 100,
-            y: 100,
-            w: 50,
-            h: 50,
-            img: new Image()
-        }
+    function startGame() {
+        console.log("start game clicked");
+        
+    }
 
-
-        player.img.src = "./blackguy.jpg"
-
-
-        window.addEventListener('gamepadconnected', (e) => {
-            function movement() {
-                var gamepad = navigator.getGamepads()[0]
-                // left
-                if (gamepad.axes[0] < -0.5) {
-                    
-                }
-                // right
-                if (gamepad.axes[0] > 0.5) {
-                    
-                }
-                // down
-                if (gamepad.axes[1] > 0.5) {
-                    
-                }
-                // up
-                if (gamepad.axes[1] < -0.5) {
-                    
-                }
-
-                requestAnimationFrame(movement)
-
-            }
-            movement()
-        })
-
-        const charSpeed = 3
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext("2d");
-
-
-        function drawSprite() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            ctx.font = "30px serif";
-            ctx.fillStyle = 'black';
-            ctx.fillText("Gamepad", 10, 30);
-            ctx.fillText(`X: ${player.x.toFixed(2)}, Y: ${player.y.toFixed(2)}`, 10, 70)
-            ctx.drawImage(player.img, player.x, player.y, player.w, player.h);
-            console.log('sprite drawn')
-        }
-
-        window.addEventListener('gamepadconnected', (event) => {
-            console.log('Gamepad connected:', event.gamepad);
-            function movement() {
-                var gamepad = navigator.getGamepads()[0]
-
-                if(gamepad) {
-                    if (gamepad.axes[0] < -0.5) {
-                        player.x -= charSpeed
-                        console.log('left')
-                    }
-
-                    if (gamepad.axes[0] > 0.5) {
-                        player.x += charSpeed
-                        console.log('right')
-                    }
-
-                    if (gamepad.axes[1] < -0.5) {
-                        player.y -= charSpeed
-                        console.log('down')
-                    }
-
-                    if (gamepad.axes[1] > 0.5) {
-                        player.y += charSpeed
-                        console.log('up')
-                    }
-
-                    if (player.x + player.w > canvas.width)
-                        player.x = canvas.width - player.w;
-    
-    
-                    if (player.y + player.h > canvas.height)
-                        player.y = canvas.height - player.h;
-                    
-                    if (player.x < 0) {
-                        player.x = 0
-                    }
-
-                    if (player.y < 0) {
-                        player.y = 0
-                    }
-
-                    drawSprite()
-                    
-                }
-                requestAnimationFrame(movement)
-            }
-            movement();
-        }
-    );
-    </script>
+</script>
 
 </html>
