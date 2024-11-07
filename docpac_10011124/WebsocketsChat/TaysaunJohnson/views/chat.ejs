@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 4px solid lightgray;
+        }
+
+        body {
+            font-family: "roboto", Arial;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: stretch;
+        }
+
+        #userBox {
+            flex: 1;
+            border-right: 4px solid lightgray;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        #chatBox {
+            text-align: right;
+            flex: 1;
+        }
+
+        #chatArea {
+            flex: 5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #send {
+            flex: 0.07;
+            margin: 0;
+            display: flex;
+            border-top: 4px solid lightgray;
+        }
+
+        #text {
+            display: block;
+            border-radius: 0;
+            border: 0;
+            outline: 0;
+        }
+
+        #button {
+            display: block;
+            flex: 1;
+            border-radius: 0;
+            border: 0
+        }
+    </style>
+</head>
+<body>
+    <div id="userBox"></div>
+    <div id="chatArea">
+        <h1 style="margin: 0; padding: 25px 0;">Chat</h1>
+        <div id="chatBox"></div>
+        <div id="send">
+            <textarea name="mychat" style="resize: none; width: 90%;" id="text"></textarea>
+            <input type="submit" value="Send" id="button">
+        </div>
+    </div>
+</body>
+<script>
+    var currentUser = '<%- name %>'
+    var button = document.getElementById('button')
+    var text = document.getElementById('text')
+    var userBox = document.getElementById('userBox')
+    var chatBox = document.getElementById('chatBox')
+    var socket = new WebSocket("http://localhost:3000")
+    var message = {
+        text: text.value,
+        name: currentUser
+    }
+    
+    socket.onopen = () => {
+        socket.send(JSON.stringify({name: currentUser}))
+    }
+
+    socket.onmessage = function(message){
+        var data = JSON.parse(message.data)
+        console.log(data)
+        if (data.list) {
+            userBox.innerHTML = ''
+            data.list.forEach(user => {
+                userBox.innerHTML += user + "<br>"
+            });
+        }
+        if (data.text) {
+            chatBox.innerHTML += `${data.text} :<b>${data.user}</b> <br>`
+        }
+    }
+    
+    button.addEventListener('click', () => {
+        if (text) {
+            var message = {
+                text: text.value,
+                user: currentUser
+            }
+
+            socket.send(JSON.stringify(message))
+            text.value = ''
+        }
+        
+    })
+
+    
+</script>
+</html>

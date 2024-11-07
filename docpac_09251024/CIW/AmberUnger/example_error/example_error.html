@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Error Example</title>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <script language="JavaScript" type="text/javascript">
+        alert("hello i am alert");
+
+        (function () {
+            let devtoolsState = 'CLOSED';
+            const threshold = 100; // Adjust this value if necessary
+
+            setInterval(function () {
+                const start = performance.now();
+                debugger;
+                document.write("")
+                const end = performance.now();
+                const timeTaken = end - start;
+
+                switch (devtoolsState) {
+                    case 'CLOSED':
+                        if (timeTaken > threshold) {
+                            devtoolsState = 'OPEN';
+                            alert('Developer tools were opend but was just closed');
+                        }
+                        break;
+
+                }
+            }, 1000); // Check every second
+        })();
+    </script>
+</body>
+
+</html>
