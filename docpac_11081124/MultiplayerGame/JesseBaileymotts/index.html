@@ -92,7 +92,7 @@
                 for (let i = 0; i < game.boxes; i++) {
                     // Create a button element and assign an ID and Tag
                     const box = document.createElement('button')
-                    box.id = 'b'+i;
+                    box.id = 'b'+(i+1);
                     box.tag = i+1;
                     // Style the button
                     box.textContent = i+1;
@@ -118,18 +118,16 @@
                     board.appendChild(box);
                     if (((i + 1) % 8) === 0) board.appendChild(document.createElement('br'));
                 };
-                //If the method is update...
-                if (response.method === 'update') {
-                    // If there is no game state, return
-                    if (!response.game.state) return;
-                    // For box of game states
-                    for (const b of Object.keys(response.game.state)) {
-                        const color = response.game.state[b];
-                        console.log(color);
-                        const boxObj = document.getElementById['b' + b];
-                        boxObj.style.backgroundColor = color;
-                    };
-
+            };
+            //If the method is update...
+            if (response.method === 'update') {
+                // If there is no game state, return
+                if (!response.game.state) return;
+                // For boxes of the game's state...
+                for (const b of Object.keys(response.game.state)) {
+                    const color = response.game.state[b];
+                    const boxObj = document.getElementById['b' + b];
+                    boxObj.style.backgroundColor = color;
                 };
             };
         };

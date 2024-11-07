@@ -122,7 +122,7 @@ wss.on('request', (request) => {
 });
 
 // Create a function to update the game
-const update = () => {
+let update = () => {
     // For game of games..
     // Loop through all the keys ( {'gameID':, gameID} )
     for (const g of Object.keys(games)) {
@@ -134,10 +134,10 @@ const update = () => {
             'game': game
         };
         // For each client in games...
-        console.log(payload);
         game.clients.forEach(c => {
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
+            console.log(payload);
         });
     };
     setTimeout(update, 500);
