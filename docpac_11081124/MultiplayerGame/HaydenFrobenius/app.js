@@ -172,7 +172,7 @@ app.get('/joingame', (req, res) => {
 });
 
 app.get('/game', (req, res) => {
-    let gameCode = req.query.gameCode;
+    let gameCode = req.query.gameCode.toLowerCase();
 
     if(!games.has(gameCode)){
         res.send('Game not found');
