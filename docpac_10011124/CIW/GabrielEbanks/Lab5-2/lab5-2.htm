@@ -15,6 +15,11 @@
 function checkGrade(form) {
   var myGrade = parseFloat(form.myText.value);
   
+  while (isNaN(myGrade)) {
+    if (isNaN(myGrade)) {
+      myGrade = parseInt(prompt("Enter a number:"));
+    } 
+  }
 /***********************************************
   Create a while statement. In the conditional 
   expression, use the isNaN function to test the
@@ -25,20 +30,10 @@ function checkGrade(form) {
   enters a number.
 ***********************************************/
 
-<<<<<<<< HEAD:docpac_10011124/CIW/MatthewWalizer/lab5-2.htm
-  while (isNaN(myGrade)) {
-    if (myGrade != Number) {
-      myGrade = parseInt(prompt("Please enter a numerical grade value"))
-    }
-  }
 
 
 
-========
-  while(isNaN(myGrade)) {
-    myGrade = parseInt(prompt("Please enter a numerical value."));
-  }
->>>>>>>> upstream/main:docpac_10011124/CIW/RobertAmbartsumyan/Lab5-2/lab5-2.htm
+
   
   if(myGrade >= 91) {
     alert("Your grade is an A.");
