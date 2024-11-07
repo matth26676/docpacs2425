@@ -5,20 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O!</title>
-    <script>
-        //create a new websocket object
-        var ws = new WebSocket("ws:/localhost:443")
-
-        ws.onmessage = (message) => {
-            message = JSON.parse(message.data)
-            if (message.id) {
-                console.log("ID: " + message.id)
-            }
-            if (message.text) {
-                console.log(message.user + ": " + message.text)
-            }
-        }
-    </script>
 </head>
 
 <body>
