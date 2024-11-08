@@ -13,13 +13,21 @@ const paddleWidth = 15;
 const paddleHeight = 100;
 const paddleSpeed = 4;
 
-//ball
-const ballRadius = 10;
-const ball = { x: cv.width / 2, y: cv.height / 2, dx: 4, dy: 4, radius: ballRadius };
+
+const ball = {
+    x: cv.width / 2,
+    y: cv.height / 2,
+    dx: 4,
+    dy: 4,
+    radius: 10
+};
 
 //score
 let score = [0, 0];
 const maxScore = 5;
+
+//game loop
+let gameActive = true;
 
 /*-----
 Players
@@ -57,36 +65,30 @@ let sDown = false;
 
 //set keys to true when pressed
 function keyDownHandler(e) {
-    if (e.code === "KeyW") {
-        wDown = true;
-    } else if (e.code === "KeyS") {
-        sDown = true;
-    };
+    if (e.code === "KeyW") wDown = true;
+    if (e.code === "KeyS") sDown = true;
 };
+
 function keyUpHandler(e) {
-    if (e.code === "KeyW") {
-        wDown = false;
-    } else if (e.code === "KeyS") {
-        sDown = false;
-    };
+    if (e.code === "KeyW") wDown = false;
+    if (e.code === "KeyS") sDown = false;
 };
 
 function movePlayer() {
     PLAYER.forEach(player => {
         //move player on key down
-        if (sDown) {
-            player.y += paddleSpeed;
-        } else if (wDown) {
-            player.y -= paddleSpeed;
+        if (player.id === 0) {
+            if (sDown) player.y += paddleSpeed;
+            if (wDown) player.y -= paddleSpeed;
+        } else if (player.id === 1) {
+            if (sDown) player.y += paddleSpeed;
+            if (wDown) player.y -= paddleSpeed;
         };
 
         //player cannot leave canvas
-        if (player.y < 0) {
-            player.y = 0;
-        };
-        if (player.y + player.height > cv.height) {
-            player.y = cv.height - player.height;
-        };
+        if (player.y < 0) player.y = 0;
+        if (player.y + player.height > cv.height) player.y = cv.height - player.height;
+
 
         socket.emit("playerMove", { //emit movement to server
             id: player.id,
@@ -100,12 +102,13 @@ Ball Movement
 -----------*/
 
 function moveBall() {
-    ball.x += ball.dx;
-    ball.y += ball.dy;
-
-    if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= cv.height) {
-        ball.dy = -ball.dy;
+    if (!gameActive) return;
+    if (score[0] < maxScore && score[1] < maxScore) {
+        ball.x += ball.dx;
+        ball.y += ball.dy;
     };
+
+    if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= cv.height) ball.dy = -ball.dy;
 
     PLAYER.forEach(player => {
         if (
@@ -114,8 +117,11 @@ function moveBall() {
             ball.y + ball.radius > player.y &&
             ball.y - ball.radius < player.y + player.height
         ) {
-            ball.dx = -ball.dx;
-        }
+            let angle = (ball.y - (player.y + player.height / 2)) / (player.height / 2);
+            ball.dy = angle * 4;  //adjust angle based on where ball hit paddle
+            ball.dx = -ball.dx * 1.05; //slight speed increase
+            ball.dy *= 1.05;
+        };
     });
 
     if (ball.x - ball.radius <= 0) {
@@ -129,63 +135,22 @@ function moveBall() {
 };
 
 function resetBall() {
-    ball.x = cv.width / 2;
-    ball.y = cv.height / 2;
-    ball.dx = -ball.dx;
-    ball.dy = 4 * (Math.random() < 0.5 ? 1 : -1);
+    if (score[0] < maxScore && score[1] < maxScore) {
+        ball.x = canvasWidth / 2;
+        ball.y = canvasHeight / 2;
+        ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4; //random horizontal
+        ball.dy = (Math.random() < 0.5 ? 1 : -1) * 4; //random vertical
+        socket.emit("ballMove", ball)
+    };
 };
 
-/*--------------
-Server Responses
---------------*/
-
-//update other player's position
-socket.on("playerMove", (data) => {
-    const otherPlayer = PLAYER.find(player => player.id === data.id);
-    if (otherPlayer) {
-        otherPlayer.y = data.y;
-    }
+socket.on("gameFullMessage", (message) => {
+    document.getElementById("gameStatus").innerText = message;
 });
 
-//update ball position
-socket.on("ballMove", (data) => {
-    ball.x = data.x;
-    ball.y = data.y;
-    ball.dx = data.dx;
-    ball.dy = data.dy;
-
-    //score boundaries
-    if (data.x < 0) { //ball crossed the left boundary
-        score[1]++; //increase score for player 1
-        socket.emit("scoreUpdate", score); //emit updated score
-
-    } else if (data.x > cv.width) { //ball crossed the right boundary
-        score[0]++; //increase score for player 0
-        socket.emit("scoreUpdate", score); //emit updated score
-    }
-
-    if (score[0] >= maxScore) {
-        io.emit("gameOver", { winner: 0 });
-    };
-
-    resetBall();
-});
-
-//update score
-socket.on("scoreUpdate", (data) => {
-    score = data;
-});
-
-//update gameFull
-socket.on("gameFull", () => {
-    alert("The game is full. Please try again later.");
-    window.location.reload();
-});
-
-//update gameOver
-socket.on("gameOver", () => {
-    alert(`Player ${playerID} disconnected. Game Over.`)
-    window.location.reload();
+socket.on("gameOverMessage", (message) => {
+    alert(message);
+    window.location.reload(); //reload the page to restart the game
 });
 
 /*--
@@ -193,6 +158,7 @@ Draw
 --*/
 
 function draw() {
+    if (!gameActive) return;
     //erase the screen
     ctx.clearRect(0, 0, cv.width, cv.height);
 
@@ -223,10 +189,23 @@ function draw() {
 };
 
 function loop() {
+    if (!gameActive) return resetGame(); //stop loop if the game is over
     movePlayer();
+    moveBall();
     draw();
     requestAnimationFrame(loop);
 }
-loop(); //start game loop
 
-
+function resetGame() {
+    score = [0, 0];
+    ball = {
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
+        dx: 4,
+        dy: 4,
+        radius: 10
+    };
+    gameActive = true;
+    loop(); //restart game loop
+    io.emit("gameStart"); //notify players to start new game
+}
