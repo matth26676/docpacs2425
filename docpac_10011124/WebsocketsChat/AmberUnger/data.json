@@ -19,6 +19,14 @@
     {
       "username": "tuna",
       "password": "$2b$10$8RuBlYoFVk1K8CqwqILtgOhnLZR3Hv2VBsPeDHwCjQJR7jLL8dvWm"
+    },
+    {
+      "username": "test",
+      "password": "$2b$10$pdI83Q/KHESZ.qgQFNA/AeqAiK4CIS9Lt6ZYsKJpADYtkXDtc.1q."
+    },
+    {
+      "username": "ddd",
+      "password": "$2b$10$4pc5O7PPhvw.pyPQujAdped8sWjdV7Fl9jN..YJ7LR8ivWuQgHbJO"
     }
   ]
 }
