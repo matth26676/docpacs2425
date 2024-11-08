@@ -15,6 +15,22 @@
 //        |_|                                                   //
 //////////////////////////////////////////////////////////////////
 
+/*
+    -------------------LYNN'S INSTRUCTIONS!!!!!!!!-------------------
+    
+    __Add a timer that starts when the game begins__
+This timer will signify the end of the game when it hits 0. Players shouldn't be able to change the color of any boxes if the timer is 0
+
+    __Add a score for each player__
+The score will be calculated by the number of boxes that are the player's color
+
+    __Alert the end of the game__
+Let every player know the game has ended
+
+    __Add a restart option__
+Give players the option to restart the game
+*/
+
 // Set up the variables
 const { response } = require('express');
 const http = require('http');
@@ -154,14 +170,6 @@ let update = () => {
         };
         // For each client in games...
         game.clients.forEach(c => {
-            score = c.score;
-            score = 0;
-            // this no worky
-            for (let i = 0; i < game.boxes; i++) {
-                if (c.color === game.state[i+1]) {
-                    score++;
-                };
-            };
             console.log(score);
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
