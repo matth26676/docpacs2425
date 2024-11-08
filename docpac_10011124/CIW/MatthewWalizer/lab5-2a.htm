@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Lab 5-2</title>
+<title>Lab 5-2a</title>
 
 <script type="text/javascript">
 <!--
@@ -14,32 +14,29 @@
 
 function checkGrade(form) {
   var myGrade = parseFloat(form.myText.value);
+  var attempts = 1;
   
-/***********************************************
+/*************************************************
   Create a while statement. In the conditional 
   expression, use the isNaN function to test the
   myGrade variable. If myGrade is not a number,
-  reassign myGrade the return value if a prompt 
-  that asks the user to input a numerical value.
-  The while loop will continue until the user 
-  enters a number.
-***********************************************/
-
-<<<<<<<< HEAD:docpac_10011124/CIW/MatthewWalizer/lab5-2.htm
-  while (isNaN(myGrade)) {
-    if (myGrade != Number) {
-      myGrade = parseInt(prompt("Please enter a numerical grade value"))
-    }
-  }
-
-
-
-========
-  while(isNaN(myGrade)) {
-    myGrade = parseInt(prompt("Please enter a numerical value."));
-  }
->>>>>>>> upstream/main:docpac_10011124/CIW/RobertAmbartsumyan/Lab5-2/lab5-2.htm
+  and the value of the attempts variable is less
+  than 2, display a prompt asking the user to 
+  input a numerical value. The while loop will 
+  continue until the user enters a number or until
+  the attempts variable is greater than 2.
+*************************************************/
   
+  while (isNaN(myGrade) && attempts <= 2) {
+    myGrade = parseFloat(prompt("Please enter a numerical grade value: ", ""));
+    attempts++
+  }
+  
+  if(isNaN(myGrade) && attempts == 3) {
+    alert("No grade can be calculated! Please try again!")
+    return;
+  }
+
   if(myGrade >= 91) {
     alert("Your grade is an A.");
   }

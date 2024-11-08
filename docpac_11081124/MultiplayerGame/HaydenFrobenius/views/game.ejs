@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Game</title>
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        #canvas {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid black;
+        }
+
+        #modal {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            transform: translateX(-50%) translateY(-50%);
+            width: 30vw;
+            height: 30vh;
+            background-color: white;
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+    <script src="public/js/socket.io.js"></script>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="modal">
+        <h1>Game Over</h1>
+        <br>
+        <h2 id="modal-text"></h2>
+    </div>
+
+    <script>
+        const GAME_CODE = `<%- gameCode %>`;
+    </script>
+
+    <script src="public/js/main.js"></script>
+</body>
+
+</html>
