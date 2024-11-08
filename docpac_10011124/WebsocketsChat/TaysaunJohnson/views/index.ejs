@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <form action="/chat" method="get" id="form">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username">
+        <input type="submit" value="SUBMIT" id="submit" disabled>
+    </form>
+</body>
+<script>
+    var username = document.getElementById('username')
+    var submit = document.getElementById('submit')
+    var form = document.getElementById('form')
+
+    var interval = () => {
+        if (username.value) {
+            submit.disabled = false
+        } else {
+            submit.disabled = true
+        }
+        requestAnimationFrame(interval)
+    }
+    interval()
+</script>
+</html>

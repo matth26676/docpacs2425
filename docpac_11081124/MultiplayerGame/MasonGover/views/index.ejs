@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Canvas Mover</title>
+</head>
+<body>
+	<canvas width="800px" height="600px" id="canvas"></canvas>
+</body>
+<script>
+	const ws = new WebSocket("ws://localhost:3000");
+	
+	ws.onopen = () => {
+		// Connect the user to the server
+		ws.send(JSON.stringify({
+			type: "connection",
+			name: "Player1"
+		}));
+	}
+
+
+	const canvas = document.getElementById("canvas");
+	const scene = canvas.getContext("2d");
+	const playerSpeed = 2;
+	const controlButtonHeight = 150;
+	const playerAvatar = {
+		x: 20,
+		y: 20,
+		w: 64,
+		h: 64,
+		color: generateRandomColor()
+	};
+
+	function generateRandomColor() {
+		const r = Math.floor(Math.random() * 256);
+		const g = Math.floor(Math.random() * 256);
+		const b = Math.floor(Math.random() * 256);
+		return { r, g, b };
+	}
+
+	const keyControls = {
+		w: () => {scene.fillRect(90, scene.canvas.height - controlButtonHeight, 64, 64)},
+		a: () => {scene.fillRect(26, scene.canvas.height - controlButtonHeight + 64, 64, 64)},
+		s: () => {scene.fillRect(90, scene.canvas.height - controlButtonHeight + 64, 64, 64)},
+		d: () => {scene.fillRect(154, scene.canvas.height - controlButtonHeight + 64, 64, 64)}
+	}
+	
+	// Setup image and store pressed keys
+	const keysPressed = {
+		w: false,
+		a: false,
+		s: false,
+		d: false
+	}
+
+	window.addEventListener("keydown", (event) => {
+		keysPressed[event.key] = true;
+	});
+
+	window.addEventListener("keyup", (event) => {
+		keysPressed[event.key] = false;
+	});
+	
+	function update() {
+		// Turns into 1, -1, or 0 for movement direction
+		const directionX = keysPressed["d"] - keysPressed["a"];
+		const directionY = keysPressed["s"] - keysPressed["w"];
+		let newX = directionX * playerSpeed;
+		let newY = directionY * playerSpeed;
+
+		// Check if newX is past canvas bounds
+		if (playerAvatar.x + newX < 0 || playerAvatar.x + newX + playerAvatar.w > canvas.width) {
+			newX = 0;
+		}
+
+		// Check if newY is past canvas bounds
+		if (playerAvatar.y + newY < 0 || playerAvatar.y + newY + playerAvatar.h > canvas.height) {
+			newY = 0;
+		}
+
+		// Change player position & clear canvas
+		playerAvatar.x += newX;
+		playerAvatar.y += newY;
+		scene.fillStyle = "black";
+		scene.fillRect(0, 0, canvas.width, canvas.height);
+
+		// Draw the image at the proper location
+		scene.fillStyle = `rgb(${playerAvatar.color.r}, ${playerAvatar.color.g}, ${playerAvatar.color.b})`;
+		scene.fillRect(playerAvatar.x, playerAvatar.y, playerAvatar.w, playerAvatar.h);
+		
+		// Display positions
+		scene.font = "30px Arial";
+		scene.textBaseline = "top";
+		scene.textAlign = "left"
+		scene.fillStyle = "white";
+		scene.fillText("X: " + playerAvatar.x + " Y: " + playerAvatar.y, 20, 30);
+		scene.fillText("Coins: ", 20, 70);
+		
+		// Control keys
+		scene.fillStyle = "white";
+		scene.font = "30px Arial";
+		scene.textBaseline = "middle";
+		scene.textAlign = "center";
+
+		for (const control in keyControls) {
+			if (keysPressed[control]) {
+				scene.fillStyle = "white";
+			} else {
+				scene.fillStyle = "grey";
+			}
+			
+			scene.globalAlpha = 0.15;
+			keyControls[control]();
+			scene.globalAlpha = 1;
+		}
+		
+		scene.fillStyle = "white";
+		scene.fillText("W", 90 + 32, scene.canvas.height - controlButtonHeight + 32);
+		scene.fillText("A", 26 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+		scene.fillText("S", 90 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+		scene.fillText("D", 154 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+
+		// Call next frame
+		requestAnimationFrame(update);
+	}
+
+	// Start calling the update function
+	requestAnimationFrame(update);
+</script>
+</html>

@@ -1,56 +1,81 @@
+//Base stuff frfr
 const express = require('express');
 const app = express();
 
 //WebSocket
-const { WebSocketServer } = require('ws');
-const http = require('http');
-const { name } = require('ejs');
-const { title } = require('process');
-const wss = new WebSocketServer({ port: 443 });
+const WebSocket = require('ws');
+const http = require('http').Server(app);
+const wss = new WebSocket.Server({ server: http });
 
-const PORT = 3000;
+//Start thge srever
+http.listen(3000, () => { console.log(`Server started on http://localhost:3000`); });
 
+//EJS settings
 app.set('view engine', 'ejs');
+
+//Express settings
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//View folder frfr jon
 app.set('views', __dirname + '/views');
 
 //WebSocket connection
 wss.on('connection', (ws) => {
-    console.log(`New usser connected.`);
+    console.log(`New usser connected`);
 
     ws.on('message', (message) => {
-        message = message.toString('utf8');
-        console.log(`WE GOT : ${message}`);
-        if (message.text) {
-            broadcast(wss, JSON.stringify({ user: ws.name, text: message.text }));
+        message = JSON.parse(String(message));
+
+        if (message.hasOwnProperty('name')) {
+            ws.name = message.name;
+            broadcast(wss, { list: userList(wss).list });
         };
+
+        if (message.hasOwnProperty('text')) {
+            broadcast(wss, message);
+        };
+    });
+
+    //When user leaves
+    ws.on('close', () => {
+        //This is the user that left
+        broadcast(wss, { list: userList(wss).list });
     });
 });
 
-function broadcast(wss, message) {
-    wss.clients.forEach((client) => {
-        client.send(message);
-    });
-}
 
-function userList() {
-    let users = [];
+//FUNCTIONS
+function broadcast(wss, message) {
+    //console.log(`>>${message}<<`);
     for (let client of wss.clients) {
-        if (client.name) {
-            users.push(client.name);
-        };
+        client.send(JSON.stringify(message));
     };
+};
+
+function userList(wss) {
+    const users = [];
+    //console.log('0');
+    wss.clients.forEach((client) => {
+        //console.log('1');
+        if (client.hasOwnProperty('name')) {
+            users.push(client.name);
+            //console.log(users);
+            //console.log(`${client.name} Debug`);
+        }
+    });
     return { list: users };
 };
 
-function nameCheck (req, res, next) {
+function nameCheck(req, res, next) {
     let name = req.query.name;
     //console.log(name);
     if (name) {
         next();
     } else {
         res.redirect('/');
-    }
-}
+    };
+};
 
 //////////////////////////////////////
 //////////////////////////////////////
@@ -64,15 +89,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/chat', nameCheck, (req, res) => {
-    let name = req.query.name;
-    res.render('chat', {title: 'Chat', name: name});
+    const NAME = req.query.name;
+
+    res.render('chat', { name: NAME });
 });
 
-//App posts
-
-const server = http.createServer(app);
-
-//Start server
-server.listen(PORT, function() {
-    console.log(`Server is running on port ${PORT}`);
+app.get('/users', (req, res) => {
+    res.json(userList(wss));
 });
