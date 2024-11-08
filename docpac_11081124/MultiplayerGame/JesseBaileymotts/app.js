@@ -17,7 +17,7 @@
 
 /*
     -------------------LYNN'S INSTRUCTIONS!!!!!!!!-------------------
-    
+
     __Add a timer that starts when the game begins__
 This timer will signify the end of the game when it hits 0. Players shouldn't be able to change the color of any boxes if the timer is 0
 
@@ -170,7 +170,6 @@ let update = () => {
         };
         // For each client in games...
         game.clients.forEach(c => {
-            console.log(score);
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
             console.log(payload);
