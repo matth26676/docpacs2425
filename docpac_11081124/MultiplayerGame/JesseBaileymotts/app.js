@@ -1,5 +1,19 @@
 // The moment I understood the weakness of my flesh, it disgusted me. I craved the strength and certainty of steel. I aspired to the purity of the blessed machine.
-// 1:38:48, https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
+// https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
+
+//////////////////////////////////////////////////////////////////
+// __        __     _       __  _                   _           //
+// \ \      / /___ | |__   / _|(_)  ___  _ __    __| | ___  _   //
+//  \ \ /\ / // _ \| '_ \ | |_ | | / _ \| '_ \  / _` |/ __|(_)  //
+//   \ V  V /|  __/| |_) ||  _|| ||  __/| | | || (_| |\__ \ _   //
+//    \_/\_/  \___||_.__/ |_|  |_| \___||_| |_| \__,_||___/(_)  //
+//  ____          _         _    ____   ____                    //
+// / ___|  _ __  | |  __ _ | |_ |___ \ |  _ \                   //
+// \___ \ | '_ \ | | / _` || __|  __) || | | |                  //
+//  ___) || |_) || || (_| || |_  / __/ | |_| |                  //
+// |____/ | .__/ |_| \__,_| \__||_____||____/                   //
+//        |_|                                                   //
+//////////////////////////////////////////////////////////////////
 
 // Set up the variables
 const { response } = require('express');
@@ -64,19 +78,24 @@ wss.on('request', (request) => {
             const gameID = result.gameID;
             const game = games[gameID];
             // If there are more than 5 players...
-            if (game.clients.length >= 5) {
+            if (game.clients.length >= 6) {
                 // Notify that the maximum amount of players has been reached
                 console.log(`Game (${gameID}) is at maximum capacity.`)
                 return;
             }
             // Set the color for the player depending on which they are
-            // 1 is Red, 2 is Yellow, 3 is Green, 4 is Cyan, 5 is Purple 
-            const color = {'0': '#ff0000', '1': '#ffff00', '2': '#00ff00', '3': '#00ffff', '4': '#ff00ff'}[game.clients.length]
+            // 1 is Red, 2 is Cyan, 3 is Green, 4 is Yellow, 5 is Purple, 6 is Orange
+            const color = {'0': '#ff0000', '1': '#00ffff', '2': '#00ff00', '3': '#ffff00', '4': '#ff00ff', '5': '#ff8800'}[game.clients.length]
+            // Set the number for the player depending on which they are
+            const player = {'0': 'Player 1', '1': 'Player 2', '2': 'Player 3', '3': 'Player 4', '4': 'Player 5', '5': 'Player 6'}[game.clients.length]
             // Add that client to the game
             game.clients.push({
                 'clientID': clientID,
-                'color': color
+                'color': color,
+                'player': player,
+                'score': 0
             });
+            console.log(game.clients);
             // If there are more than one clients, start the game
             if (game.clients.length > 1) update();
             // Create the join payload
@@ -135,21 +154,30 @@ let update = () => {
         };
         // For each client in games...
         game.clients.forEach(c => {
+            score = c.score;
+            score = 0;
+            // this no worky
+            for (let i = 0; i < game.boxes; i++) {
+                if (c.color === game.state[i+1]) {
+                    score++;
+                };
+            };
+            console.log(score);
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
             console.log(payload);
         });
     };
-    setTimeout(update, 500);
+    setTimeout(update, 50);
 };
 
 // Create a function to randomly create a hex string 4 characters long
-const S4 = () => {
+const hex = () => {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1); 
 };
 
-// Create a guid (Globally Unique Identifier) by concatenating multiple random hex strings together. Ensure they are all lower case
-const guid = () => (S4() + S4() + "-" + S4() + "-4" + S4().substr(0,3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+// // Create a guid (Globally Unique Identifier) by concatenating multiple random hex strings together. Ensure they are all upper case
+const guid = () => (hex()/* + hex()*/ + '-' + hex()/* + hex()*/).toUpperCase();
 
 // For anyone that needs a refresher on jolliness 👇
 //................................................................................................................................................................................................................................
