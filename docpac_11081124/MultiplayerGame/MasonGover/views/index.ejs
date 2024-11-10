@@ -9,34 +9,87 @@
 	<canvas width="800px" height="600px" id="canvas"></canvas>
 </body>
 <script>
+	// Make the player enter a username and ensure it's not empty or just spaces
+	let name = "";
+	while (!name || !name.trim()) {
+		name = prompt("Please enter your username:")
+	}
+
+	// Setup websocket connection to the server 
 	const ws = new WebSocket("ws://localhost:3000");
-	
+	const players = {};
+	let coinPosition = {};
+	let timer = 60;
+	let winner = "";
+
 	ws.onopen = () => {
 		// Connect the user to the server
 		ws.send(JSON.stringify({
 			type: "connection",
-			name: "Player1"
+			name
 		}));
+
+		ws.onmessage = (message) => {
+			message = JSON.parse(message.data);
+
+			switch (message.type) {
+				case "playerJoin": {
+					players[message.ws.name] = message.ws;
+					break;
+				}
+
+				case "playerLeave": {
+					delete players[message.ws.name];
+					break;
+				}
+
+				case "currentPlayers": {
+					for (const playerName in message.players) {
+						// If the player is the local player, skip as playerJoin will handle that
+						if (playerName == message.ws.name) {
+							continue;
+						}
+
+						const player = message.players[playerName];
+						players[playerName] = player;
+					}
+					break;
+				}
+
+				case "playerPositionUpdate": {
+					players[message.ws.name].position = message.ws.position;
+					break;
+				}
+
+				case "coinPositionUpdate": {
+					coinPosition = message.coinPosition;
+					break;
+				}
+
+				case "coinCollected": {
+					if (message.name == name) {
+						players[message.name].coins++;
+					}
+					break;
+				}
+
+				case "timerUpdate": {
+					timer = message.timer;
+					break;
+				}
+
+				case "gameOver": {
+					winner = message.winner;
+					break;
+				}
+			}
+		}
 
 		const canvas = document.getElementById("canvas");
 		const scene = canvas.getContext("2d");
-		const playerSpeed = 2;
 		const controlButtonHeight = 150;
-		const playerAvatar = {
-			x: 20,
-			y: 20,
-			w: 64,
-			h: 64,
-			color: generateRandomColor()
-		};
 
-		function generateRandomColor() {
-			const r = Math.floor(Math.random() * 256);
-			const g = Math.floor(Math.random() * 256);
-			const b = Math.floor(Math.random() * 256);
-			return { r, g, b };
-		}
-
+		// Handles the WASD 
 		const keyControls = {
 			w: () => {scene.fillRect(90, scene.canvas.height - controlButtonHeight, 64, 64)},
 			a: () => {scene.fillRect(26, scene.canvas.height - controlButtonHeight + 64, 64, 64)},
@@ -44,19 +97,24 @@
 			d: () => {scene.fillRect(154, scene.canvas.height - controlButtonHeight + 64, 64, 64)}
 		}
 
+		// Hold the keys currently pressed
 		const keysPressed = {
 			"w": false,
 			"a": false,
 			"s": false,
 			"d": false
 		};
-		
-		// Setup image and store pressed keys
+
+		// Create the coin image
+		const coinImage = new Image();
+		coinImage.src = 'http://localhost:3000/coin.png';
+
+		// When a player presses a key, relay that information to the server
 		window.addEventListener("keydown", (event) => {
 			const key = event.key.toLowerCase();
 			if (!keysPressed[key]) {
 				ws.send(JSON.stringify({
-					type: "movementStarted",
+					type: "keyPressed",
 					key
 				}));
 
@@ -64,11 +122,12 @@
 			}
 		});
 
+		// When a player releases a key, relay that information to the server
 		window.addEventListener("keyup", (event) => {
 			const key = event.key.toLowerCase();
 			if (keysPressed[key]) {
 				ws.send(JSON.stringify({
-					type: "movementEnded",
+					type: "keyReleased",
 					key
 				}));
 
@@ -77,41 +136,37 @@
 		});
 		
 		function update() {
-			// Turns into 1, -1, or 0 for movement direction
-			// const directionX = keysPressed["d"] - keysPressed["a"];
-			// const directionY = keysPressed["s"] - keysPressed["w"];
+			// If the player hasn't been created by the server, then skip the frame update
+			if (!players[name]) {
+				return requestAnimationFrame(update);
+			}
 			
-			// temp stubbed with 0
-			let newX = 0 * playerSpeed;
-			let newY = 0 * playerSpeed;
-
-			// Check if newX is past canvas bounds
-			if (playerAvatar.x + newX < 0 || playerAvatar.x + newX + playerAvatar.w > canvas.width) {
-				newX = 0;
-			}
-
-			// Check if newY is past canvas bounds
-			if (playerAvatar.y + newY < 0 || playerAvatar.y + newY + playerAvatar.h > canvas.height) {
-				newY = 0;
-			}
-
-			// Change player position & clear canvas
-			playerAvatar.x += newX;
-			playerAvatar.y += newY;
+			// Clear canvas
 			scene.fillStyle = "black";
 			scene.fillRect(0, 0, canvas.width, canvas.height);
 
-			// Draw the image at the proper location
-			scene.fillStyle = `rgb(${playerAvatar.color.r}, ${playerAvatar.color.g}, ${playerAvatar.color.b})`;
-			scene.fillRect(playerAvatar.x, playerAvatar.y, playerAvatar.w, playerAvatar.h);
+			// Draw all players
+			for (const playerName in players) {
+				const player = players[playerName];
+				scene.fillStyle = `rgb(${player.color.r}, ${player.color.g}, ${player.color.b})`;
+				scene.fillRect(player.position.x, player.position.y, player.size.w, player.size.h);
+			}
+
+			// Draw the coin
+			scene.drawImage(coinImage, coinPosition.x, coinPosition.y, 32, 32);
 			
 			// Display positions
 			scene.font = "30px Arial";
 			scene.textBaseline = "top";
 			scene.textAlign = "left"
 			scene.fillStyle = "white";
-			scene.fillText("X: " + playerAvatar.x + " Y: " + playerAvatar.y, 20, 30);
-			scene.fillText("Coins: ", 20, 70);
+			scene.fillText("X: " + Math.round(players[name].position.x) + " Y: " + Math.round(players[name].position.y), 20, 30);
+			scene.fillText("Coins: " + players[name].coins, 20, 70);
+			scene.fillText("Timer: " + timer, 20, 110);
+
+			if (winner) {
+				scene.fillText("Winner: " + winner, 20, 150);
+			}
 			
 			// Control keys
 			scene.fillStyle = "white";
