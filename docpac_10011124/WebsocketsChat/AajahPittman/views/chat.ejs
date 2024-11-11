@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <style>
+        #usernameList {
+            float: left;
+            width: 200px;
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #messageList {
+            margin-left: 220px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        #textBox {
+            width: calc(100% - 240px);
+            margin-left: 220px;
+            margin-top: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #messageText input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #messageText button {
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="usernameList">
+        <h3>Users</h3>
+
+    </div>
+
+    <div id="messageList">
+        <h3>Messages</h3>
+
+    </div>
+
+    <div id="messageText">
+        <input id="messageBox" type="text" placeholder="type your message here">
+        <button id="sendbutton" >Send</button>
+    </div>
+</body>
+<script>
+    var username = '<%= user %>';
+    
+    var usernameList = document.getElementById('usernameList')
+
+    var messageList = document.getElementById('messageList')
+
+    var messageBox = document.getElementById('messageBox')
+
+    console.log(username);
+
+    const socket = new WebSocket('ws://localhost:3000');
+
+    socket.onopen = (event) => {
+        socket.send(JSON.stringify({name: username}));
+    }
+
+    socket.onmessage = (event) => {
+        console.log(event)
+        var message = JSON.parse(event.data)
+        if(message.list) {
+            usernameList.innerHTML = ''
+            for (let i = 0; i < message.list.length; i++){
+                usernameList.innerHTML += message.list[i] + "<br>"
+            }  
+        }
+        if(message.text) {
+            messageList.innerHTML += message.user + ": " + message.text + "<br>"
+        }
+    }
+
+    document.getElementById("sendbutton").addEventListener("click", function(){
+        if(messageBox) {
+            var message = {
+                text: messageBox.value, user: username
+            }
+            socket.send(JSON.stringify(message))
+        }
+    })
+
+</script>
+</html>

@@ -8,74 +8,127 @@
         html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
         }
+        
         body {
             display: flex;
+            flex-direction: row;
             height: 100vh;
         }
 
         .chatbox {
             flex: 1;
             background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .input-container {
+            display: flex;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .messagebox {
-            position: absolute;
-            width: 90%;
-            height: 50px;
-            bottom: 0;
+            flex: 1;
+            height: 30px;
         }
 
         .user-list {
-            display: block;
             width: 10%;
+            background-color: grey;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
-        .user-list li {
-            display: inline-block;
+        li {
             list-style-type: none;
-            padding: 10px;
-            color: white;
+            color: black;
+            margin-bottom: 5px;
+        }
+
+        li p {
+            padding: 0;
+            margin: 0;
         }
     </style>
 </head>
 <body>
     <div class="chatbox">
-        <input class="messagebox">
+        <ul id="messages-list">
 
-        </input>
+        </ul>
+        <div class="input-container">
+            <input class="messagebox" id="messageInput"">
+            <button id="sendButton" onclick="send()">Send</button>
+        </div>
     </div>
 
     <div class="user-list">
-        <li>
-            <a href="#">User 1</a>
-            <a href="#">User 1</a>
-            <a href="#">User 1</a>
-        </li>
+        <ul id="user-list">
+            <li>
+                <p>Users:</p>
+            </li>
+        </ul>
     </div>
+
     <script>
         const name = "<%= username %>";
         const ws = new WebSocket("ws://localhost:3000");
+
+        function send() {
+            const textElement = document.getElementById("messageInput");
+            const text = textElement.value;
+            textElement.value = "";
+
+            const data = JSON.stringify({
+                name,
+                text
+            });
+            ws.send(data);
+        }
         
         ws.onopen = () => {
             // Send the name of the user to the server
-            ws.send(JSON.stringify({
-                name
-            }));
+            ws.send(JSON.stringify({ name }));
 
             ws.onmessage = (message) => {
                 const data = JSON.parse(message.data);
                 const names = data.names;
-                const message = data.text;
+                const messages = data.messages;
 
                 // Handle users
                 if (names) {
-                    console.log(names);
+                    // Get user list and clear the existing one
+                    const userList = document.getElementById("user-list");
+                    userList.innerHTML = "<li><p>Users:</p></li>";
+
+                    for (const name of names) {
+                        const li = document.createElement("li");
+                        const p = document.createElement("p");
+                        p.textContent = name;
+                        li.appendChild(p);
+                        userList.appendChild(li);
+                    }
                 }
 
                 // Handle messages
-                if (message) {
-                    console.log(message);
+                if (messages) {
+                    const messageList = document.getElementById("messages-list");
+                    messageList.innerHTML = "<li></li>";
+
+                    for (const message of messages) {
+                        const li = document.createElement("li");
+                        const p = document.createElement("p");
+                        p.textContent = message;
+                        li.appendChild(p);
+                        messageList.appendChild(li);
+                    }
                 }
             }
         };
