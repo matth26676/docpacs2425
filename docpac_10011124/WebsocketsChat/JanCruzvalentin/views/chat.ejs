@@ -11,38 +11,43 @@
 <body>
     <style>
         #users {
+            padding: 10px;
             float: left;
             border-color: blue;
             border-radius: 20px;
             border-style: solid;
-            height: 900px;
+            height: 825px;
             width: 200px;
             overflow-y: auto;
         }
 
         #chatBox {
+            padding: 10px;
             margin-left: 200px;
-            height: 900px;
+            height: 825px;
             overflow-y: scroll;
             overflow-x: auto;
             display: list-item;
         }
 
         #messageBox {
-            width: 85%;
+
+            padding: 10px;
+            width: 80%;
             height: 25px;
             position: absolute;
-            float: right;
-            margin-top: 896px;
-            margin-left: 5px;
+            float: left;
+            margin-top: 850px;
 
         }
 
         #Send {
+            padding: 10px;
             float: right;
             height: 10%;
-            width: 45px;
-            margin-top: 900px;
+            width: 60px;
+            margin-right: 30px;
+            margin-top: 850px;
         }
     </style>
 
@@ -62,21 +67,21 @@
 
     };
 
-    ws.onmessage = function (message) {
-        let message = JSON.parse(message.data)
-        console.log(message);
+    ws.onmessage = function (mess) {
+        var mess = JSON.parse(mess.data)
+        console.log(mess.list)
 
-        if (message.list) {
+        if (mess.list) {
             let users = document.getElementById("users");
             users.innerHTML = ''
-            for (name in message.list) {
-                console.log(message.list[name]);
+            for (name in mess.list) {
+                console.log(mess.list[name]);
                 users.innerHTML += mess.list[name] + "<br>";
             }
         };
 
-        if (message.text) {
-            document.getElementById("chatBox").innerHTML += message.name + ": " + message.text + "<br>";
+        if (mess.text) {
+            document.getElementById("chatBox").innerHTML += mess.name + ": " + mess.text + "<br>";
         }
     };
 
