@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: 'Garamond', serif;
+            background: url('/path/to/your/image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #3e2723;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h3 {
+            color: #3e2723;
+            text-align: center;
+        }
+        input[type="submit"] {
+            background-color: #6b4226;
+            color: #f4f1e1;
+            border: 2px solid #3e2723;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Garamond', serif;
+        }
+        input[type="submit"]:hover {
+            background-color: #8b5e3c;
+        }
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        label {
+            font-family: 'Garamond', serif;
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="checkbox"] {
+            margin-left: 10px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #3e2723;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to thy profile, <%= username %>.</h1>
+    <a href="/">Thy home page link</a>
+    <h3>Checkbox for thy profile:</h3>
+    <form action="" method="post">
+        <label for="profileCheckbox">Profile Checkbox:
+            <input type="checkbox" id="profileCheckbox" name="checkbox" value="checked">
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

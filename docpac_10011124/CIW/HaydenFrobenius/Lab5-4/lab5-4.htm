@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lab 5-4</title>
+
+<script type="text/javascript">
+<!--
+
+/*****************************************************************
+  Add a one line if statement inside the while loop. Check myvalue 
+  for a null value. Invoke a break statement if myvalue is null.
+  ***************************************************************/
+  
+  function breakTest() {
+    var loopBoolean = true;
+    var myvalue = "";
+    while(loopBoolean) {
+	
+      myvalue = prompt("Enter data", myvalue);
+<<<<<<<< HEAD:docpac_10011124/CIW/MatthewWalizer/lab5-4.htm
+          if (myvalue == null) {
+            break
+          }
+========
+	  
+        if(myvalue == null) return;
+
+>>>>>>>> upstream/main:docpac_10011124/CIW/HaydenFrobenius/Lab5-4/lab5-4.htm
+          if (myvalue) {
+            loopBoolean = false;
+            alert (myvalue)
+          }
+    }
+  }
+
+//-->
+</script>
+
+</head>
+
+<body>
+
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+<form name="myForm">
+<input type="button" value="Break Test" onclick="breakTest();" />
+</form>
+
+</body>
+</html>
