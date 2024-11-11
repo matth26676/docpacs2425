@@ -29,6 +29,9 @@ Let every player know the game has ended
 
     __Add a restart option__
 Give players the option to restart the game
+
+    __Add online functionality__
+Ensure players from any machine can connect
 */
 
 // Set up the variables
