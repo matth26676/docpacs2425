@@ -51,7 +51,10 @@ wss.on('connection', (ws) => {
 
         if (message.type == 'scoreUpdate') {
             const username = message.username;
-            // make that individual users score go up and be saved in the scores array
+            const score = message.score
+            console.log(score)
+            console.log(scores)
+            // make that individual users score be saved in the scores array
         }
 
         // if (message.type == 'endGame') {

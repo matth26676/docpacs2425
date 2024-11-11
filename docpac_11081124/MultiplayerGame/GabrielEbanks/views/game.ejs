@@ -100,6 +100,7 @@
     const timer = document.getElementById('timerBox');
     let timeLeft = 20;
     let timerID;
+    let con = console.log
 
     webSocket.addEventListener("open", () => {
         console.log("We are connected");
@@ -116,11 +117,9 @@
             startCountdown(message.timeLeft);
         }
 
-        // else if (message.type == 'updateScore') {
-        // }
 
         else if (message.type == 'gameOver') {
-            // alert the rusult
+            // alert the result of the winner stuff
             resetGame();
         }
     });
@@ -135,7 +134,7 @@
             webSocket.send(JSON.stringify({ type: 'endGame' }));
         } else {
             timeLeft--;
-            timerBox.innerHTML = timeLeft;
+            timerBox.innerHTML = 'Time Remaining '+timeLeft;
         }
     }
 
@@ -143,11 +142,12 @@
     function scoreDoer() {
         if (timeLeft > 0) {
             score++;
+            scoreBox.innerHTML = score;
             webSocket.send(JSON.stringify({
                 type: 'scoreUpdate',
                 username: username,
+                score: score,
             }));
-            scoreBox.innerHTML = score;
         }
     }
 
