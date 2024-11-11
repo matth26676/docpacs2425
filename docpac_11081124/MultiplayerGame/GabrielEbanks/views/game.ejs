@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Mover</title>
+
+    <style>
+        #startGame {
+            width: 90px;
+            height: 30px;
+            border: black;
+            margin: 150px auto;
+            background-color: rgb(162, 0, 255);
+
+
+        }
+
+        #startGameDiv {
+            width: 100px;
+            margin: auto;
+        }
+
+
+
+
+        #button1Div {
+            border-style: solid;
+            border-color: rgb(61, 43, 226);
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+
+        }
+
+
+        #button2Div {
+            border-style: solid;
+            border-color: rgb(226, 110, 43);
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 0;
+            right: 0;
+
+
+        }
+
+        #button1 {
+            border-style: solid;
+            border-color: rgb(61, 43, 226);
+            width: 300px;
+            height: 300px;
+
+
+
+        }
+
+        #button2 {
+            border-style: solid;
+            border-color: rgb(226, 110, 43);
+            width: 300px;
+            height: 300px;
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <div id="bigDiv">
+        <div id='button1Div'>
+            <button onclick="scoreUp1()" id="button1">p1</button>
+        </div>
+
+
+        <div id='button2Div'>
+            <button onclick="scoreUp2()" id="button2">p2</button>
+        </div>
+    </div>
+
+
+    <div id='startGameDiv'>
+        <button onclick="startGame()" id="startGame"> Click here to start game </button>
+    </div>
+
+
+</body>
+
+<script>
+    function scoreUp1() {
+        console.log('p1 clicked')
+    }
+
+    function scoreUp2() {
+        console.log('p2 clicked')
+    }
+
+    function startGame() {
+        console.log("start game clicked");
+        
+    }
+
+</script>
+
+</html>
