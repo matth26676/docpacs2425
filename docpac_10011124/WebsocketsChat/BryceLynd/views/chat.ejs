@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAT!</title>
+
+</head>
+
+<body>
+    <style>
+        #nameList {
+            float: left;
+            border: 2px double black;
+            height: 925px;
+            width: 185px;
+            overflow-y: auto;
+        }
+
+        #chatBox {
+            background-color: white;
+            margin-left: 200px;
+            height: 890px;
+            overflow-y: scroll;
+            overflow-x: auto;
+            display: list-item;
+        }
+
+        #messageBox {
+            background-color: white;
+            width: 85%;
+            height: 25px;
+            position: absolute;
+            float: right;
+            margin-top: 896px;
+            margin-left: 5px;
+
+        }
+
+        #Send {
+            background-color: white;
+            float: right;
+            height: 10%;
+            width: 45px;
+            margin-top: 900px;
+        }
+    </style>
+
+    <div id="nameList"></div>
+    <input type="text" id="messageBox">
+    <button id="Send" onclick="sendMessage()">Send</button>
+    <div id="chatBox"></div>
+
+</body>
+<script>
+    const ws = new WebSocket("ws://localhost:3000")
+    let name = `<%= name %>`
+
+
+    ws.onopen = function () {
+        ws.send(JSON.stringify({ name: name }));
+        console.log(name);
+        
+    };
+
+    ws.onmessage = function (message) {
+        let mess = JSON.parse(message.data)
+        console.log(mess);
+
+        if (mess.list) {
+            console.log(mess.list); 
+            let nameList = document.getElementById("nameList");
+            nameList.innerHTML = ''
+            for (name in mess.list) {
+                console.log(mess.list[name]);
+                nameList.innerHTML += mess.list[name] + "<br>";
+            }
+        };
+
+        if (mess.text) {
+            document.getElementById("chatBox").innerHTML += mess.name + ": " + mess.text + "<br>";
+        }
+    };
+    function sendMessage() {
+        const inputMessage = document.getElementById("messageBox").value
+        console.log(inputMessage);
+        ws.send(JSON.stringify({ name: name, text: inputMessage }))
+    };
+
+</script>
+
+</html>
