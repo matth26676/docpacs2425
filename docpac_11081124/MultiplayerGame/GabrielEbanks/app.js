@@ -57,9 +57,9 @@ wss.on('connection', (ws) => {
             // make that individual users score be saved in the scores array
         }
 
-        // if (message.type == 'endGame') {
-        //     endGame();
-        // }
+        if (message.type == 'endGame') {
+            endGame();
+        }
     });
 
     ws.on('close', () => {
