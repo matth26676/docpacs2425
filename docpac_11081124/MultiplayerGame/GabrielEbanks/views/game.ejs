@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Click faster than other person game</title>
 
+    <script>
+        const username = "<%= name %>"
+    </script>
+
     <style>
         #startGame {
             width: 90px;
@@ -32,8 +36,8 @@
             border-color: rgb(61, 43, 226);
             width: 300px;
             height: 300px;
-            
-            
+
+
         }
 
 
@@ -42,7 +46,7 @@
             border-color: rgb(61, 43, 226);
             width: 300px;
             height: 300px;
-            
+
 
 
 
@@ -56,7 +60,7 @@
 
         #TestsDiv {
             align-items: center;
-            justify-content: center; 
+            justify-content: center;
             display: flex;
         }
     </style>
@@ -68,10 +72,8 @@
 
     <div id='TestsDiv' style="display:none" class="bigDiv">
         <div id='buttonDiv'>
-            <button onclick="scoreUp()" id="button">p1</button>
+            <button onclick="scoreDoer()" id="button">Click This!</button>
         </div>
-
-
     </div>
 
 
@@ -91,38 +93,79 @@
 </body>
 
 <script>
+    const webSocket = new WebSocket('ws://localhost:443/');
+
     const scoreBox = document.getElementById('scoreBox')
     var score = 0
     const timer = document.getElementById('timerBox');
     let timeLeft = 20;
+    let timerID;
+
+    webSocket.addEventListener("open", () => {
+        console.log("We are connected");
+        webSocket.send(JSON.stringify({
+            type: 'playerUsername',
+            username: username
+        }));
+    });
+
+    webSocket.addEventListener("message", (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.type == 'startCountdown') {
+            startCountdown(message.timeLeft);
+        }
+
+        // else if (message.type == 'updateScore') {
+        // }
+
+        else if (message.type == 'gameOver') {
+            // alert the rusult
+            resetGame();
+        }
+    });
+    
+    function TestsFunction() {
+            webSocket.send(JSON.stringify({ type: 'startGame' }));
+        }
 
     function countDown() {
-        timeLeft--
-        timer.innerHTML = timeLeft
-
-        if (timeLeft === 0) {
-            clearInterval(timerID)
-            alert('Game over!')
+        if (timeLeft <= 0) {
+            clearInterval(timerID);
+            webSocket.send(JSON.stringify({ type: 'endGame' }));
+        } else {
+            timeLeft--;
+            timerBox.innerHTML = timeLeft;
         }
     }
 
+
     function scoreDoer() {
-        score++
-        scoreBox.innerHTML = 'Score ' + score
+        if (timeLeft > 0) {
+            score++;
+            webSocket.send(JSON.stringify({
+                type: 'scoreUpdate',
+                username: username,
+            }));
+            scoreBox.innerHTML = score;
+        }
     }
 
-    function TestsFunction() {
-        var T = document.getElementById("TestsDiv");
-        var V = document.getElementById('startGameDiv')
-        T.style.display = "flex";  // <-- Set it to flex
-        V.style.display ='none';
-        console.log('test function')
-    }
+    function startCountdown(startTime) {
+            document.getElementById("TestsDiv").style.display = "flex";
+            document.getElementById("startGameDiv").style.display = "none";
+            timeLeft = startTime;
+            timerBox.innerHTML = timeLeft;
+            timerID = setInterval(countDown, 1000);
+        }
 
-    const webSocket = new WebSocket('ws://localhost:443/');
-    webSocket.addEventListener("open", () => {
-        console.log("We are connected");
-    })
+    // function updateDaScore() {
+
+    //     }
+
+    function resetGame() {
+        location.reload();
+    }
 </script>
 
 </html>
