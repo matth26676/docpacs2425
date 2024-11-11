@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+            background-color: rgb(37, 37, 37);
+            color: aliceblue;
+            font-size: large;
+            font-family: sans-serif
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+        }
+
+        .userList {
+            float: left;
+            border: 2px solid black;
+            background-color: solid rgb(54, 54, 54);
+            justify-content: center;
+            align-items: center;
+            height: 90%;
+            width: 10%;
+        }
+
+        .messageList {
+            border: 2px solid red;
+            float: right;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .textBox {
+            width: 100%;
+            height: 10%;
+            border: 2px solid blue;
+            position: fixed;
+            bottom: 0;
+        }
+
+        #msgButton {
+            float: right;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<script>
+    let currentUrl = window.location.href;
+    let url = new URL(currentUrl);
+    let params = url.searchParams;
+    let paramValue = params.get('name');
+    const name = paramValue;
+    const ws = new WebSocket("ws://localhost:3000");
+
+    ws.onopen = () => {
+        ws.send(JSON.stringify({
+            name
+        }));
+
+        ws.onmessage = (message) => {
+            const data = JSON.parse(message.data);
+            const names = data.names;
+            const messages = data.messages;
+
+            if (names) {
+                const userList = document.getElementById("userList")
+                userList.innerHTML = "<li><p>Users: </p></li>"
+
+                for (const name of names) {
+                    const li = document.createElement("li")
+                    const p = document.createElement("p")
+                    p.textContent = name
+                    li.appendChild(p)
+                    userList.appendChild(li)
+                }
+            }
+
+            if (messages) {
+                console.log("abc")
+                let messageList = document.getElementById("messageList")
+                messageList.innerHTML = "<li></li>"
+
+                for (const message of messages) {
+                    const li = document.createElement("li")
+                    const p = document.createElement("p")
+                    p.textContent = message
+                    li.appendChild(p)
+                    messageList.appendChild(li)
+                }
+            }
+
+        }
+    };
+
+    function submit() {
+            const textElement = document.getElementById("messageBox")
+            console.log(textElement.value)
+            const text = textElement.value
+            textElement.value = ""
+            const data = JSON.stringify({name, text})
+            ws.send(data)
+        }
+
+    console.log(paramValue);
+</script>
+
+<body>
+    <div class="userList">
+        <li id="userList">
+            <h1>Users:</h1>
+        </li>
+    </div>
+    <div class="messageList" id="messageList">
+
+    </div>
+    <div class="textBox">
+        <input class="messageBox" id="messageBox">
+        <button id="msgButton" onclick="submit()">SUBMIT</button>
+    </div>
+</body>
+
+</html>
