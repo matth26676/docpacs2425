@@ -101,7 +101,7 @@ wss.on('request', (request) => {
                 // Notify that the maximum amount of players has been reached
                 console.log(`Game (${gameID}) is at maximum capacity.`)
                 return;
-            }
+            };
             // Set the color for the player depending on which they are
             // 1 is Red, 2 is Cyan, 3 is Green, 4 is Yellow, 5 is Purple, 6 is Orange
             const color = {'0': '#ff0000', '1': '#00ffff', '2': '#00ff00', '3': '#ffff00', '4': '#ff00ff', '5': '#ff8800'}[game.clients.length]
@@ -142,7 +142,7 @@ wss.on('request', (request) => {
             // Assign the client's color to the box and update the game state
             state[boxID] = color;
             games[gameID].state = state;
-        }
+        };
     });
     // Generate a new client id
     const clientID = guid();
@@ -175,11 +175,44 @@ let update = () => {
         game.clients.forEach(c => {
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
-            console.log(payload);
+            console.log(payload)
         });
     };
     setTimeout(update, 50);
 };
+
+/*
+    ____Example Code for a Theoretical Timer____
+// Create a function to update the game
+let update = () => {
+    // For game of games..
+    // Loop through all the keys ( {'gameID':, gameID} )
+    for (const g of Object.keys(games)) {
+        // Set the game from the games object
+        const game = games[g];
+
+        // Set the current time in the game
+        game.time = time
+
+        Every 1 second, the timer should tick down
+        This timer should be broadcasted to each client and tick down the timer in the html
+        When the timer in the game's state is 0, don't allow the players to click boxes
+        Tell players who won by calculating how many boxes are the player's colors
+
+        // Create the update payload
+        const payload = {
+            'method': 'update',
+            'game': game
+        };
+        // For each client in games...
+        game.clients.forEach(c => {
+            // Stringify and send the update payload
+            clients[c.clientID].connection.send(JSON.stringify(payload));
+        });
+    };
+    setTimeout(update, 50);
+};
+*/
 
 // Create a function to randomly create a hex string 4 characters long
 const hex = () => {

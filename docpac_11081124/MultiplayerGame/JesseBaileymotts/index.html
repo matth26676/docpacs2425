@@ -10,8 +10,8 @@
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
-    <div id='clock'>Time</div>
-    <div id='players'></div>
+    <div id='clock'>Time: <div>
+    <div id="players"></div>
     <div id='board'></div>
     <script>
         //// HTML Elements
@@ -28,7 +28,13 @@
         let clientID = null;
         let gameID = null;
         let pColor = null;
-        let timer = 30;
+        let timer = 5;
+
+            //This code organization is slop so I'm putting this at the top for my convenience
+            //"waaa, you can't just declare things with random letters"
+            //https://youtu.be/E58qLXBfLrs?si=zLnwz42YwGdJigo7&t=67
+            //function fuodhougj() { yidvasjkb = setInterval(function() { timer--, console.log(timer), wadsuodhsa.innerText = "Time: " + timer; }, 1000); if (timer <= 0) { WebSocket.close; console.log("Bye bye connection"); } else { clearInterval(yidvasjkb); } }
+
 
         //// HTML Events
         // On clicking join game...
@@ -91,7 +97,7 @@
                 });
                 // While the board div has elements, remove the first element
                 while (board.firstChild) board.removeChild(board.firstChild);
-                // Start i at 0. While i is less than the game balls, increment i by 1 and...
+                // Start i at 0. While i is less than the game boxes, increment i by 1 and...
                 for (let i = 0; i < game.boxes; i++) {
                     // Create a button element and assign an ID and Tag
                     const box = document.createElement('button')
@@ -103,6 +109,7 @@
                     box.style.height = '4.5rem';
                     // Add clicking functionality to the button
                     box.addEventListener('click', (e) => {
+                        // If the timer is greater than 0...
                         if (timer > 0) {
                             // Set the clicked box to the player color
                             box.style.background = pColor;
@@ -116,7 +123,8 @@
                             }
                             // Stringify and send the play payload
                             ws.send(JSON.stringify(payload));
-                        };
+                            // Else, return
+                        } else return;
                     });
                     // Append the box to the board. If there are eight boxes already, break
                     // Results in a 8 x 8 grid
