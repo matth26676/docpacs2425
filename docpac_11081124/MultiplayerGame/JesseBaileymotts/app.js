@@ -170,7 +170,7 @@ wss.on('request', (request) => {
             state[boxID] = color;
             games[gameID].state = state;
             for (b in game[gameID].state) {
-                
+
             }
         };
         /*
@@ -256,6 +256,7 @@ let update = () => {
         This timer should be broadcasted to each client and tick down the timer in the html
         When the timer in the game's state is 0, don't allow the players to click boxes
         Tell players who won by calculating how many boxes are the player's colors
+            The score property of clients in the game should be used
 
         // Create the update payload
         const payload = {
