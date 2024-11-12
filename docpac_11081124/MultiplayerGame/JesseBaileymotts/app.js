@@ -1,6 +1,3 @@
-// The moment I understood the weakness of my flesh, it disgusted me. I craved the strength and certainty of steel. I aspired to the purity of the blessed machine.
-// https://www.youtube.com/watch?v=cXxEiWudIUY&ab_channel=HusseinNasser
-
 //////////////////////////////////////////////////////////////////
 // __        __     _       __  _                   _           //
 // \ \      / /___ | |__   / _|(_)  ___  _ __    __| | ___  _   //
@@ -90,6 +87,17 @@ wss.on('request', (request) => {
             const con = clients[clientID].connection;
             con.send(JSON.stringify(payload));
         };
+        /*
+        When the user creates a game,
+            set the client's ID
+            and create the game's ID
+            Set an object for that game in the games object. Within the object,
+                Set the id to the game's id.
+                Set the number of boxes for the game
+                Set clients to an empty client list
+            Set the client of the client's list's connection to con
+            Send the payload in stringified form
+        */
         // If the method is join...
         if (result.method === 'join'){
             // Set the IDs and the Game
@@ -114,8 +122,7 @@ wss.on('request', (request) => {
                 'player': player,
                 'score': 0
             });
-            console.log(game.clients);
-            // If there are more than one clients, start the game
+            // If there is more than one client, start the game
             if (game.clients.length > 1) update();
             // Create the join payload
             const payload = {
@@ -129,6 +136,26 @@ wss.on('request', (request) => {
                 clients[c.clientID].connection.send(JSON.stringify(payload));
             });
         };
+        /*
+        When the user joins a game,
+            set the client's ID
+            and set the game's ID.
+            Set the game to the game from the games object.
+            if there are more than 5 players, notify that the max players has been reached.
+            Set the color for the player depending on which they are.
+            Set the number for the player depending on which they are.
+            Push a client object to the game object.
+                The client's ID should be set to the client ID
+                The client's color should be set to the color
+                The client's player number should be set to the player number
+                The client's score should be set to 0
+            If there is more than one client, call the update function
+            Create the join payload
+                The method should be set to join
+                The game should be set to the game
+            For each client in the game,
+                Send the payload in stringified form
+        */
         // If the method is play... 
         if (result.method === 'play') {
             // Set the IDs for the game and box, and assign the box's color
@@ -142,12 +169,15 @@ wss.on('request', (request) => {
             // Assign the client's color to the box and update the game state
             state[boxID] = color;
             games[gameID].state = state;
+            for (b in game[gameID].state) {
+                
+            }
         };
         /*
         When the user plays,
-            get the ID of the game,
-            get the ID of the box the user played on,
-            and get the color the box should be.
+            set the ID of the game,
+            set the ID of the box the user played on,
+            and set the color the box should be.
             Let the state of the game be equal to the current game state.
             If the game does not have a state yet, make one.
             Assign the color to the box the player clicked.
@@ -169,6 +199,12 @@ wss.on('request', (request) => {
     };
     // Send the stringified payload (client connect)
     connection.send(JSON.stringify(payload));
+    /*
+    Generate the client's ID,
+    Assign the client's connection by their ID,
+    create a connect payload,
+    and send that payload in stringified form
+    */
 });
 
 // Create a function to update the game
@@ -187,11 +223,21 @@ let update = () => {
         game.clients.forEach(c => {
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
-            console.log(payload)
         });
     };
     setTimeout(update, 50);
 };
+/*
+Create a function called update. When called,
+    loop through each game in games. For each,
+        // Object.keys() returns an array of the object's property names
+        // Object.keys(games) would returned ['gameID', 'gameID', 'gameID'] (assume the gameIDs are real ID strings)
+        assign that current game to a game constant.
+        Create an update payload.
+        For each client in the game,
+            send the stringified update payload.
+    Set a time out for every 50 milliseconds (1/20th of a second) for the update function
+*/
 
 /*
     ____Example Code for a Theoretical Timer____
@@ -231,7 +277,7 @@ const hex = () => {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1); 
 };
 
-// // Create a guid (Globally Unique Identifier) by concatenating multiple random hex strings together. Ensure they are all upper case
+// Create a guid (Globally Unique Identifier) by concatenating multiple random hex strings together. Ensure they are all upper case
 const guid = () => (hex()/* + hex()*/ + '-' + hex()/* + hex()*/).toUpperCase();
 
 // For anyone that needs a refresher on jolliness 👇
