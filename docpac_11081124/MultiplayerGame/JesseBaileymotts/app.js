@@ -178,6 +178,16 @@ let update = () => {
     for (const g of Object.keys(games)) {
         // Set the game from the games object
         const game = games[g];
+        //the time property of game is equivalent to time
+        game.time=time
+
+        // Every 1 second, the timer should tick down
+        //__add a game end thingy instead of closing connection__
+        function serverTimer() { yidvasjkb = setInterval(function() { game.time--}, 1000); if (game.time <= 0) { WebSocket.close; console.log("Bye bye connection"); } else { clearInterval(yidvasjkb); } }
+                // This timer should be broadcasted to each client and tick down the timer in the html
+                // When the timer in the game's state is 0, don't allow the players to click boxes
+                // Tell players who won by calculating how many boxes are the player's colors
+
         // Create the update payload
         const payload = {
             'method': 'update',
@@ -193,38 +203,8 @@ let update = () => {
     setTimeout(update, 50);
 };
 
-/*
-    ____Example Code for a Theoretical Timer____
-// Create a function to update the game
-let update = () => {
-    // For game of games..
-    // Loop through all the keys ( {'gameID':, gameID} )
-    for (const g of Object.keys(games)) {
-        // Set the game from the games object
-        const game = games[g];
 
-        // Set the current time in the game
-        game.time = time
 
-        Every 1 second, the timer should tick down
-        This timer should be broadcasted to each client and tick down the timer in the html
-        When the timer in the game's state is 0, don't allow the players to click boxes
-        Tell players who won by calculating how many boxes are the player's colors
-
-        // Create the update payload
-        const payload = {
-            'method': 'update',
-            'game': game
-        };
-        // For each client in games...
-        game.clients.forEach(c => {
-            // Stringify and send the update payload
-            clients[c.clientID].connection.send(JSON.stringify(payload));
-        });
-    };
-    setTimeout(update, 50);
-};
-*/
 
 // Create a function to randomly create a hex string 4 characters long
 const hex = () => {
