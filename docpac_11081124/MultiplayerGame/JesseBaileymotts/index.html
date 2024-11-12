@@ -30,12 +30,6 @@
         let pColor = null;
         let timer = 5;
 
-            //This code organization is slop so I'm putting this at the top for my convenience
-            //"waaa, you can't just declare things with random letters"
-            //https://youtu.be/E58qLXBfLrs?si=zLnwz42YwGdJigo7&t=67
-            //function fuodhougj() { yidvasjkb = setInterval(function() { timer--, console.log(timer), wadsuodhsa.innerText = "Time: " + timer; }, 1000); if (timer <= 0) { WebSocket.close; console.log("Bye bye connection"); } else { clearInterval(yidvasjkb); } }
-
-
         //// HTML Events
         // On clicking join game...
         joinGame.addEventListener('click', (e) => {
@@ -128,11 +122,12 @@
                     });
                     // Append the box to the board. If there are eight boxes already, break
                     // Results in a 8 x 8 grid
+                    // If the total boxes are increased, it must be exponentially to result in an evenly distributed and, thus, square grid
                     board.appendChild(box);
                     if (((i + 1) % (game.boxes / Math.sqrt(game.boxes))) === 0) board.appendChild(document.createElement('br'));
                 };
             };
-            //If the method is update...
+            // If the method is update...
             if (response.method === 'update') {
                 // If there is no game state, return
                 if (!response.game.state) return;

@@ -143,6 +143,18 @@ wss.on('request', (request) => {
             state[boxID] = color;
             games[gameID].state = state;
         };
+        /*
+        When the user plays,
+            get the ID of the game,
+            get the ID of the box the user played on,
+            and get the color the box should be.
+            Let the state of the game be equal to the current game state.
+            If the game does not have a state yet, make one.
+            Assign the color to the box the player clicked.
+            Assign (update) the state of that game.
+
+            Between assigning the color to the box and updating the game state, the player's score should be increamented by one.
+        */
     });
     // Generate a new client id
     const clientID = guid();
