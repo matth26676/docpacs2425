@@ -10,8 +10,8 @@
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
-    <div id='clock'>Time: <div>
-    <div id="players"></div>
+    <div id='clock'></div>
+    <div id='players'></div>
     <div id='board'></div>
     <script>
         //// HTML Elements
@@ -67,12 +67,16 @@
             };
             // If the method is create...
             if (response.method === 'create') {
+                // Set the text of the clock div to the remaining time
+                clock.innerText = `Time: ${response.game.time}`;
                 // Assign and relay the game ID
                 gameID = response.game.id;
                 console.log(`Game ID Set: ${response.game.id}`);
             };
             // If the method is join...
             if (response.method === 'join') {
+                // Set the text of the clock div to the remaining time
+                clock.innerText = `Time: ${response.game.time}`;
                 // Assign the game
                 game = response.game;
                 // While the players div has elements, remove the first element
@@ -103,22 +107,18 @@
                     box.style.height = '4.5rem';
                     // Add clicking functionality to the button
                     box.addEventListener('click', (e) => {
-                        // If the timer is greater than 0...
-                        if (timer > 0) {
-                            // Set the clicked box to the player color
-                            box.style.background = pColor;
-                            // Create the play payload
-                            const payload = {
-                                'method': 'play',
-                                'clientID': clientID,
-                                'gameID': gameID,
-                                'boxID': box.tag,
-                                'color': pColor
-                            }
-                            // Stringify and send the play payload
-                            ws.send(JSON.stringify(payload));
-                            // Else, return
-                        } else return;
+                        // Set the clicked box to the player color
+                        box.style.background = pColor;
+                        // Create the play payload
+                        const payload = {
+                            'method': 'play',
+                            'clientID': clientID,
+                            'gameID': gameID,
+                            'boxID': box.tag,
+                            'color': pColor
+                        }
+                        // Stringify and send the play payload
+                        ws.send(JSON.stringify(payload));
                     });
                     // Append the box to the board. If there are eight boxes already, break
                     // Results in a 8 x 8 grid
@@ -129,13 +129,26 @@
             };
             // If the method is update...
             if (response.method === 'update') {
+                const game = response.game;
+                // Update the text of the clock div to the current game time
+                clock.innerText = `Time: ${game.time}`;
                 // If there is no game state, return
-                if (!response.game.state) return;
+                if (!game.state) return;
                 // For boxes of the game's state...
-                for (const b of Object.keys(response.game.state)) {
-                    const color = response.game.state[b];
+                for (const b of Object.keys(game.state)) {
+                    // Set color to the color of said box
+                    const color = game.state[b];
+                    // Set boxObj to said box on the board
                     const boxObj = document.getElementById('b' + b);
+                    // Set the boxObj's background color to the color gotten
                     boxObj.style.backgroundColor = color;
+                };
+                // If the game's time is less than or equal to 0...
+                if (game.time <= 0) {
+                    // Set all boxes equal to all buttons within board
+                    const allBoxes = document.querySelectorAll('#board button');
+                    // For each box, set the box to disabled
+                    allBoxes.forEach((box) => box.disabled = true);
                 };
             };
         };

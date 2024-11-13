@@ -13,10 +13,7 @@
 //////////////////////////////////////////////////////////////////
 
 /*
-    -------------------LYNN'S INSTRUCTIONS!!!!!!!!-------------------
-
-    __Add a timer that starts when the game begins__
-This timer will signify the end of the game when it hits 0. Players shouldn't be able to change the color of any boxes if the timer is 0
+    -------------------To Do-------------------
 
     __Add a score for each player__
 The score will be calculated by the number of boxes that are the player's color
@@ -66,7 +63,7 @@ wss.on('request', (request) => {
     connection.on('message', (message) => {
         // This assumes all the messages being sent by the clients are JSON which is bad practice, but for simplicities sake, I am assuming all the clients will be good little webfiends. Webfriends, if you will
         const result = JSON.parse(message.utf8Data);
-        console.log(result);
+        // console.log(result);
         // If the method is create...
         if (result.method === 'create') {
             // Assign the client ID and the game ID
@@ -76,7 +73,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
-                'time': 30,
+                'time': 5,
                 'frame': 0,
                 'clients': []
             };
@@ -89,17 +86,6 @@ wss.on('request', (request) => {
             const con = clients[clientID].connection;
             con.send(JSON.stringify(payload));
         };
-        /*
-        When the user creates a game,
-            set the client's ID
-            and create the game's ID
-            Set an object for that game in the games object. Within the object,
-                Set the id to the game's id.
-                Set the number of boxes for the game
-                Set clients to an empty client list
-            Set the client of the client's list's connection to con
-            Send the payload in stringified form
-        */
         // If the method is join...
         if (result.method === 'join'){
             // Set the IDs and the Game
@@ -138,26 +124,6 @@ wss.on('request', (request) => {
                 clients[c.clientID].connection.send(JSON.stringify(payload));
             });
         };
-        /*
-        When the user joins a game,
-            set the client's ID
-            and set the game's ID.
-            Set the game to the game from the games object.
-            if there are more than 5 players, notify that the max players has been reached.
-            Set the color for the player depending on which they are.
-            Set the number for the player depending on which they are.
-            Push a client object to the game object.
-                The client's ID should be set to the client ID
-                The client's color should be set to the color
-                The client's player number should be set to the player number
-                The client's score should be set to 0
-            If there is more than one client, call the update function
-            Create the join payload
-                The method should be set to join
-                The game should be set to the game
-            For each client in the game,
-                Send the payload in stringified form
-        */
         // If the method is play... 
         if (result.method === 'play') {
             // Set the IDs for the game and box, and assign the box's color
@@ -171,22 +137,10 @@ wss.on('request', (request) => {
             // Assign the client's color to the box and update the game state
             state[boxID] = color;
             games[gameID].state = state;
-            for (b in game[gameID].state) {
+            // for (b in game[gameID].state) {
 
-            }
+            // }
         };
-        /*
-        When the user plays,
-            set the ID of the game,
-            set the ID of the box the user played on,
-            and set the color the box should be.
-            Let the state of the game be equal to the current game state.
-            If the game does not have a state yet, make one.
-            Assign the color to the box the player clicked.
-            Assign (update) the state of that game.
-
-            Between assigning the color to the box and updating the game state, the player's score should be increamented by one.
-        */
     });
     // Generate a new client id
     const clientID = guid();
@@ -201,12 +155,6 @@ wss.on('request', (request) => {
     };
     // Send the stringified payload (client connect)
     connection.send(JSON.stringify(payload));
-    /*
-    Generate the client's ID,
-    Assign the client's connection by their ID,
-    create a connect payload,
-    and send that payload in stringified form
-    */
 });
 
 // Create a function to update the game
@@ -216,38 +164,23 @@ let update = () => {
     for (const g of Object.keys(games)) {
         // Set the game from the games object
         const game = games[g];
-        //the time property of game is equivalent to time
-        //game.time = time;
-
-        // Every 1 second, the timer should tick down
-        //__add a game end thingy instead of closing connection__
-        // This does not work. The function is never called, the timer interval is cleared too fast, 
-        // and the time variable is undefined so it will never deincremeant
-        /*
-        const serverTimer = () => {
-            timer = setInterval(() => { game.time--}, 1000); 
-            if (game.time <= 0) {
-                WebSocket.close;
-                console.log("Bye bye connection");
-            } else {
-                clearInterval(timer);
-            };
-        };
-                // This timer should be broadcasted to each client and tick down the timer in the html
-                // When the timer in the game's state is 0, don't allow the players to click boxes
-                // Tell players who won by calculating how many boxes are the player's colors
-        */
-
-        //
-        console.log(game.frame)
+        // Incremeant the game's frame by 1
         game.frame++;
+        // Every 20 frames while the game is running...
         if ((game.frame % 20) === 0 && game.time > 0) {
+            // Reset the frames back to 0 and deincremeant the time by one
             game.frame = 0;
             game.time--;
+            console.log(game.time);
         };
-        //console.log(game.time)
-
-
+        // __ Work for Calculating Client Score__
+        // if (game.state) {
+        //     game.clients
+        //     for (const b of Object.keys(game.state)) {
+        //         const color = game.state[b];
+                
+        //     };
+        // };
         // Create the update payload
         const payload = {
             'method': 'update',
@@ -261,20 +194,6 @@ let update = () => {
     };
     setTimeout(update, 50);
 };
-/*
-Create a function called update. When called,
-    loop through each game in games. For each,
-        // Object.keys() returns an array of the object's property names
-        // Object.keys(games) would returned ['gameID', 'gameID', 'gameID'] (assume the gameIDs are real ID strings)
-        assign that current game to a game constant.
-        Create an update payload.
-        For each client in the game,
-            send the stringified update payload.
-    Set a time out for every 50 milliseconds (1/20th of a second) for the update function
-*/
-
-
-
 
 // Create a function to randomly create a hex string 4 characters long
 const hex = () => {
@@ -282,7 +201,7 @@ const hex = () => {
 };
 
 // Create a guid (Globally Unique Identifier) by concatenating multiple random hex strings together. Ensure they are all upper case
-const guid = () => (hex()/* + hex()*/ + '-' + hex()/* + hex()*/).toUpperCase();
+const guid = () => (hex() + '-' + hex()).toUpperCase();
 
 // For anyone that needs a refresher on jolliness 👇
 //................................................................................................................................................................................................................................
