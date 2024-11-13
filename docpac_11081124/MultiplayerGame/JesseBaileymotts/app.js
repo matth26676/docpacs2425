@@ -15,9 +15,6 @@
 /*
     -------------------To Do-------------------
 
-    __Add a score for each player__
-The score will be calculated by the number of boxes that are the player's color
-
     __Alert the end of the game__
 Let every player know the game has ended
 
@@ -164,30 +161,40 @@ let update = () => {
     for (const g of Object.keys(games)) {
         // Set the game from the games object
         const game = games[g];
-        // Incremeant the game's frame by 1
+        // increment the game's frame by 1
         game.frame++;
         // Every 20 frames while the game is running...
         if ((game.frame % 20) === 0 && game.time > 0) {
-            // Reset the frames back to 0 and deincremeant the time by one
+            // Reset the frames back to 0 and deincrement the time by one
             game.frame = 0;
             game.time--;
             console.log(game.time);
         };
-        // __ Work for Calculating Client Score__
-        // if (game.state) {
-        //     game.clients
-        //     for (const b of Object.keys(game.state)) {
-        //         const color = game.state[b];
-                
-        //     };
-        // };
+        // For each client in games...
+        game.clients.forEach((c) => {
+            // Reset that client's score
+            c.score = 0;
+            // If there is no game state, return
+            if (!game.state) return;
+            // For boxes of the game's state
+            for (const b of Object.keys(game.state)) {
+                // Set color to the box's color
+                const color = game.state[b];
+                // If the client's color is equal to the color
+                if (c.color === color) {
+                    // Increment score by one
+                    c.score++;
+                };
+            };
+            console.log(`${c.clientID}: ${c.score}`);
+        });
         // Create the update payload
         const payload = {
             'method': 'update',
             'game': game
         };
         // For each client in games...
-        game.clients.forEach(c => {
+        game.clients.forEach((c) => {
             // Stringify and send the update payload
             clients[c.clientID].connection.send(JSON.stringify(payload));
         });
