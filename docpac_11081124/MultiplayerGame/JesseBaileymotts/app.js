@@ -77,6 +77,7 @@ wss.on('request', (request) => {
                 'id': gameID,
                 'boxes': 64,
                 'time': 30,
+                'frame': 0,
                 'clients': []
             };
             // Create the create payload 
@@ -216,7 +217,7 @@ let update = () => {
         // Set the game from the games object
         const game = games[g];
         //the time property of game is equivalent to time
-        game.time = time;
+        //game.time = time;
 
         // Every 1 second, the timer should tick down
         //__add a game end thingy instead of closing connection__
@@ -238,14 +239,13 @@ let update = () => {
         */
 
         //
-        let frames = 0;
-        if ((frames % 20) === 0 && game.time > 0) {
-            frames = 0;
+        console.log(game.frame)
+        game.frame++;
+        if ((game.frame % 20) === 0 && game.time > 0) {
+            game.frame = 0;
             game.time--;
-        } else {
-            frames++;
         };
-        console.log(frames)
+        //console.log(game.time)
 
 
         // Create the update payload
