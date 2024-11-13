@@ -76,6 +76,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
+                'time': 30,
                 'clients': []
             };
             // Create the create payload 
@@ -215,14 +216,37 @@ let update = () => {
         // Set the game from the games object
         const game = games[g];
         //the time property of game is equivalent to time
-        game.time=time
+        game.time = time;
 
         // Every 1 second, the timer should tick down
         //__add a game end thingy instead of closing connection__
-        function serverTimer() { yidvasjkb = setInterval(function() { game.time--}, 1000); if (game.time <= 0) { WebSocket.close; console.log("Bye bye connection"); } else { clearInterval(yidvasjkb); } }
+        // This does not work. The function is never called, the timer interval is cleared too fast, 
+        // and the time variable is undefined so it will never deincremeant
+        /*
+        const serverTimer = () => {
+            timer = setInterval(() => { game.time--}, 1000); 
+            if (game.time <= 0) {
+                WebSocket.close;
+                console.log("Bye bye connection");
+            } else {
+                clearInterval(timer);
+            };
+        };
                 // This timer should be broadcasted to each client and tick down the timer in the html
                 // When the timer in the game's state is 0, don't allow the players to click boxes
                 // Tell players who won by calculating how many boxes are the player's colors
+        */
+
+        //
+        let frames = 0;
+        if ((frames % 20) === 0 && game.time > 0) {
+            frames = 0;
+            game.time--;
+        } else {
+            frames++;
+        };
+        console.log(frames)
+
 
         // Create the update payload
         const payload = {
