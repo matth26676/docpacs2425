@@ -49,12 +49,12 @@ wss.on('connection', (ws) => {
             broadcast({ type: 'startCountdown', timeLeft: 20 });
         }
 
-        if (message.type == 'scoreUpdate') {
+        if (message.type === 'scoreUpdate') {
             const username = message.username;
             const score = message.score
-            console.log(score)
-            console.log(scores)
-            // make that individual users score be saved in the scores array
+            console.log(username, score)
+            scores.push([username,score])
+            console.log(scores) 
         }
 
         if (message.type == 'endGame') {
@@ -78,21 +78,21 @@ function broadcast(data) {
     });
 }
 
-// function endGame() {
-//     gameStarted = false;
 
-//     let winner = 
-
-//     wss.clients.forEach(client => {
-//         const username = message.username; {
-//             if (username == winner) {
-//                 client.send(JSON.stringify({ type: 'gameOver', result: 'You win' }));
-//             } else {
-//                 client.send(JSON.stringify({ type: 'gameOver', result: 'You lose' }));
-//             }
-//         }
-//     });   
-// }
+function endGame() {
+    gameStarted = false;
+    
+    let winner = "26gebanks@live.ytech.edu"
+    
+    wss.clients.forEach(client => {
+        const username = clients.get(client);
+            if (username == winner) {
+                client.send(JSON.stringify({ type: 'gameOver', result: 'You win' }));
+            } else {
+                client.send(JSON.stringify({ type: 'gameOver', result: 'You lose' }));
+            }
+    });   
+}
 
 
 

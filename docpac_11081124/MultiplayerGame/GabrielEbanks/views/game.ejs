@@ -100,7 +100,7 @@
     const timer = document.getElementById('timerBox');
     let timeLeft = 20;
     let timerID;
-    let con = console.log
+    
 
     webSocket.addEventListener("open", () => {
         console.log("We are connected");
@@ -119,7 +119,7 @@
 
 
         else if (message.type == 'gameOver') {
-            // alert the result of the winner stuff
+           alert(result)
             resetGame();
         }
     });
@@ -158,10 +158,6 @@
             timerBox.innerHTML = timeLeft;
             timerID = setInterval(countDown, 1000);
         }
-
-    // function updateDaScore() {
-
-    //     }
 
     function resetGame() {
         location.reload();
