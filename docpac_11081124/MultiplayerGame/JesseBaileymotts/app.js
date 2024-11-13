@@ -23,6 +23,12 @@ Give players the option to restart the game
 
     __Add online functionality__
 Ensure players from any machine can connect
+
+    __Style the game__
+    > Center the Board
+    > Center the SplatoonD
+    > Make the game code visible in the HTML
+    > Add a score element below the timer
 */
 
 // Set up the variables

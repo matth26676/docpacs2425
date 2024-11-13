@@ -11,6 +11,7 @@
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
     <div id='clock'></div>
+    <div id='score'></div>
     <div id='players'></div>
     <div id='board'></div>
     <script>
@@ -18,9 +19,10 @@
         const newGame = document.getElementById('newGame');
         const joinGame = document.getElementById('joinGame');
         const code = document.getElementById('code');
+        const clock = document.getElementById('clock');
+        const score = document.getElementById('score');
         const players = document.getElementById('players');
         const board = document.getElementById('board');
-        const clock = document.getElementById('clock');
         
         //// Splatoon 2D Variables
         // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
@@ -132,6 +134,8 @@
                 const game = response.game;
                 // Update the text of the clock div to the current game time
                 clock.innerText = `Time: ${game.time}`;
+                //
+
                 // If there is no game state, return
                 if (!game.state) return;
                 // For boxes of the game's state...
