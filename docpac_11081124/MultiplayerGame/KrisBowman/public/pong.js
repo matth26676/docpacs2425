@@ -9,12 +9,12 @@ const cv = document.getElementById("cv")
 const ctx = cv.getContext("2d");
 
 //paddle
-const paddleWidth = 15;
+const paddleWidth = 20;
 const paddleHeight = 100;
-const paddleSpeed = 4;
+const paddleSpeed = 5;
 
-
-const ball = {
+//ball
+let ball = {
     x: cv.width / 2,
     y: cv.height / 2,
     dx: 4,
@@ -63,6 +63,13 @@ document.addEventListener("keyup", keyUpHandler, false);
 let wDown = false;
 let sDown = false;
 
+//playerID
+let playerID;
+
+socket.on("playerID", (id) => {
+    playerID = id; //set playerID when received from server
+});
+
 //set keys to true when pressed
 function keyDownHandler(e) {
     if (e.code === "KeyW") wDown = true;
@@ -74,13 +81,10 @@ function keyUpHandler(e) {
     if (e.code === "KeyS") sDown = false;
 };
 
-function movePlayer() {
+function handlePlayerMove() {
     PLAYER.forEach(player => {
         //move player on key down
-        if (player.id === 0) {
-            if (sDown) player.y += paddleSpeed;
-            if (wDown) player.y -= paddleSpeed;
-        } else if (player.id === 1) {
+        if (player.id === playerID) {
             if (sDown) player.y += paddleSpeed;
             if (wDown) player.y -= paddleSpeed;
         };
@@ -89,11 +93,8 @@ function movePlayer() {
         if (player.y < 0) player.y = 0;
         if (player.y + player.height > cv.height) player.y = cv.height - player.height;
 
-
-        socket.emit("playerMove", { //emit movement to server
-            id: player.id,
-            y: player.y
-        });
+        //emit movement to server
+        socket.emit("playerMove", { id: player.id, y: player.y });
     });
 };
 
@@ -101,54 +102,28 @@ function movePlayer() {
 Ball Movement
 -----------*/
 
-function moveBall() {
-    if (!gameActive) return;
-    if (score[0] < maxScore && score[1] < maxScore) {
-        ball.x += ball.dx;
-        ball.y += ball.dy;
-    };
-
-    if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= cv.height) ball.dy = -ball.dy;
-
+socket.on("playerMove", (data) => {
     PLAYER.forEach(player => {
-        if (
-            ball.x - ball.radius < player.x + player.width &&
-            ball.x + ball.radius > player.x &&
-            ball.y + ball.radius > player.y &&
-            ball.y - ball.radius < player.y + player.height
-        ) {
-            let angle = (ball.y - (player.y + player.height / 2)) / (player.height / 2);
-            ball.dy = angle * 4;  //adjust angle based on where ball hit paddle
-            ball.dx = -ball.dx * 1.05; //slight speed increase
-            ball.dy *= 1.05;
+        if (player.id === data.id) {
+            player.y = data.y;
         };
     });
+});
 
-    if (ball.x - ball.radius <= 0) {
-        score[1]++;
-        resetBall();
-    } else if (ball.x + ball.radius >= cv.width) {
-        score[0]++;
-        resetBall();
-    };
-    socket.emit("ballMove", ball);
-};
+socket.on("ballMove", (data) => {
+    ball = data; //update ball position from server
+});
 
-function resetBall() {
-    if (score[0] < maxScore && score[1] < maxScore) {
-        ball.x = canvasWidth / 2;
-        ball.y = canvasHeight / 2;
-        ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4; //random horizontal
-        ball.dy = (Math.random() < 0.5 ? 1 : -1) * 4; //random vertical
-        socket.emit("ballMove", ball)
-    };
-};
+socket.on("scoreUpdate", (newScore) => {
+    score = newScore;
+});
 
-socket.on("gameFullMessage", (message) => {
+socket.on("gameFull", (message) => {
     document.getElementById("gameStatus").innerText = message;
 });
 
-socket.on("gameOverMessage", (message) => {
+socket.on("gameOver", (message) => {
+    gameActive = false;
     alert(message);
     window.location.reload(); //reload the page to restart the game
 });
@@ -159,6 +134,7 @@ Draw
 
 function draw() {
     if (!gameActive) return;
+
     //erase the screen
     ctx.clearRect(0, 0, cv.width, cv.height);
 
@@ -176,36 +152,18 @@ function draw() {
     ctx.closePath();
 
     //draw score
-    if (score[0] >= maxScore || score[1] >= maxScore) {
-        ctx.font = "36px Arial";
-        ctx.fillStyle = "#fff";
-        ctx.fillText(`Game Over! Player ${score[0] >= maxScore ? 0 : 1} wins!`, cv.width / 4, cv.height / 2);
-        return; //stop further drawing
-    };
-
     ctx.font = "24px Arial";
+    ctx.fillStyle = "#fff";
     ctx.fillText(score[0], cv.width / 4, 30);
     ctx.fillText(score[1], (cv.width * 3) / 4, 30);
 };
 
 function loop() {
-    if (!gameActive) return resetGame(); //stop loop if the game is over
-    movePlayer();
-    moveBall();
-    draw();
-    requestAnimationFrame(loop);
-}
-
-function resetGame() {
-    score = [0, 0];
-    ball = {
-        x: canvasWidth / 2,
-        y: canvasHeight / 2,
-        dx: 4,
-        dy: 4,
-        radius: 10
+    if (gameActive) { //only loop if the game is active
+        handlePlayerMove();
+        draw();
+        requestAnimationFrame(loop);
     };
-    gameActive = true;
-    loop(); //restart game loop
-    io.emit("gameStart"); //notify players to start new game
-}
+};
+
+loop(); //start game loop

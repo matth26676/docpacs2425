@@ -21,7 +21,7 @@ Default settings
 --------------*/
 
 //players
-let players = [];
+let players = {};
 
 //canvas
 const canvasWidth = 800;
@@ -40,9 +40,6 @@ let ball = {
 let score = [0, 0];
 const maxScore = 5;
 
-//game loop
-let gameActive = true;
-
 /*--------------
 socket.io Server
 --------------*/
@@ -52,93 +49,124 @@ const io = new Server(http); //create new socket.io server, attach it to http se
 
 //on connection to socket.io server
 io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    //assign id to new player
+    const playerID = Object.keys(players).length;
+    console.log(`New user ${socket.id} assigned to ${playerID}`);
 
     //check if there are already 2 players connected
-    if (players.length >= 2) {
+    if (playerID >= 2) {
         socket.emit("gameFull"); //notify client the game is full
-        socket.disconnect(); //disconnect the client
-        return;
+        return socket.disconnect(); //disconnect the client
     };
 
-    //assign playerID based on player count
-    let playerID = players.length;
-    players.push({ id: playerID, socket: socket }); //push to players list
-
-    //send the playerID to the client
-    socket.emit("playerID", { id: playerID });
+    players[socket.id] = { id: playerID, y: canvasHeight / 2 }; //add player
+    socket.emit("playerID", playerID); //send the playerID to the client
 
     //enough players to start
-    if (players.length === 2) {
+    if (Object.keys(players).length === 2) {
         io.emit("gameStart"); //game begins
     };
 
+    //update gameFull
+    socket.on("gameFull", () => {
+        socket.emit("gameFull", "The game is full. Please try again later."); //notify extra client
+    });
+
     //player movements synced on both connections
     socket.on("playerMove", (data) => {
-        const player = players.find(player => player.id === data.id);
-        if (player) {
-            player.y = data.y;
-            socket.broadcast.emit("playerMove", data); //sync player movement to other player
-        };
+        players[socket.id].y = data.y;
+        io.emit("playerMove", { id: data.id, y: data.y });
     });
 
     //ball movements synced on both connections
     socket.on("ballMove", (data) => {
-        if (!gameActive) return;
-        ball = data; //update ball position on server
-
-        //ball crossed the left boundary
-        if (data.x < 0) { 
-            score[1]++; //increase score for player 1
-            io.emit("scoreUpdate", score); //emit updated score
-
-        //ball crossed the right boundary
-        } else if (data.x > canvasWidth) {
-            score[0]++; //increase score for player 0
-            io.emit("scoreUpdate", score); //emit updated score
-        };
-
-        //player wins
-        if (score[0] >= maxScore) socket.broadcast.emit("gameOver", { winner: 0 }); //winner is 0
-        if (score[1] >= maxScore) socket.broadcast.emit("gameOver", { winner: 1 }); //winner is 1
-
-        socket.broadcast.emit("ballMove", data); //sync ball movement to other player
+        handleBallMove(data);
+        collisions();
+        io.emit("ballMove", ball)
     });
 
-    //update score
-    socket.on("scoreUpdate", (data) => {
-        score = data;
-        //one of the players meets win criteria (maxScore of 5)
-        if (score[0] >= maxScore || score[1] >= maxScore) {
-            io.emit("gameOver"); //game is over
-        };
-    });
+    //emit updated ball position and score regularly
+    setInterval(() => {
+        io.emit("ballMove", ball); // Emit ball position update to all clients
+        io.emit("scoreUpdate", score); // Emit score update to all clients
+    }, 1000 / 60); // Update 60 times per second
 
     //player disconnects
     socket.on("disconnect", () => {
         console.log(`${socket.id} has disconnected.`);
-        players = players.filter(player => player.socket !== socket); //remove player from players list
+
+        //remove player from players list
+        delete players[socket.id];
+
         //only one player left
-        if (players.length === 1) {
-            io.emit("gameOver", { winner: players[0].id }); //notify remaining player
+        if (Object.keys(players).length === 1) {
+            io.emit("gameOver", { message: `The other player has disconnected.` }); //notify remaining player
         };
     });
 
-    //update gameFull
-    socket.on("gameFull", () => {
-        socket.emit("gameFullMessage", "The game is full. Please try again later."); //notify extra client
-    });
+    function handleBallMove() {
+        ball = data; //update ball position on server
 
-    //set update gameOver
-    socket.on("gameOver", ({ winner }) => {
-        gameActive = false; //stop loop
-        io.emit("gameOverMessage", `Game Over! Player ${winner} wins!`); //notify players of winner
-    });
+        if (data.x < 0) { //ball crossed the left boundary
+            score[1]++; //increase score for player 1
+            io.emit("scoreUpdate", score); //emit updated score
+            resetBall();
+        } else if (data.x > canvasWidth) { //ball crossed the right boundary
+            score[0]++; //increase score for player 0
+            io.emit("scoreUpdate", score); //emit updated score
+            resetBall();
+        };
+
+        if (isGameOver()) {
+            io.emit("gameOver", { message: score[0] >= maxScore ? 0 : 1 })
+            return;
+        };
+
+        collisions();
+        io.emit("scoreUpdate", score);
+    };
+
+    function collisions() {
+        if (!isGameOver()) {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+        };
+
+        if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= canvasHeight) ball.dy = -ball.dy;
+
+        Object.values(players).forEach(player => {
+            if (
+                ball.x - ball.radius < player.x + player.width &&
+                ball.x + ball.radius > player.x &&
+                ball.y + ball.radius > player.y &&
+                ball.y - ball.radius < player.y + player.height
+            ) {
+                let angle = (ball.y - (player.y + player.height / 2)) / (player.height / 2);
+                ball.dy = angle * 4;  //adjust angle based on where ball hit paddle
+                ball.dx = -ball.dx * 1.05; //slight speed increase
+                ball.dy *= 1.05;
+            };
+        });
+    };
+
+    function resetBall() {
+        if (!isGameOver()) {
+            ball.x = canvasWidth / 2;
+            ball.y = canvasHeight / 2;
+            ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4; //random horizontal speed
+            ball.dy = (Math.random() < 0.5 ? 1 : -1) * 4; //random vertical speed
+        };
+    };
+
+    function isGameOver() {
+        return score[0] >= maxScore || score[1] >= maxScore;
+    };
 });
 
 /*---------------
 GET/POST Requests
 ---------------*/
+
 //handle index
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
