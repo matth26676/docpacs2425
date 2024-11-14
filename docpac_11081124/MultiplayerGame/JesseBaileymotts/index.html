@@ -6,22 +6,28 @@
     <title>SplatoonD</title>
 </head>
 <body>
+    <!-- Splatoon 2D -->
     <h1>SplatoonD</h1>
+    <!-- Game Creation -->
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
+    <!-- Game Information -->
     <div id='clock'></div>
-    <div id='score'></div>
     <div id='players'></div>
+    <div id='winner'></div>
+    <!-- Game Board -->
     <div id='board'></div>
+    <!-- JS Code -->
     <script>
         //// HTML Elements
+        // In order of which they appear
         const newGame = document.getElementById('newGame');
         const joinGame = document.getElementById('joinGame');
         const code = document.getElementById('code');
         const clock = document.getElementById('clock');
-        const score = document.getElementById('score');
         const players = document.getElementById('players');
+        const winner = document.getElementById('winner');
         const board = document.getElementById('board');
         
         //// Splatoon 2D Variables
@@ -30,7 +36,12 @@
         let clientID = null;
         let gameID = null;
         let pColor = null;
-        let timer = 5;
+        let timer = null;
+        let gameEnd = false;
+        // A compare function for proper score sorting
+        let compare = (a, b) => {
+            return a - b;
+        };
 
         //// HTML Events
         // On clicking join game...
@@ -69,8 +80,6 @@
             };
             // If the method is create...
             if (response.method === 'create') {
-                // Set the text of the clock div to the remaining time
-                clock.innerText = `Time: ${response.game.time}`;
                 // Assign and relay the game ID
                 gameID = response.game.id;
                 console.log(`Game ID Set: ${response.game.id}`);
@@ -87,10 +96,11 @@
                 game.clients.forEach((c) => {
                     // Create a div element, style it, and add into it the client ID
                     const div = document.createElement('div');
-                    div.style.width = '3.5rem';
+                    div.id = c.clientID;
+                    div.style.width = '4.5rem';
                     div.style.background = c.color;
-                    div.textContent = c.number;
-                    // If the client's ID matches, the current client, their player color is the client's color
+                    div.textContent = `${c.player}: ${c.score}`;
+                    // If the client's ID matches the current client, their player color is the client's color
                     if (c.clientID === clientID) pColor = c.color;
                     // Append the client's div to the players div
                     players.appendChild(div);
@@ -125,6 +135,7 @@
                     // Append the box to the board. If there are eight boxes already, break
                     // Results in a 8 x 8 grid
                     // If the total boxes are increased, it must be exponentially to result in an evenly distributed and, thus, square grid
+                    // For example, a 12 x 12 grid would be 144 boxes. A 20 x 20 grid would be 400
                     board.appendChild(box);
                     if (((i + 1) % (game.boxes / Math.sqrt(game.boxes))) === 0) board.appendChild(document.createElement('br'));
                 };
@@ -134,8 +145,16 @@
                 const game = response.game;
                 // Update the text of the clock div to the current game time
                 clock.innerText = `Time: ${game.time}`;
-                //
-
+                // For each client in the game...
+                game.clients.forEach((c) => {
+                    // If the player div exists...
+                    if (document.getElementById(c.clientID)) {
+                        // Set the playerBox constant equal to that client's ID
+                        const playerBox = document.getElementById(c.clientID)
+                        // Update the text content with that player's score
+                        playerBox.textContent = `${c.player}: ${c.score}`;
+                    };
+                });
                 // If there is no game state, return
                 if (!game.state) return;
                 // For boxes of the game's state...
@@ -149,10 +168,30 @@
                 };
                 // If the game's time is less than or equal to 0...
                 if (game.time <= 0) {
-                    // Set all boxes equal to all buttons within board
-                    const allBoxes = document.querySelectorAll('#board button');
-                    // For each box, set the box to disabled
-                    allBoxes.forEach((box) => box.disabled = true);
+                    if (gameEnd === false) {
+                        // Set allBoxes to all buttons within the board
+                        const allBoxes = document.querySelectorAll('#board button');
+                        // For each box, set the box to disabled
+                        allBoxes.forEach((box) => box.disabled = true);
+                        // Let scores equal an empty array
+                        let scores = [];
+                        // For each client in the game... 
+                        game.clients.forEach((c) => {
+                            // Push their score to scores
+                            scores.push(c.score);
+                        });
+                        // Sort scores with the compare functions
+                        scores.sort(compare);
+                        // scores[scores.length - 1]
+                        game.clients.forEach((c) => {
+                            const div = document.createElement(div);
+                            div.id = c.player;
+                            div.style.width = '4rem';
+                            div.style.color = c.color;
+                        });
+                        gameEnd = true;
+                        
+                    };
                 };
             };
         };

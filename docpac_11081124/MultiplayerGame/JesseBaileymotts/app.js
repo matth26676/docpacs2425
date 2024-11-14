@@ -4,11 +4,11 @@
 //  \ \ /\ / // _ \| '_ \ | |_ | | / _ \| '_ \  / _` |/ __|(_)  //
 //   \ V  V /|  __/| |_) ||  _|| ||  __/| | | || (_| |\__ \ _   //
 //    \_/\_/  \___||_.__/ |_|  |_| \___||_| |_| \__,_||___/(_)  //
-//  ____          _         _    ____   ____                    //
-// / ___|  _ __  | |  __ _ | |_ |___ \ |  _ \                   //
-// \___ \ | '_ \ | | / _` || __|  __) || | | |                  //
-//  ___) || |_) || || (_| || |_  / __/ | |_| |                  //
-// |____/ | .__/ |_| \__,_| \__||_____||____/                   //
+//  ____          _         _                        ____       //
+// / ___|  _ __  | |  __ _ | |_  ___    ___   _ __  |  _ \      //
+// \___ \ | '_ \ | | / _` || __|/ _ \  / _ \ | '_ \ | | | |     //
+//  ___) || |_) || || (_| || |_| (_) || (_) || | | || |_| |     //
+// |____/ | .__/ |_| \__,_| \__|\___/  \___/ |_| |_||____/      //
 //        |_|                                                   //
 //////////////////////////////////////////////////////////////////
 
@@ -27,8 +27,7 @@ Ensure players from any machine can connect
     __Style the game__
     > Center the Board
     > Center the SplatoonD
-    > Make the game code visible in the HTML
-    > Add a score element below the timer
+    > Make the game code visible in the document
 */
 
 // Set up the variables
@@ -66,7 +65,6 @@ wss.on('request', (request) => {
     connection.on('message', (message) => {
         // This assumes all the messages being sent by the clients are JSON which is bad practice, but for simplicities sake, I am assuming all the clients will be good little webfiends. Webfriends, if you will
         const result = JSON.parse(message.utf8Data);
-        // console.log(result);
         // If the method is create...
         if (result.method === 'create') {
             // Assign the client ID and the game ID
@@ -76,7 +74,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
-                'time': 5,
+                'time': 30,
                 'frame': 0,
                 'clients': []
             };
@@ -140,9 +138,6 @@ wss.on('request', (request) => {
             // Assign the client's color to the box and update the game state
             state[boxID] = color;
             games[gameID].state = state;
-            // for (b in game[gameID].state) {
-
-            // }
         };
     });
     // Generate a new client id
@@ -174,7 +169,6 @@ let update = () => {
             // Reset the frames back to 0 and deincrement the time by one
             game.frame = 0;
             game.time--;
-            console.log(game.time);
         };
         // For each client in games...
         game.clients.forEach((c) => {
@@ -192,7 +186,6 @@ let update = () => {
                     c.score++;
                 };
             };
-            console.log(`${c.clientID}: ${c.score}`);
         });
         // Create the update payload
         const payload = {
