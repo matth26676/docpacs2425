@@ -42,7 +42,7 @@ function userList(wss) {
     wss.clients.forEach((client) => {
         if (client.name) {
             users.push(client.name)
-            // console.log('functioning')
+            // console.log(client.name)
         }
     })
     return { list: users }

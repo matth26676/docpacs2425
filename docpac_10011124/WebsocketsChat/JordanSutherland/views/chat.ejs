@@ -35,7 +35,7 @@
 
         #chat {
             width: calc(100% - 200px);
-            height: 100vh;
+            height: calc(100vh - 60px);
             background-color: #ecf0f1;
             float: left;
             padding: 10px;
@@ -43,10 +43,22 @@
             overflow-y: auto;
         }
 
+        #input-container {
+            width: calc(100% - 200px);
+            height: 50px;
+            background-color: #ecf0f1;
+            float: left;
+            padding: 10px;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+            left: 200px;
+        }
+
         input[type="text"] {
             width: calc(100% - 110px);
             padding: 10px;
-            margin: 10px 0;
+            margin: 0;
             border: 1px solid #bdc3c7;
             border-radius: 4px;
             box-sizing: border-box;
@@ -54,7 +66,7 @@
 
         input[type="button"] {
             padding: 10px 20px;
-            margin: 10px 0;
+            margin: 0;
             background-color: #3498db;
             color: white;
             border: none;
@@ -69,14 +81,14 @@
 </head>
 
 <body>
-    <input type="text" name="text">
-    <input type="button" value="Submit" onclick=" sendMessage() ">
-
     <div id="users">
         <ul></ul>
     </div>
     <div id="chat"></div>
-
+    <div id="input-container">
+        <input type="text" name="text">
+        <input type="button" value="Submit" onclick="sendMessage()">
+    </div>
 </body>
 <script>
     let name = '<%= name %>';
@@ -104,6 +116,13 @@
         if (data.list) {
             for (let i = 0; i < data.list.length; i++) {
                 console.log(data.list);
+                for (document.querySelector('#users ul').innerHTML = '', i = 0; i < data.list.length; i++) {
+                    if (data.list[i] === name) {
+                        document.querySelector('#users ul').innerHTML += '<li style="color: red;">' + data.list[i] + '</li>';
+                    } else {
+                        document.querySelector('#users ul').innerHTML += '<li>' + data.list[i] + '</li>';
+                    }
+                }
             }
         }
     }
@@ -116,6 +135,12 @@
         console.log('Sending message');
         document.querySelector('input[name="text"]').value = '';
         ws.send(JSON.stringify(object));
+    }
+
+    document.onkeydown = function (e) {
+        if (e.keyCode == 13) {
+            sendMessage();
+        }
     }
 
 </script>
