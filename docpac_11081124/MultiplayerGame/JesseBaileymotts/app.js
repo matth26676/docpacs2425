@@ -31,10 +31,13 @@ Ensure players from any machine can connect
 */
 
 // Set up the variables
-const { response } = require('express');
+const express = require('express');
 const http = require('http');
 const app = require('express')();
 const ws = require('websocket').server;
+
+// Make the static directory the current directory
+app.use(express.static(__dirname + '/'));
 
 // Get the index.html page and listen to port 3000
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
