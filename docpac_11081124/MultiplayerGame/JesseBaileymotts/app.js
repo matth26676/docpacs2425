@@ -101,7 +101,7 @@ wss.on('request', (request) => {
             };
             // Set the color for the player depending on which they are
             // 1 is Red, 2 is Cyan, 3 is Green, 4 is Yellow, 5 is Purple, 6 is Orange
-            const color = {'0': '#ff0000', '1': '#00ffff', '2': '#00ff00', '3': '#ffff00', '4': '#ff00ff', '5': '#ff8800'}[game.clients.length]
+            const color = {'0': '#FF0000', '1': '#00ffff', '2': '#00ff00', '3': '#ffff00', '4': '#ff00ff', '5': '#ff8800'}[game.clients.length]
             // Set the number for the player depending on which they are
             const player = {'0': 'Player 1', '1': 'Player 2', '2': 'Player 3', '3': 'Player 4', '4': 'Player 5', '5': 'Player 6'}[game.clients.length]
             // Add that client to the game
