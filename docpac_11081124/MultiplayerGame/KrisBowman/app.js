@@ -1,5 +1,6 @@
 //to install required modules, in terminal: "npm i express path http socket.io"
 
+const { log } = require("console");
 const express = require("express"); //import express
 const app = express(); //initialize express with app
 
@@ -55,22 +56,17 @@ io.on("connection", (socket) => {
 
     //check if there are already 2 players connected
     if (playerID >= 2) {
-        socket.emit("gameFull"); //notify client the game is full
+        socket.emit("gameFull", { message: "The game is full. Spectating..." }); //notify client the game is full
         return socket.disconnect(); //disconnect the client
     };
 
-    players[socket.id] = { id: playerID, y: canvasHeight / 2 }; //add player
+    players[socket.id] = { id: playerID, x: 10, y: canvasHeight / 2, width: 20, height: 100}; //add player
     socket.emit("playerID", playerID); //send the playerID to the client
 
     //enough players to start
     if (Object.keys(players).length === 2) {
         io.emit("gameStart"); //game begins
     };
-
-    //update gameFull
-    socket.on("gameFull", () => {
-        socket.emit("gameFull", "The game is full. Please try again later."); //notify extra client
-    });
 
     //player movements synced on both connections
     socket.on("playerMove", (data) => {
@@ -82,14 +78,8 @@ io.on("connection", (socket) => {
     socket.on("ballMove", (data) => {
         handleBallMove(data);
         collisions();
-        io.emit("ballMove", ball)
+        io.emit("ballMove", ball);
     });
-
-    //emit updated ball position and score regularly
-    setInterval(() => {
-        io.emit("ballMove", ball); // Emit ball position update to all clients
-        io.emit("scoreUpdate", score); // Emit score update to all clients
-    }, 1000 / 60); // Update 60 times per second
 
     //player disconnects
     socket.on("disconnect", () => {
@@ -100,11 +90,11 @@ io.on("connection", (socket) => {
 
         //only one player left
         if (Object.keys(players).length === 1) {
-            io.emit("gameOver", { message: `The other player has disconnected.` }); //notify remaining player
+            io.emit("gameOver", { message: "The other player has disconnected." }); //notify remaining player
         };
     });
 
-    function handleBallMove() {
+    function handleBallMove(data) {
         ball = data; //update ball position on server
 
         if (data.x < 0) { //ball crossed the left boundary
@@ -118,11 +108,10 @@ io.on("connection", (socket) => {
         };
 
         if (isGameOver()) {
-            io.emit("gameOver", { message: score[0] >= maxScore ? 0 : 1 })
+            io.emit("gameOver", { message: `Player ${score[0] >= maxScore ? 0 : 1} won!` })
             return;
         };
 
-        collisions();
         io.emit("scoreUpdate", score);
     };
 

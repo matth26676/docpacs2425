@@ -81,6 +81,14 @@ function keyUpHandler(e) {
     if (e.code === "KeyS") sDown = false;
 };
 
+socket.on("playerMove", (data) => {
+    PLAYER.forEach(player => {
+        if (player.id === data.id) {
+            player.y = data.y;
+        };
+    });
+});
+
 function handlePlayerMove() {
     PLAYER.forEach(player => {
         //move player on key down
@@ -95,6 +103,7 @@ function handlePlayerMove() {
 
         //emit movement to server
         socket.emit("playerMove", { id: player.id, y: player.y });
+
     });
 };
 
@@ -102,29 +111,25 @@ function handlePlayerMove() {
 Ball Movement
 -----------*/
 
-socket.on("playerMove", (data) => {
-    PLAYER.forEach(player => {
-        if (player.id === data.id) {
-            player.y = data.y;
-        };
-    });
-});
-
 socket.on("ballMove", (data) => {
     ball = data; //update ball position from server
 });
 
 socket.on("scoreUpdate", (newScore) => {
-    score = newScore;
+    score = newScore; //update score from server
 });
 
-socket.on("gameFull", (message) => {
-    document.getElementById("gameStatus").innerText = message;
+function messageUpdate(data) {
+    document.getElementById("gameStatus").innerText = data.message;
+};
+
+socket.on("gameFull", (data) => {
+    messageUpdate(data);
 });
 
-socket.on("gameOver", (message) => {
+socket.on("gameOver", (data) => {
+    messageUpdate(data);
     gameActive = false;
-    alert(message);
     window.location.reload(); //reload the page to restart the game
 });
 
