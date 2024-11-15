@@ -53,7 +53,8 @@ wss.on('connection', (ws) => {
             const username = message.username;
             const score = message.score
             console.log(username, score)
-            scores.push([username,score])
+            // fix here
+            // scores.push([username,score])
             console.log(scores) 
         }
 
