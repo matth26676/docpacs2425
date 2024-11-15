@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
         return socket.disconnect(); //disconnect the client
     };
 
-    players[socket.id] = { id: playerID, x: 10, y: canvasHeight / 2, width: 20, height: 100}; //add player
+    players[socket.id] = { id: playerID, x: 10, y: canvasHeight / 2, width: 20, height: 100 }; //add player
     socket.emit("playerID", playerID); //send the playerID to the client
 
     //enough players to start
@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
         players[socket.id].y = data.y;
         io.emit("playerMove", { id: data.id, y: data.y });
     });
-    
+
     //ball movements synced on both connections
     setInterval(() => {
         if (!isGameOver()) {
@@ -81,10 +81,10 @@ io.on("connection", (socket) => {
             ball.y += ball.dy;
         };
 
-        handleBallMove(data);
+        handleBallMove(ball);
         collisions(ball);
         io.emit("ballMove", ball);
-    }, 16 );
+    }, 16);
 
     //player disconnects
     socket.on("disconnect", () => {
@@ -99,18 +99,16 @@ io.on("connection", (socket) => {
         };
     });
 
-    function handleBallMove(data) {
-        ball = data; //update ball position on client
-
-        if (data.x < 0) { //ball crossed the left boundary
+    function handleBallMove(ball) {
+        if (ball.x < 0) { //ball crossed the left boundary
             score[1]++; //increase score for player 1
-            io.emit("scoreUpdate", score); //emit updated score
-            resetBall();
-        } else if (data.x > canvasWidth) { //ball crossed the right boundary
+
+        } else if (ball.x > canvasWidth) { //ball crossed the right boundary
             score[0]++; //increase score for player 0
-            io.emit("scoreUpdate", score); //emit updated score
-            resetBall();
         };
+
+        io.emit("scoreUpdate", score); //emit updated score
+        resetBall();
 
         if (isGameOver()) {
             io.emit("gameOver", { message: `Player ${score[0] >= maxScore ? 0 : 1} won!` })
