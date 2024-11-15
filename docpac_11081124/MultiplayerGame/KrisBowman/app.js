@@ -73,13 +73,18 @@ io.on("connection", (socket) => {
         players[socket.id].y = data.y;
         io.emit("playerMove", { id: data.id, y: data.y });
     });
-
+    
     //ball movements synced on both connections
-    socket.on("ballMove", (data) => {
+    setInterval(() => {
+        if (!isGameOver()) {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+        };
+
         handleBallMove(data);
-        collisions();
+        collisions(ball);
         io.emit("ballMove", ball);
-    });
+    }, 16 );
 
     //player disconnects
     socket.on("disconnect", () => {
@@ -95,7 +100,7 @@ io.on("connection", (socket) => {
     });
 
     function handleBallMove(data) {
-        ball = data; //update ball position on server
+        ball = data; //update ball position on client
 
         if (data.x < 0) { //ball crossed the left boundary
             score[1]++; //increase score for player 1
@@ -115,12 +120,7 @@ io.on("connection", (socket) => {
         io.emit("scoreUpdate", score);
     };
 
-    function collisions() {
-        if (!isGameOver()) {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
-        };
-
+    function collisions(ball) {
         if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= canvasHeight) ball.dy = -ball.dy;
 
         Object.values(players).forEach(player => {

@@ -111,12 +111,12 @@ function handlePlayerMove() {
 Ball Movement
 -----------*/
 
-socket.on("ballMove", (data) => {
-    ball = data; //update ball position from server
+socket.on("ballMove", (ball) => {
+    ball = data; //update ball position on client
 });
 
 socket.on("scoreUpdate", (newScore) => {
-    score = newScore; //update score from server
+    score = newScore; //update score on client
 });
 
 function messageUpdate(data) {
