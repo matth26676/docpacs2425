@@ -21,13 +21,8 @@ Let every player know the game has ended
     __Add a restart option__
 Give players the option to restart the game
 
-    __Add online functionality__
-Ensure players from any machine can connect
-
-    __Style the game__
-    > Center the Board
-    > Center the SplatoonD
-    > Make the game code visible in the document
+    __Game Code__
+Make the game code visible in the document
 */
 
 // Set up the variables
