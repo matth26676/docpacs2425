@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////
 
 /*
-    -------------------To Do-------------------
+    ------------------- To Do -------------------
 
     __Alert the end of the game__
 Let every player know the game has ended
@@ -23,6 +23,8 @@ Give players the option to restart the game
 
     __Add online functionality__
 Ensure players from any machine can connect
+
+    __
 
     __Style the game__
     > Center the Board
@@ -95,6 +97,11 @@ wss.on('request', (request) => {
             // Set the IDs and the Game
             const clientID = result.clientID;
             const gameID = result.gameID;
+            // If there is no gameID, return
+            if (!gameID) {
+                return;
+            };
+            // Set the game from the games object
             const game = games[gameID];
             // If there are more than 5 players...
             if (game.clients.length >= 6) {
@@ -114,20 +121,47 @@ wss.on('request', (request) => {
                 'player': player,
                 'score': 0
             });
-            // If there is more than one client, start the game
-            if (game.clients.length > 1) update();
             // Create the join payload
             const payload = {
                 'method': 'join',
                 'game': game
             };
-
+            
             // For each client in the game...
             game.clients.forEach((c) => {
                 // Send a stringified payload to each client to notify that a new client has joined
                 clients[c.clientID].connection.send(JSON.stringify(payload));
             });
         };
+        // If the method is start...
+        if (result.method === 'start') {
+            // Set the game's ID and the client's ID, and set the game
+            const gameID = result.gameID;
+            const clientID = result.clientID;
+            const player = result.player;
+            const game = games[gameID];
+            // If there is no gameID and the user is not player 1, return
+            if (!gameID && player !== 'Player 1') {
+                return;
+            };
+            // Set the game from the games object
+            // If there is more than one client, start the game
+            if (game.clients.length > 1) update();
+            const payload = {
+                'method': 'start',
+                'game': game
+            };
+        };
+        /* 
+            //////////////////////////////////////////////////////////////////////
+            //  ____  _             _     ____             _                 _  //
+            // / ___|| |_ __ _ _ __| |_  |  _ \ __ _ _   _| | ___   __ _  __| | //
+            // \___ \| __/ _` | '__| __| | |_) / _` | | | | |/ _ \ / _` |/ _` | //
+            //  ___) | || (_| | |  | |_  |  __/ (_| | |_| | | (_) | (_| | (_| | //
+            // |____/ \__\__,_|_|   \__| |_|   \__,_|\__, |_|\___/ \__,_|\__,_| //
+            //                                       |___/                      //
+            //////////////////////////////////////////////////////////////////////
+        */
         // If the method is play... 
         if (result.method === 'play') {
             // Set the IDs for the game and box, and assign the box's color

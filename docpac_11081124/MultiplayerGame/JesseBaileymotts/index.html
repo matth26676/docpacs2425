@@ -13,6 +13,7 @@
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
+    <button id='startGame'></button>
     <!-- Game Information -->
     <div id='clock'></div>
     <div id='players'></div>
@@ -26,6 +27,7 @@
         const newGame = document.getElementById('newGame');
         const joinGame = document.getElementById('joinGame');
         const code = document.getElementById('code');
+        const startGame = document.getElementById('startGame');
         const clock = document.getElementById('clock');
         const players = document.getElementById('players');
         const winner = document.getElementById('winner');
@@ -33,7 +35,7 @@
         
         //// Splatoon 2D Variables
         // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
-        let ws = new WebSocket('ws://localhost:9090');
+        let ws = new WebSocket('ws://172.16.3.206:9090');
         let clientID = null;
         let gameID = null;
         let pColor = null;
@@ -47,10 +49,11 @@
         //// HTML Events
         // On clicking join game...
         joinGame.addEventListener('click', (e) => {
-            // Create the join payload
+            // If there is no gameID, assign it to the code input's value
             if (gameID === null) {
-                gameID = code.value;
-            }
+                gameID = (code.value).toUpperCase();
+            };
+            // Create the join payload
             const payload = {
                 'method': 'join',
                 'clientID': clientID,
@@ -69,7 +72,19 @@
             // Stringify and send the create payload
             ws.send(JSON.stringify(payload));
         });
-
+        // On clicking start game...
+        startGame.addEventListener('click', (e) => {
+            // Create the start payload
+            const payload = {
+                'method': 'start',
+                'clientID': clientID,
+                // Where the client's ID in game.clients, set the number to the player
+                'player': game.clients.find((c) => c.clientID === clientID).player,
+                'gameID': gameID
+            };
+            // Stringify and send the start payload
+            ws.send(JSON.stringify(payload));
+        });
         // On recieving a websocket message...
         ws.onmessage = message => {
             const response = JSON.parse(message.data);
@@ -95,6 +110,7 @@
                 while (players.firstChild) players.removeChild(players.firstChild);
                 // For each client in the game...
                 game.clients.forEach((c) => {
+                    if (c.player === 'Player 1') startGame.innerText = 'Start Game';
                     // Create a div element, style it, and add into it the client ID
                     const div = document.createElement('div');
                     div.id = c.clientID;
@@ -141,6 +157,11 @@
                     if (((i + 1) % (game.boxes / Math.sqrt(game.boxes))) === 0) board.appendChild(document.createElement('br'));
                 };
             };
+            // If the method is start...
+            if (response.method === 'start') {
+
+            }
+
             // If the method is update...
             if (response.method === 'update') {
                 const game = response.game;
