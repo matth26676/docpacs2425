@@ -21,6 +21,8 @@ Let every player know the game has ended
     __Add a restart option__
 Give players the option to restart the game
 
+    __Game Code__
+Make the game code visible in the document
     __Add online functionality__
 Ensure players from any machine can connect
 
