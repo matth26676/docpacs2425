@@ -13,7 +13,7 @@
     <button id='newGame'>New Game</button>
     <button id='joinGame'>Join Game</button>
     <input type='text' id='code'>
-    <button id='startGame'></button>
+    <button id='startGame'>Start Game</button>
     <!-- Game Information -->
     <div id='clock'></div>
     <div id='players'></div>
@@ -104,6 +104,17 @@
             if (response.method === 'join') {
                 // Set the text of the clock div to the remaining time
                 clock.innerText = `Time: ${response.game.time}`;
+                // Dislpay the start game button
+                startGame.style.display = 'inline-block';
+                // If the game has less than two clients...
+                if (response.game.clients.length < 2) {
+                    // Disable the start game button
+                    startGame.disabled = true;
+                // Else...
+                } else {
+                    // Enable the start game button
+                    startGame.disabled = false;
+                };
                 // Assign the game
                 game = response.game;
                 // While the players div has elements, remove the first element
@@ -130,6 +141,8 @@
                     const box = document.createElement('button')
                     box.id = 'b'+(i+1);
                     box.tag = i+1;
+                    box.className = 'box';
+                    box.disabled = true;
                     // Style the button
                     box.textContent = i+1;
                     box.style.width = '4.5rem';
@@ -159,11 +172,17 @@
             };
             // If the method is start...
             if (response.method === 'start') {
-
+                
             }
-
+            
             // If the method is update...
             if (response.method === 'update') {
+                // If the game has ended, return
+                if (gameEnd === true) return;
+                // Set allBoxes to all buttons within the board
+                const allBoxes = document.querySelectorAll('#board button');
+                // For each box, set the box to enabled
+                allBoxes.forEach((box) => box.disabled = false);
                 const game = response.game;
                 // Update the text of the clock div to the current game time
                 clock.innerText = `Time: ${game.time}`;
@@ -177,8 +196,8 @@
                         playerBox.textContent = `${c.player}: ${c.score}`;
                     };
                 });
-                // If there is no game state, return
-                if (!game.state) return;
+                // If there is no game state, make one
+                if (!game.state) game.state = {};
                 // For boxes of the game's state...
                 for (const b of Object.keys(game.state)) {
                     // Set color to the color of said box
@@ -191,8 +210,8 @@
                 // If the game's time is less than or equal to 0...
                 if (game.time <= 0) {
                     if (gameEnd === false) {
-                        // Set allBoxes to all buttons within the board
-                        const allBoxes = document.querySelectorAll('#board button');
+                        // // Set allBoxes to all buttons within the board
+                        // const allBoxes = document.querySelectorAll('#board button');
                         // For each box, set the box to disabled
                         allBoxes.forEach((box) => box.disabled = true);
                         // Let scores equal an empty array
@@ -208,17 +227,22 @@
                         game.clients.forEach((c) => {
                             const div = document.createElement('div');
                             div.id = c.player;
+                            div.textContent = c.player;
                             div.style.width = '4rem';
                             div.style.color = c.color;
                             winner.appendChild(div);
                             console.log(div);
+                            // Remove all the elements from the players div
+                            while (players.firstChild) players.removeChild(players.firstChild);
                         });
                         gameEnd = true;
-                        
                     };
-                };
-            };
-        };
+              };
+           };
+      };
+// Modify the update function to accept a gameID parameter.
+// Update the update function to only update the game with the specified gameID.
+// Modify the start method to call the update function with the specific gameID.
     </script>
 </body>
 </html>

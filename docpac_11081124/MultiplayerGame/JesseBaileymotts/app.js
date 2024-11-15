@@ -81,7 +81,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
-                'time': 30,
+                'time': 1,
                 'frame': 0,
                 'clients': []
             };
