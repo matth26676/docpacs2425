@@ -13,42 +13,70 @@
 //////////////////////////////////////////////////////////////////
 
 /*
-    ------------------- To Do -------------------
+------------------- To Do -------------------
+    __Main Menu__
+Add a main menu where you can log in, view your settings, view the leaderboard, and go to the game
 
-    __Alert the end of the game__
+__Formbar Oauth2__
+Implement Oauth2 using the formbar
+
+    __Game End__
 Let every player know the game has ended
 
-    __Add a restart option__
+    __Restart__
 Give players the option to restart the game
 
-    __Game Code__
-Make the game code visible in the document
-    __Add online functionality__
-Ensure players from any machine can connect
+    __Game Settings__
+Allow the game to be customized by the host
 
-    __
+    __Leaderboard__
+Create a leaderboard to show the top players, their wins, their win rates, win loss ratio
 
-    __Style the game__
-    > Center the Board
-    > Center the SplatoonD
-    > Make the game code visible in the document
+    __Log In__
+Create a log in system to save your settings and track your wins
+
+    __Settings__
+Create a settings page to change your display name, color, and other settings
+
+    __Power Ups__
+Add power ups to the game to give players an advantage
+Possible power ups:
+    - 3x3 Click (Covers a 3x3 area)
+    - Shield (Prevents a box from being clicked)
+    - Bomb (Erases color in a 3x3 area)
+
+    __Teams__
+Add teams to the game to allow players to play cooperatively
+
+    __One Game per Player__
+Players can only make one game at a time
 */
 
 // Set up the variables
 const express = require('express');
-const http = require('http');
-const app = require('express')();
+const app = express();
+const {createServer} = require('http');
 const ws = require('websocket').server;
 
 // Make the static directory the current directory
 app.use(express.static(__dirname + '/'));
+app.set('view engine', 'ejs');
 
-// Get the index.html page and listen to port 3000
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+// Listen on port 3000 and relat that
 app.listen(3000, console.log(`App: Listening on port 3000`));
 
+// Get the index page
+app.get('/', (req, res) => {
+    res.render('index');
+});
+
+// Get the game page
+app.get('/game', (req, res) => {
+    res.render('game');
+});
+
 // Create the http server 
-const httpServer = http.createServer();
+const httpServer = createServer();
 httpServer.listen(9090, console.log(`HTTP: Listening on port 9090`));
 
 // Create the client hashmap for all your webfiends
@@ -63,11 +91,51 @@ const wss = new ws({
 
 // On connecting to the server..
 wss.on('request', (request) => {
-    // Connect
+    // Assign the connection to the request and accept the connection
     const connection = request.accept(null, request.origin);
-    // On opening or closing a connection, relay that. 
-    connection.on('open', () => console.log('Opened'));
-    connection.on('close', () => console.log('Closed'));
+    // On closing a connection...
+    connection.on('close', () => {
+        // Find the client by the connection and assign it to clientID
+        const clientID = Object.keys(clients).find((c) => clients[c].connection === connection);
+        // Delete the client from the clients list
+        delete clients[clientID];
+        // If that client is in a game, delete them from the game
+        // For each game in games...
+        Object.keys(games).forEach((g) => {
+            // Assign the game from the games object
+            const game = games[g];
+            // Find the client by the client ID and assign it to clientIndex
+            const clientIndex = game.clients.findIndex((c) => c.clientID === clientID);
+            // If the client index is not negative one...
+            if (clientIndex !== -1) {
+                const client = game.clients[clientIndex];
+                // Add the player's slot and color back to the available lists
+                game.slots.push(client.player);
+                game.colors.push(client.color);
+                // Sort the available slots to maintain the correct order
+                game.slots.sort();
+                game.colors.sort();
+                // Splice that client from the game
+                game.clients.splice(clientIndex, 1);
+                // If the game has no clients, delete the game
+                // If there are no clients in the game...
+                if (game.clients.length === 0) {
+                    // Delete that game from games
+                    delete games[g];
+                };
+            };
+            // Create the disconnect payload
+            const payload = {
+                'method': 'disconnect',
+                'clientID': clientID
+            };
+            // For each client in the game...
+            game.clients.forEach((c) => {
+                // Send a stringified payload to each client to notify that a client has disconnected
+                clients[c.clientID].connection.send(JSON.stringify(payload));
+            });
+        });
+    });
     // On recieving a message, JSON parse the message and save it to result
     connection.on('message', (message) => {
         // This assumes all the messages being sent by the clients are JSON which is bad practice, but for simplicities sake, I am assuming all the clients will be good little webfiends. Webfriends, if you will
@@ -91,8 +159,7 @@ wss.on('request', (request) => {
                 'game': games[gameID]
             };
             // Send the create payload for the game through the client connection
-            const con = clients[clientID].connection;
-            con.send(JSON.stringify(payload));
+            clients[clientID].connection.send(JSON.stringify(payload));
         };
         // If the method is join...
         if (result.method === 'join'){
@@ -109,13 +176,17 @@ wss.on('request', (request) => {
             if (game.clients.length >= 6) {
                 // Notify that the maximum amount of players has been reached
                 console.log(`Game (${gameID}) is at maximum capacity.`)
+                // Return
                 return;
             };
-            // Set the color for the player depending on which they are
-            // 1 is Red, 2 is Cyan, 3 is Green, 4 is Yellow, 5 is Purple, 6 is Orange
-            const color = {'0': '#FF0000', '1': '#00ffff', '2': '#00ff00', '3': '#ffff00', '4': '#ff00ff', '5': '#ff8800'}[game.clients.length]
-            // Set the number for the player depending on which they are
-            const player = {'0': 'Player 1', '1': 'Player 2', '2': 'Player 3', '3': 'Player 4', '4': 'Player 5', '5': 'Player 6'}[game.clients.length]
+            // If the slots or colors of the game do not exist, create the slots and colors arrays
+            if (!game.slots || !game.colors) {
+                game.slots = ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5', 'Player 6'];
+                game.colors = ['#da0000', '#000bda', '#00961c', '#c7de00', '#b700b1', '#eaa400'];
+            }
+            // Get the lowest available slot and color
+            const player = game.slots.shift();
+            const color = game.colors.shift();
             // Add that client to the game
             game.clients.push({
                 'clientID': clientID,
@@ -137,33 +208,21 @@ wss.on('request', (request) => {
         };
         // If the method is start...
         if (result.method === 'start') {
-            // Set the game's ID and the client's ID, and set the game
+            // Set the game's ID, set the player that sent the payload, and set the game
             const gameID = result.gameID;
-            const clientID = result.clientID;
             const player = result.player;
             const game = games[gameID];
             // If there is no gameID and the user is not player 1, return
-            if (!gameID && player !== 'Player 1') {
+            if (!gameID || player !== 'Player 1') {
                 return;
             };
-            // Set the game from the games object
             // If there is more than one client, start the game
-            if (game.clients.length > 1) update();
+            if (game.clients.length > 1) update(gameID);
             const payload = {
                 'method': 'start',
                 'game': game
             };
         };
-        /* 
-            //////////////////////////////////////////////////////////////////////
-            //  ____  _             _     ____             _                 _  //
-            // / ___|| |_ __ _ _ __| |_  |  _ \ __ _ _   _| | ___   __ _  __| | //
-            // \___ \| __/ _` | '__| __| | |_) / _` | | | | |/ _ \ / _` |/ _` | //
-            //  ___) | || (_| | |  | |_  |  __/ (_| | |_| | | (_) | (_| | (_| | //
-            // |____/ \__\__,_|_|   \__| |_|   \__,_|\__, |_|\___/ \__,_|\__,_| //
-            //                                       |___/                      //
-            //////////////////////////////////////////////////////////////////////
-        */
         // If the method is play... 
         if (result.method === 'play') {
             // Set the IDs for the game and box, and assign the box's color
@@ -188,59 +247,64 @@ wss.on('request', (request) => {
     // Create the connect payload
     const payload = {
         'method': 'connect',
-        'clientID': clientID
+        'clientID': clientID,
+        'games': games
     };
     // Send the stringified payload (client connect)
     connection.send(JSON.stringify(payload));
 });
 
-// Create a function to update the game
-let update = () => {
-    // For game of games..
-    // Loop through all the keys ( {'gameID':, gameID} )
-    for (const g of Object.keys(games)) {
-        // Set the game from the games object
-        const game = games[g];
-        // increment the game's frame by 1
-        game.frame++;
-        // Every 20 frames while the game is running...
-        if ((game.frame % 20) === 0 && game.time > 0) {
-            // Reset the frames back to 0 and deincrement the time by one
-            game.frame = 0;
-            game.time--;
-        };
-        // For each client in games...
-        game.clients.forEach((c) => {
-            // Reset that client's score
-            c.score = 0;
-            // If there is no game state, return
-            if (!game.state) return;
-            // For boxes of the game's state
-            for (const b of Object.keys(game.state)) {
-                // Set color to the box's color
-                const color = game.state[b];
-                // If the client's color is equal to the color
-                if (c.color === color) {
-                    // Increment score by one
-                    c.score++;
-                };
-            };
-        });
-        // Create the update payload
-        const payload = {
-            'method': 'update',
-            'game': game
-        };
-        // For each client in games...
-        game.clients.forEach((c) => {
-            // Stringify and send the update payload
-            clients[c.clientID].connection.send(JSON.stringify(payload));
-        });
+// Create a function to update the game by gameID
+let update = (gameID) => {
+    // Get the game by gameID.
+    const game = games[gameID];
+    // If the game does not exist, return
+    if (!game) return;
+    // Increment the game's frame by 1
+    game.frame++;
+    // Every 20 frames while the game is running...
+    if ((game.frame % 20) === 0 && game.time > 0) {
+        // Reset the frames back to 0 and deincrement the time by one
+        game.frame = 0;
+        game.time--;
     };
-    setTimeout(update, 50);
+    // For each client in the game...
+    game.clients.forEach((c) => {
+        // Reset that client's score
+        c.score = 0;
+        // If there is no game state, return
+        if (!game.state) return;
+        // For boxes of the game's state
+        for (const b of Object.keys(game.state)) {
+            // Set color to the box's color
+            const color = game.state[b];
+            // If the client's color is equal to the color
+            if (c.color === color) {
+                // Increment score by one
+                c.score++;
+            };
+        };
+    });
+    // Create the update payload
+    const payload = {
+        'method': 'update',
+        'game': game
+    };
+    // For each client in the game...
+    game.clients.forEach((c) => {
+        // Stringify and send the update payload
+        clients[c.clientID].connection.send(JSON.stringify(payload));
+    });
+    // Set a timeout to update every 50 milliseconds (1/20th of a second)
+    // 20 frames per second
+    setTimeout(() => update(gameID), 50);
 };
 
-// Create a function to randomly create a hex string 4 characters long
+// Create a function to randomly create a hex string 4 characters long. It does this by...
+// Get a random number between 1 and 2, excluding 1 and 2, and multiply it by 0x10000 (a hex representation of 2^16) 
+// (Results in a number from 131072 to 65536)
+// Quickly convert said number to an integer, and then, convert the number to a hex string
+// Slice the string to remove the first character and return the hex string
 const hex = () => {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1); 
 };

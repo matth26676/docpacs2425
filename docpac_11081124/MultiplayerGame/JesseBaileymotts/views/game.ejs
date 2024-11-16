@@ -3,6 +3,7 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='icon' href='/favicon.ico' type='image/x-icon'>
     <link rel='stylesheet' href='/style.css'>
     <title>SplatoonD</title>
 </head>
@@ -10,14 +11,23 @@
     <!-- Splatoon 2D -->
     <h1>SplatoonD</h1>
     <!-- Game Creation -->
-    <button id='newGame'>New Game</button>
-    <button id='joinGame'>Join Game</button>
-    <input type='text' id='code'>
-    <button id='startGame'>Start Game</button>
+    <button class='menuItems' id='newGame'>New Game</button>
+    <button class='menuItems' id='joinGame'>Join Game</button>
+    <form id='gameList'>
+        <label for='code'>Game Code:</label>
+        <select id='code'>
+            <option id='defOpt' value='' disabled selected>Select a Game</option>
+        </select>
+    </form>
+    <div id='divider'></div>
     <!-- Game Information -->
-    <div id='clock'></div>
-    <div id='players'></div>
-    <div id='winner'></div>
+    <button class='menuItems' id='startGame'>Start Game</button>
+    <div id='gameInfo'>
+        <div id='clock'></div>
+        <div id='players'></div>
+        <div id='winner'></div>
+    </div>    
+
     <!-- Game Board -->
     <div id='board'></div>
     <!-- JS Code -->
@@ -26,8 +36,11 @@
         // In order of which they appear
         const newGame = document.getElementById('newGame');
         const joinGame = document.getElementById('joinGame');
+        const gameList = document.getElementById('gameList');
+        const defOpt = document.getElementById('defOpt');
         const code = document.getElementById('code');
         const startGame = document.getElementById('startGame');
+        const gameInfo = document.getElementById('gameInfo');
         const clock = document.getElementById('clock');
         const players = document.getElementById('players');
         const winner = document.getElementById('winner');
@@ -35,7 +48,7 @@
         
         //// Splatoon 2D Variables
         // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
-        let ws = new WebSocket('ws://172.16.3.206:9090');
+        let ws = new WebSocket('ws://localhost:9090');
         let clientID = null;
         let gameID = null;
         let pColor = null;
@@ -86,24 +99,52 @@
             ws.send(JSON.stringify(payload));
         });
         // On recieving a websocket message...
-        ws.onmessage = message => {
+        ws.onmessage = (message) => {
             const response = JSON.parse(message.data);
             // If the method is connect...
-            if (response.method == 'connect') {
+            if (response.method === 'connect') {
                 // Assign and relay the client ID
                 clientID = response.clientID;
-                console.log(`Client ID Set: ${clientID}`);
+                // For each game in the games object...
+                Object.keys(response.games).forEach((g) => {
+                    // Create an option element
+                    const option = document.createElement('option');
+                    // Assign the game ID to the value and text
+                    option.value = g;
+                    option.text = g;
+                    // Append it to the code select
+                    code.appendChild(option);
+                });
+                // If there are games...
+                if (response.games.length !== 0) {
+                    // Hide the default option
+                    defOpt.style.display = 'none';
+                };
+            };
+            // If the method is disconnect...
+            if (response.method === 'disconnect') {
+                // Remove the player div with that client's ID
+                player.removeChild(document.getElementById(response.clientID));
             };
             // If the method is create...
             if (response.method === 'create') {
                 // Assign and relay the game ID
                 gameID = response.game.id;
-                console.log(`Game ID Set: ${response.game.id}`);
+                // Create an option element
+                const option = document.createElement('option');
+                // Assign the game ID to the value and text
+                option.value = gameID;
+                option.text = gameID;
+                option.selected = true;
+                // Append it to the code select
+                code.appendChild(option);
+                // Set the option to the selected option in the gameList form
             };
             // If the method is join...
             if (response.method === 'join') {
                 // Set the text of the clock div to the remaining time
                 clock.innerText = `Time: ${response.game.time}`;
+                clock.style.display = 'inline-block';
                 // Dislpay the start game button
                 startGame.style.display = 'inline-block';
                 // If the game has less than two clients...
@@ -121,18 +162,19 @@
                 while (players.firstChild) players.removeChild(players.firstChild);
                 // For each client in the game...
                 game.clients.forEach((c) => {
-                    if (c.player === 'Player 1') startGame.innerText = 'Start Game';
                     // Create a div element, style it, and add into it the client ID
                     const div = document.createElement('div');
                     div.id = c.clientID;
-                    div.style.width = '5rem';
                     div.style.background = c.color;
+                    div.className = 'player';
                     div.textContent = `${c.player}: ${c.score}`;
                     // If the client's ID matches the current client, their player color is the client's color
                     if (c.clientID === clientID) pColor = c.color;
                     // Append the client's div to the players div
                     players.appendChild(div);
                 });
+                const grid = `repeat(${Math.min(3, game.clients.length)}, 1fr)`;
+                players.style.gridTemplateColumns = grid;
                 // While the board div has elements, remove the first element
                 while (board.firstChild) board.removeChild(board.firstChild);
                 // Start i at 0. While i is less than the game boxes, increment i by 1 and...
@@ -145,8 +187,6 @@
                     box.disabled = true;
                     // Style the button
                     box.textContent = i+1;
-                    box.style.width = '4.5rem';
-                    box.style.height = '4.5rem';
                     // Add clicking functionality to the button
                     box.addEventListener('click', (e) => {
                         // Set the clicked box to the player color
@@ -162,19 +202,15 @@
                         // Stringify and send the play payload
                         ws.send(JSON.stringify(payload));
                     });
-                    // Append the box to the board. If there are eight boxes already, break
-                    // Results in a 8 x 8 grid
+                    // Append the box to the board
+                    board.appendChild(box);
+                    // If the boxes divided by the square root of itself can divide i plus one with no remainder, break
+                    // Results in a 8 x 8 grid if there are 64 boxes
                     // If the total boxes are increased, it must be exponentially to result in an evenly distributed and, thus, square grid
                     // For example, a 12 x 12 grid would be 144 boxes. A 20 x 20 grid would be 400
-                    board.appendChild(box);
                     if (((i + 1) % (game.boxes / Math.sqrt(game.boxes))) === 0) board.appendChild(document.createElement('br'));
                 };
             };
-            // If the method is start...
-            if (response.method === 'start') {
-                
-            }
-            
             // If the method is update...
             if (response.method === 'update') {
                 // If the game has ended, return
@@ -223,7 +259,7 @@
                         });
                         // Sort scores with the compare functions
                         scores.sort(compare);
-                        // scores[scores.length - 1]
+                        // 
                         game.clients.forEach((c) => {
                             const div = document.createElement('div');
                             div.id = c.player;
@@ -232,17 +268,13 @@
                             div.style.color = c.color;
                             winner.appendChild(div);
                             console.log(div);
-                            // Remove all the elements from the players div
-                            while (players.firstChild) players.removeChild(players.firstChild);
+                            players.style.display = 'none';
                         });
                         gameEnd = true;
                     };
-              };
-           };
-      };
-// Modify the update function to accept a gameID parameter.
-// Update the update function to only update the game with the specified gameID.
-// Modify the start method to call the update function with the specific gameID.
+                };
+            };
+        };
     </script>
 </body>
 </html>

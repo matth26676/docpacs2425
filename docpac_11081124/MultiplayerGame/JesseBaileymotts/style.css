@@ -1,3 +1,4 @@
+/* Style for all */
 * {
     margin: auto;
     text-align: center;
@@ -6,11 +7,82 @@
     color: #e8e6e3;
 }
 
-.box {
-    background-color: #FFFFFF;
-    color: #181a1b;
+/* Style for IDs */
+#menu {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    grid-gap: 1rem;
+    width: 70rem;
+    height: 21rem;
+    border: 0.0625rem solid #000000;
+    padding: 1rem;
+    place-items: center;
+    align-items: center;
+}
+
+#players {
+    display: grid;
+    grid-gap: 1rem;
+    width: 20rem;
+}
+
+#divider {
+    border: #000000 solid 0.0625rem;
+    padding: 0rem;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+    color:#eaa400;
 }
 
 #startGame {
     display: none;
+}
+
+#clock {
+    border: #000000 solid 0.0625rem;
+    padding: .5rem;
+    display: none;
+    width: 5rem;
+    color: #181a1b;
+    background-color: #FFFFFF;
+}
+
+#menuHeader {
+    font-size: 8rem;
+    margin-bottom: 1rem;
+}
+
+/* Style for Classes */
+.player {
+    width: 5rem;
+    color: #FFFFFF;
+}
+
+.box {
+    background-color: #FFFFFF;
+    color: #181a1b;
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.menuItems {
+    /* background-color: #168300;
+    color: #ffffff; */
+    width: 20rem;
+    height: 4rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+} 
+
+.menuItems:hover {
+    background-color: #006d02;
+    color: #f0f0f0;
+    transform: scale(1.05);
+    box-shadow: 0 .25rem .25rem #006d028c;
+    transition: all .25s ease;
 }
