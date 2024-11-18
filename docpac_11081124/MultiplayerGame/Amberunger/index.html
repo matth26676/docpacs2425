@@ -120,6 +120,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/index.js"></script>
     <script>
+        // display the game befor join other player
         document.getElementById("loading").style.display = "none";
         document.getElementById("bigCont").style.display = "none";
         document.getElementById("userCont").style.display = "none";
@@ -146,7 +147,7 @@
                 }
             }
         });
-
+// display the game after join other player
         socket.on("startGame", ({ opponent, symbol: playerSymbol, gameId: serverGameId }) => {
             symbol = playerSymbol;
             gameId = serverGameId;
@@ -171,20 +172,20 @@
         buttons.forEach((button, index) => {
             button.addEventListener('click', () => {
                 if (button.innerText === '' && myTurn) {
-
+// make move is what makes x go first
                     socket.emit('makeMove', { gameId, index, symbol });
                     myTurn = false; // Disable the player's turn until the server confirms the move
                     updateTurnDisplay();
                 }
             });
         });
-
+// its movemade this is what make O go and the after your turn makes x go
         socket.on('moveMade', ({ index, symbol, turn }) => {
             buttons[index].innerText = symbol;
             myTurn = (turn !== symbol); // Update myTurn based on the turn information from the server
 
         });
-
+// this ends the game
         socket.on('gameOver', ({ winner }) => {
             if (winner === 'Draw') {
                 alert('The game is a draw!');
