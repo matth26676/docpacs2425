@@ -14,23 +14,23 @@
 
 /*
 ------------------- To Do -------------------
-    __Formbar Oauth2__
-Implement Oauth2 using the formbar
-
-    __Game End__
-Let every player know the game has ended
-
     __Restart__
 Give players the option to restart the game
+
+    __Leave__
+Give the players the option to leave the game. If they are the owner, delete the game
 
     __Game Settings__
 Allow the game to be customized by the host
 
-    __Leaderboard__
-Create a leaderboard to show the top players, their wins, their win rates, win loss ratio
-
     __Log In__
 Create a log in system to save your settings and track your wins
+
+    __Formbar Oauth2__
+Implement Oauth2 using the formbar
+
+    __Leaderboard__
+Create a leaderboard to show the top players, their wins, their win rates, win loss ratio
 
     __Settings__
 Create a settings page to change your display name, color, and other settings
@@ -38,20 +38,16 @@ Create a settings page to change your display name, color, and other settings
     __Power Ups__
 Add power ups to the game to give players an advantage
 Possible power ups:
-    - 3x3 Click (Covers a 3x3 area)
-    - Shield (Prevents a box from being clicked)
-    - Bomb (Erases color in a 5x5 area)
+    - Inkroller (Covers a 3x3 area)
+    - Ink Wall (Prevents a box from being clicked)
+    - Inknade (Erases color in a 5x5 area)
 
     __Teams__
 Add teams to the game to allow players to play cooperatively
 
-    __One Game per Player__
-Players can only make one game at a time and can only play in one game at a time
-
     __Bug Fixes__
 Fix bugs that will inevitably arise
     Known bugs:
-    > Leaving a game when the timer is over will crash the server
 */
 
 // Set up the variables
@@ -166,6 +162,8 @@ wss.on('request', (request) => {
         if (result.method === 'create') {
             // Assign the client ID and the game ID
             const clientID = result.clientID;
+            // If the client has already created a game, return
+            if (comb(clientID, 'create')) return;
             const gameID = guid();
             // Add the game ID to the games object
             games[gameID] = {
@@ -173,7 +171,8 @@ wss.on('request', (request) => {
                 'boxes': 64,
                 'time': 5,
                 'frame': 0,
-                'clients': []
+                'clients': [],
+                'creator': clientID
             };
             // Create the create payload 
             const payload = {
@@ -192,7 +191,6 @@ wss.on('request', (request) => {
             if (!gameID) return;
             // Set the game from the games object
             const game = games[gameID];
-            const client = game.clients.find((c) => c.clientID === clientID);
             if (comb(clientID)) return;
             // if (client) return;
             // If there are more than 5 players...
@@ -290,14 +288,16 @@ wss.on('request', (request) => {
                 };
             });
         };
-        // If the method is delete...
-        if (result.method === 'delete') {
-            // Set the game's ID and set the game using the ID
+        // If the method is leave...
+        if (result.method === 'leave') {
+            // Set the game's ID, the client ID, and set the game using the ID
+            const clientID = result.clientID;
             const gameID = result.gameID;
-            game = games[gameID];
-            // Create the delete payload
+            const game = games[gameID];
+            // Create the leave payload
             const payload = {
-                'method': 'delete'
+                'method': 'leave',
+                'game': game
             };
             // For each client in the game...
             game.clients.forEach((c) => {
@@ -306,8 +306,8 @@ wss.on('request', (request) => {
                     clients[c.clientID].connection.send(JSON.stringify(payload));
                 };
             });
-            // Delete the game
-            delete game;
+            // If the game's creator is the client, delete the game
+            if (game.creator === clientID) delete game;
         };
     });
     // Generate a new client id
@@ -374,13 +374,30 @@ let update = (gameID) => {
     setTimeout(() => update(gameID), 50);
 };
 
-// Create a function to check if a client is in a game taking clientID as an argument
-let comb = (clientID) => {
+// Create a function to check if a client is in a game taking clientID and method as arguments
+let comb = (clientID, method) => {
+    // Set combed to false
     let combed = false
-    Object.keys(games).forEach((g) => {
-        const client = games[g].clients.find((c) => c.clientID === clientID) ;
-        client ? combed = true : null;
-    });
+    // If the method is create...
+    if (method === 'create') {
+        // For each game in games...
+        Object.keys(games).forEach((g) => {
+            // Set client equal to whether or not the game's creator is the clientID
+            const client = games[g].creator === clientID;
+            // If client is true, set combed to true. Else, don't do anything
+            client ? combed = true : null;
+        });
+    // Else...
+    } else {
+        // For each game in games...
+        Object.keys(games).forEach((g) => {
+            // Set client equal to whether or not the clientID is in the game's clients
+            const client = games[g].clients.find((c) => c.clientID === clientID) ;
+            // If client is true, set combed to true. Else, don't do anything
+            client ? combed = true : null;
+            });
+    };
+    // Return combed
     return combed;
 };
 

@@ -22,6 +22,7 @@
     <div id='divider'></div>
     <!-- Game Information -->
     <button class='menuItems' id='startGame'>Start Game</button>
+    <button class='menuItems' id='leaveGame'>Leave Game</button>
     <div id='gameInfo'>
         <div id='clock'></div>
         <div id='players'></div>
@@ -40,6 +41,7 @@
         const defOpt = document.getElementById('defOpt');
         const code = document.getElementById('code');
         const startGame = document.getElementById('startGame');
+        const leaveGame = document.getElementById('leaveGame');
         const gameInfo = document.getElementById('gameInfo');
         const clock = document.getElementById('clock');
         const players = document.getElementById('players');
@@ -98,6 +100,18 @@
             // Stringify and send the start payload
             ws.send(JSON.stringify(payload));
         });
+        // On clicking leave game...
+        leaveGame.addEventListener('click', (e) => {
+            // Create the leave payload
+            const payload = {
+                'method': 'leave',
+                'clientID': clientID,
+                'gameID': gameID
+            };
+            // Stringify and send the leave payload
+            ws.send(JSON.stringify(payload));
+            location.reload();
+        });
         // On recieving a websocket message...
         ws.onmessage = (message) => {
             // Set response to the parsed message data
@@ -148,6 +162,7 @@
                 clock.style.display = 'inline-block';
                 // Dislpay the start game button
                 startGame.style.display = 'inline-block';
+                leaveGame.style.display = 'inline-block';
                 // If the game has less than two clients...
                 if (response.game.clients.length < 2) {
                     // Disable the start game button
@@ -278,6 +293,8 @@
                     };
                 };
             };
+            // If the method is leave, reload the page
+            if (repsonse.method === 'leave') location.reload();
         };
     </script>
 </body>

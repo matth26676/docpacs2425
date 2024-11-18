@@ -46,6 +46,10 @@
     display: none;
 }
 
+#leaveGame {
+    display: none;
+}
+
 #clock {
     border: #000000 solid 0.0625rem;
     padding: .5rem;
