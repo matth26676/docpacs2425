@@ -169,7 +169,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
-                'time': 5,
+                'time': 30,
                 'frame': 0,
                 'clients': [],
                 'creator': clientID
@@ -268,7 +268,7 @@ wss.on('request', (request) => {
             // If there is no game, return
             if (!game) return;
             // Reset the game's time and frame
-            game.time = 5;
+            game.time = 30;
             game.frame = 0;
             // Reset the game's state and reset the client's scores
             game.state = {};
