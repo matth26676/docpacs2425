@@ -53,8 +53,13 @@ wss.on('connection', (ws) => {
             const username = message.username;
             const score = message.score
             console.log(username, score)
-            // fix here
-            // scores.push([username,score])
+            const userIndex = scores.findIndex(entry => entry.username === username);
+
+            if (userIndex !== -1) {
+                scores[userIndex].score = score;
+            } else { 
+                scores.push({ username: username, score: score });
+            }
             console.log(scores) 
         }
 
@@ -82,18 +87,34 @@ function broadcast(data) {
 
 function endGame() {
     gameStarted = false;
+
     
-    let winner = "26gebanks@live.ytech.edu"
+    let winner = scores[0]; 
+    if (scores.length > 1 && scores[0].score === scores[1].score) {
+        winner = 'tie'; 
+    } else {
+        for (let i = 1; i < scores.length; i++) {
+            if (scores[i].score > winner.score) {
+                winner = scores[i];
+            }
+        }
+    }
     
     wss.clients.forEach(client => {
         const username = clients.get(client);
-            if (username == winner) {
-                client.send(JSON.stringify({ type: 'gameOver', result: 'You win' }));
-            } else {
-                client.send(JSON.stringify({ type: 'gameOver', result: 'You lose' }));
-            }
-    });   
+        if (!username) {
+            console.log("Username not found.");
+        }
+        if (winner === 'tie') {
+            client.send(JSON.stringify({ type: 'gameOver', result: 'You tied' }));
+        } else if (username === winner.username) {
+            client.send(JSON.stringify({ type: 'gameOver', result: 'You win' }));
+        } else {
+            client.send(JSON.stringify({ type: 'gameOver', result: 'You lose' }));
+        }
+    });
 }
+
 
 
 
