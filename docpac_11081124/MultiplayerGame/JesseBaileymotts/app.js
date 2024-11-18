@@ -193,7 +193,8 @@ wss.on('request', (request) => {
             // Set the game from the games object
             const game = games[gameID];
             const client = game.clients.find((c) => c.clientID === clientID);
-            if (client) return;
+            if (comb(clientID)) return;
+            // if (client) return;
             // If there are more than 5 players...
             if (game.clients.length >= 6) {
                 // Notify that the maximum amount of players has been reached
@@ -377,7 +378,8 @@ let update = (gameID) => {
 let comb = (clientID) => {
     let combed = false
     Object.keys(games).forEach((g) => {
-        combed = games[g].clients.find((c) => c.clientID === clientID) 
+        const client = games[g].clients.find((c) => c.clientID === clientID) ;
+        client ? combed = true : null;
     });
     return combed;
 };

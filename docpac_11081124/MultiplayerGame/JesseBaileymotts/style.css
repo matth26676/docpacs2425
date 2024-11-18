@@ -28,6 +28,12 @@
     width: 20rem;
 }
 
+#scoring {
+    display: grid;
+    grid-gap: 1rem;
+    width: 20rem;
+}
+
 #divider {
     border: #000000 solid 0.0625rem;
     padding: 0rem;

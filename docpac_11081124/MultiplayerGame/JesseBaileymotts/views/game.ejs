@@ -25,7 +25,7 @@
     <div id='gameInfo'>
         <div id='clock'></div>
         <div id='players'></div>
-        <div id='winner'></div>
+        <div id='scoring'></div>
     </div>    
 
     <!-- Game Board -->
@@ -43,7 +43,7 @@
         const gameInfo = document.getElementById('gameInfo');
         const clock = document.getElementById('clock');
         const players = document.getElementById('players');
-        const winner = document.getElementById('winner');
+        const scoring = document.getElementById('scoring');
         const board = document.getElementById('board');
         
         //// Splatoon 2D Variables
@@ -100,6 +100,7 @@
         });
         // On recieving a websocket message...
         ws.onmessage = (message) => {
+            // Set response to the parsed message data
             const response = JSON.parse(message.data);
             // If the method is connect...
             if (response.method === 'connect') {
@@ -175,6 +176,7 @@
                 });
                 const grid = `repeat(${Math.min(3, game.clients.length)}, 1fr)`;
                 players.style.gridTemplateColumns = grid;
+                scoring.style.gridTemplateColumns = grid;
                 // While the board div has elements, remove the first element
                 while (board.firstChild) board.removeChild(board.firstChild);
                 // Start i at 0. While i is less than the game boxes, increment i by 1 and...
@@ -263,13 +265,15 @@
                         game.clients.forEach((c) => {
                             const div = document.createElement('div');
                             div.id = c.player;
-                            div.textContent = c.player;
-                            div.style.width = '4rem';
+                            div.textContent = `${c.player}: ${c.score}`;
+                            if (c.clientID === clientID) div.style.fontWeight = 'bold';
+                            if (c.score === scores[scores.length - 1]) div.textContent = div.textContent + ' (Winner!)';
+                            div.style.width = '5rem';
                             div.style.color = c.color;
-                            winner.appendChild(div);
-                            console.log(div);
-                            players.style.display = 'none';
+                            div.style.backgroundColor = '#FFFFFF';
+                            scoring.appendChild(div);
                         });
+                        players.style.display = 'none';
                         gameEnd = true;
                     };
                 };
