@@ -14,10 +14,7 @@
 
 /*
 ------------------- To Do -------------------
-    __Main Menu__
-Add a main menu where you can log in, view your settings, view the leaderboard, and go to the game
-
-__Formbar Oauth2__
+    __Formbar Oauth2__
 Implement Oauth2 using the formbar
 
     __Game End__
@@ -43,13 +40,18 @@ Add power ups to the game to give players an advantage
 Possible power ups:
     - 3x3 Click (Covers a 3x3 area)
     - Shield (Prevents a box from being clicked)
-    - Bomb (Erases color in a 3x3 area)
+    - Bomb (Erases color in a 5x5 area)
 
     __Teams__
 Add teams to the game to allow players to play cooperatively
 
     __One Game per Player__
-Players can only make one game at a time
+Players can only make one game at a time and can only play in one game at a time
+
+    __Bug Fixes__
+Fix bugs that will inevitably arise
+    Known bugs:
+    > Leaving a game when the timer is over will crash the server
 */
 
 // Set up the variables
@@ -73,6 +75,24 @@ app.get('/', (req, res) => {
 // Get the game page
 app.get('/game', (req, res) => {
     res.render('game');
+});
+
+//
+app.get('/login', (req, res) => {
+    // res.render('login');
+    return
+});
+
+//
+app.get('/leaderboard', (req, res) => {
+    // res.render('leaderboard');
+    return
+});
+
+//
+app.get('/settings', (req, res) => {
+    // res.render('settings');
+    return
 });
 
 // Create the http server 
@@ -132,7 +152,9 @@ wss.on('request', (request) => {
             // For each client in the game...
             game.clients.forEach((c) => {
                 // Send a stringified payload to each client to notify that a client has disconnected
-                clients[c.clientID].connection.send(JSON.stringify(payload));
+                if (clients[c.clientID]) {
+                    clients[c.clientID].connection.send(JSON.stringify(payload));
+                };
             });
         });
     });
@@ -149,7 +171,7 @@ wss.on('request', (request) => {
             games[gameID] = {
                 'id': gameID,
                 'boxes': 64,
-                'time': 1,
+                'time': 5,
                 'frame': 0,
                 'clients': []
             };
@@ -166,12 +188,12 @@ wss.on('request', (request) => {
             // Set the IDs and the Game
             const clientID = result.clientID;
             const gameID = result.gameID;
-            // If there is no gameID, return
-            if (!gameID) {
-                return;
-            };
+            // If there is no gameID or the player is in a game, return
+            if (!gameID) return;
             // Set the game from the games object
             const game = games[gameID];
+            const client = game.clients.find((c) => c.clientID === clientID);
+            if (client) return;
             // If there are more than 5 players...
             if (game.clients.length >= 6) {
                 // Notify that the maximum amount of players has been reached
@@ -203,7 +225,9 @@ wss.on('request', (request) => {
             // For each client in the game...
             game.clients.forEach((c) => {
                 // Send a stringified payload to each client to notify that a new client has joined
-                clients[c.clientID].connection.send(JSON.stringify(payload));
+                if (clients[c.clientID]) {
+                    clients[c.clientID].connection.send(JSON.stringify(payload));
+                };
             });
         };
         // If the method is start...
@@ -236,6 +260,53 @@ wss.on('request', (request) => {
             // Assign the client's color to the box and update the game state
             state[boxID] = color;
             games[gameID].state = state;
+        };
+        // If the method is restart...
+        if (result.method === 'restart') {
+            // Set the game's ID and set the game using the ID
+            const gameID = result.gameID;
+            const game = games[gameID]
+            // If there is no game, return
+            if (!game) return;
+            // Reset the game's time and frame
+            game.time = 5;
+            game.frame = 0;
+            // Reset the game's state and reset the client's scores
+            game.state = {};
+            game.clients.forEach((c) => {
+                c.score = 0;
+            });
+            // Create the restart payload
+            const payload = { 
+                'method': 'restart',
+                'game': game
+            };
+            // For each client in the game...
+            game.clients.forEach((c) => {
+                // If that client exists, send the stringified payload
+                if (clients[c.clientID]) {
+                    clients[c.clientID].connection.send(JSON.stringify(payload));
+                };
+            });
+        };
+        // If the method is delete...
+        if (result.method === 'delete') {
+            // Set the game's ID and set the game using the ID
+            const gameID = result.gameID;
+            game = games[gameID];
+            // Create the delete payload
+            const payload = {
+                'method': 'delete'
+            };
+            // For each client in the game...
+            game.clients.forEach((c) => {
+                // If that client exists, send the stringified payload
+                if (clients[c.clientID]) {
+                    clients[c.clientID].connection.send(JSON.stringify(payload));
+                };
+            });
+            // Delete the game
+            delete game;
         };
     });
     // Generate a new client id
@@ -293,11 +364,22 @@ let update = (gameID) => {
     // For each client in the game...
     game.clients.forEach((c) => {
         // Stringify and send the update payload
-        clients[c.clientID].connection.send(JSON.stringify(payload));
+        if (clients[c.clientID]) {
+            clients[c.clientID].connection.send(JSON.stringify(payload));
+        };
     });
     // Set a timeout to update every 50 milliseconds (1/20th of a second)
     // 20 frames per second
     setTimeout(() => update(gameID), 50);
+};
+
+// Create a function to check if a client is in a game taking clientID as an argument
+let comb = (clientID) => {
+    let combed = false
+    Object.keys(games).forEach((g) => {
+        combed = games[g].clients.find((c) => c.clientID === clientID) 
+    });
+    return combed;
 };
 
 // Create a function to randomly create a hex string 4 characters long. It does this by...

@@ -18,6 +18,8 @@
     padding: 1rem;
     place-items: center;
     align-items: center;
+    background: linear-gradient(225deg, #da0000, #000bda, #00961c, #c7de00);
+    /* , #b700b1, #eaa400); */
 }
 
 #players {
@@ -66,23 +68,22 @@
 }
 
 .menuItems {
-    /* background-color: #168300;
-    color: #ffffff; */
-    width: 20rem;
-    height: 4rem;
     cursor: pointer;
     padding: 0.5rem;
     text-align: center;
+    transition: all .25s ease;
+} 
+
+#menu .menuItems {
+    width: 30rem;
+    height: 6rem;
     font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
     text-decoration: none;
-} 
+}
 
 .menuItems:hover {
-    background-color: #006d02;
-    color: #f0f0f0;
     transform: scale(1.05);
-    box-shadow: 0 .25rem .25rem #006d028c;
-    transition: all .25s ease;
+    box-shadow: 0 .25rem .25rem #0000008c;
 }
