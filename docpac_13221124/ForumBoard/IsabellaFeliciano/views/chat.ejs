@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <style>
+        #usernameList {
+            float: left;
+            width: 200px;
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        #messageList {
+            margin-left: 220px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+
+        #textBox {
+            width: calc(100% - 240px);
+            margin-left: 220px;
+        }
+
+        #messageText input[type="text"] {
+            width: 100%;
+            padding: 20px;
+        }
+
+        #messageText button {
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="usernameList">
+        <h3>Users</h3>
+        <ul>
+
+
+
+        </ul>
+    </div>
+
+    <div id="messageList">
+        <h3>Messages</h3>
+    </div>
+
+    <div id="messageText">
+        <input id="messageBox" type="text" placeholder="type your message here">
+        <button id="sendbutton">Send</button>
+    </div>
+</body>
+<script>
+    var username = '<%= user %>';
+    var usernameList = document.getElementById('usernameList')
+    var messageBox = document.getElementById('messageBox')
+    var messageList = document.getElementById('messageList')
+
+    console.log(username);
+
+    const socket = new WebSocket('ws://localhost:3000');
+
+    socket.onopen = (event) => {
+        socket.send(JSON.stringify({ name: username }));
+    }
+
+    socket.onmessage = (message) => {
+        var messageData = JSON.parse(message.data)
+        console.log(messageData)
+        if (messageData.list) {
+            usernameList.children[1].innerHTML = ''
+            messageData.list.forEach(person => {
+                usernameList.children[1].innerHTML += "<li>" + person + "</li>" + "<br>"
+            });
+        }
+        if (messageData.text) {
+            messageList.innerHTML += messageData.user + ": " + messageData.text + "<br>"
+        }
+    }
+
+
+    document.getElementById("sendbutton").addEventListener("click", function () {
+        if (messageBox) {
+            var message = {
+                text: messageBox.value, user: username
+            }
+            console.log(message)
+            socket.send(JSON.stringify(message))
+        }
+    }
+    )
+</script>
+
+</html>
