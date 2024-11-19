@@ -1,16 +1,16 @@
 //to install required modules, in terminal: "npm i sqlite3 express ejs"
 
-const sqlite3 = require("sqlite3");
-const express = require("express");
-const crypto = require("crypto");
-const jwt = require('jsonwebtoken');
-const session = require('express-session');
+const sqlite3 = require("sqlite3"); //import sqlite3
+const express = require("express"); //import express
+const ejs = require("ejs"); //import ejs
+const crypto = require("crypto"); //import crypto
+const jwt = require('jsonwebtoken'); //import jsonwebtoken
+const session = require('express-session'); //import express-session
 
-const app = express();
+const app = express(); //initialize express with app
 
-app.set("view engine", "ejs");
-
-app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs"); // set view engine
+app.use(express.urlencoded({ extended: true })); //encode url
 
 app.use(session({
     secret: "Secret hehe",
@@ -18,7 +18,7 @@ app.use(session({
     saveUninitialized: false
 }));
 
-const PORT = 1000
+const PORT = 3000 //set port number
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
