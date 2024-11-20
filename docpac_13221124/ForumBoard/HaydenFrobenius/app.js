@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const util = require('./util');
 const sql = require('sqlite3').verbose();
+const config = require('./config.json');
 const dbController = require('./dbWrapper');
 
 const auth = require('./middleware/auth');
@@ -30,12 +31,6 @@ app.use(session({
 
 app.listen(PORT);
 
-app.get('/', (req, res) => {
-    let loggedIn = false;
-    if (req.session.user) loggedIn = true;
-    res.render('pages/index', {loggedIn: loggedIn, user: req.session.user});
-});
-
 app.get('/login', async (req, res) => {
 
     if (req.query.token) {
@@ -56,6 +51,26 @@ app.get('/login', async (req, res) => {
         const redirectUrl = util.addParamsToURL(`${AUTH_URL}`, {redirectURL: `${THIS_URL}/login`});
         res.redirect(redirectUrl);
    };
+});
+
+app.get('/', async (req, res) => {
+    let loggedIn = (typeof req.session.user != 'undefined');
+    let threads = await dbController.all(db, "SELECT * FROM threads");
+
+    res.render('pages/index', {threads: threads, loggedIn: loggedIn, user: req.session.user});
+});
+
+app.get('/thread/:id', async (req, res) => {
+    const id = req.params.id;
+    const thread = await dbController.get(db, "SELECT * FROM threads WHERE uid = ?", [id]);
+    const posts = await dbController.all(db, "SELECT * FROM posts WHERE thread_uid = ?", [id]);
+
+    if (!thread) {
+        res.render('pages/404');
+        return;
+    }
+
+    res.render('pages/thread', {thread: thread, posts: posts});
 });
 
 app.get('/profile/:id', async (req, res) => {

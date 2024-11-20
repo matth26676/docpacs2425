@@ -1,16 +1,18 @@
-<%- include('../partials/header.ejs', {pageTitle: 'Home'}) %>
+<%- include('../partials/header.ejs', {pageTitle: 'Home'}); %>
 
-<div class="post">
-    <div class="post-title">Post Title 1</div>
-    <div class="post-content">This is the content of the first post.</div>
-</div>
-<div class="post">
-    <div class="post-title">Post Title 2</div>
-    <div class="post-content">This is the content of the second post.</div>
-</div>
-<div class="post">
-    <div class="post-title">Post Title 3</div>
-    <div class="post-content">This is the content of the third post.</div>
-</div>
+<script>
+    function goToThreadPage(id) {
+        window.location.href = `/thread/${id}`;
+    }
+</script>
+
+<% locals.threads.forEach((thread, index) => { %>
+    <div class="thread" onclick="goToThreadPage('<%= thread.uid %>');">
+        <div class="thread-title"><%= thread.title %></div>
+        <div class="thread-description">
+            <%= (thread.description !== '') ? thread.description : 'No Description.' %>
+        </div>
+    </div>
+<% }); %>
 
 <%- include('../partials/footer.ejs') %>

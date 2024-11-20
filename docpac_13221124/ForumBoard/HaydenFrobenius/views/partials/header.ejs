@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forumbar - <%- pageTitle %></title>
     <link rel="stylesheet" href="../public/css/style.css">
+    <script>
+        function goToLoginPage() {
+            window.location.href = '/login';
+        }
+    </script>
 </head>
 <body>
     <div class="header">
-        <h1>Forumbar</h1>
+        <h1 id="logo">Forumbar</h1>
+        <% if(locals.loggedIn) { %>
+            <p id="greeting">Hello, <%= user.username %></p>
+        <% } else {%>
+            <button id="login-button" onclick="goToLoginPage()">Login</button>
+        <% } %>
     </div>
     <div class="container">
         <div class="content">
