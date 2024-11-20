@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invading Space - Hard</title>
+    <style>
+        canvas {
+            background: #f0f0f0;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Player properties
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            width: 50,
+            height: 50,
+            speed: 5,
+            bullets: []
+        };
+        player.img = new Image();
+        player.img.src = 'img/adamSandler.jpg'
+
+
+        // Enemy and boss properties
+        const enemies = [];
+        const bosses = [];
+        const regularEnemySize = 50;
+        const fastEnemySize = 40;
+        const strongEnemySize = 60;
+        const bossSize = 80;
+        const regularEnemySpeed = 2.5;
+        const fastEnemySpeed = 4.5;
+        const strongEnemySpeed = 2;
+        const bossSpeed = 1.2;
+        const bulletSpeed = 7;
+
+        // Key tracking
+        const keys = {};
+        let canShoot = true;
+
+        // Scoring
+        let score = 0;
+
+        // Event listeners
+        document.addEventListener("keydown", (e) => {
+            keys[e.key] = true;
+            if (e.key === " " && canShoot) {
+                shootBullet();
+                canShoot = false;
+            }
+        });
+
+        document.addEventListener("keyup", (e) => {
+            keys[e.key] = false;
+            if (e.key === " ") canShoot = true;
+        });
+
+        function spawnEnemy() {
+            const x = Math.random() * (canvas.width - regularEnemySize);
+            const randomValue = Math.random();
+
+            let enemy;
+            if (score < 300) {
+                enemy = { x: x, y: -regularEnemySize, width: regularEnemySize, height: regularEnemySize, color: "red", speed: regularEnemySpeed, health: 1 };
+            } else if (score < 600) {
+                if (randomValue < 0.7) {
+                    enemy = { x: x, y: -regularEnemySize, width: regularEnemySize, height: regularEnemySize, color: "red", speed: regularEnemySpeed, health: 1 };
+                } else {
+                    enemy = { x: x, y: -fastEnemySize, width: fastEnemySize, height: fastEnemySize, color: "purple", speed: fastEnemySpeed, health: 1 };
+                }
+            } else {
+                if (randomValue < 0.5) {
+                    enemy = { x: x, y: -regularEnemySize, width: regularEnemySize, height: regularEnemySize, color: "red", speed: regularEnemySpeed, health: 1 };
+                } else if (randomValue < 0.8) {
+                    enemy = { x: x, y: -fastEnemySize, width: fastEnemySize, height: fastEnemySize, color: "purple", speed: fastEnemySpeed, health: 1 };
+                } else {
+                    enemy = { x: x, y: -strongEnemySize, width: strongEnemySize, height: strongEnemySize, color: "green", speed: strongEnemySpeed, health: 3 };
+                }
+            }
+
+            enemies.push(enemy);
+        }
+
+        function spawnBoss() {
+            const x = Math.random() * (canvas.width - bossSize);
+            const boss = {
+                x: x,
+                y: -bossSize,
+                width: bossSize,
+                height: bossSize,
+                // color: "black",
+                speed: bossSpeed,
+                health: 20 // Boss takes more hits
+            };
+            boss.img = new Image()
+            boss.img.src = 'img/kong.png'
+            bosses.push(boss);
+        }
+
+        function update() {
+            if (score % 10 === 0 && score > 0 && bosses.length === 0) {
+                spawnBoss();
+                console.log("spawn");
+                
+            }
+
+            if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
+            if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+            if (keys["a"] && player.x > 0) player.x -= player.speed;
+            if (keys["d"] && player.x < canvas.width - player.width) player.x += player.speed;
+            if (keys["A"] && player.x > 0) player.x -= player.speed;
+            if (keys["D"] && player.x < canvas.width - player.width) player.x += player.speed;
+
+            player.bullets.forEach((bullet, index) => {
+                bullet.y -= bulletSpeed;
+                if (bullet.y < 0) player.bullets.splice(index, 1);
+            });
+
+            if (Math.random() < 0.02) spawnEnemy();
+
+            enemies.forEach((enemy, index) => {
+                enemy.y += enemy.speed;
+                if (enemy.y > canvas.height) enemies.splice(index, 1);
+
+                if (isColliding(enemy, player)) {
+                    alert("Game Over! Your final score: " + score);
+                    resetGame();
+                }
+
+                player.bullets.forEach((bullet, bulletIndex) => {
+                    if (isColliding(bullet, enemy)) {
+                        player.bullets.splice(bulletIndex, 1);
+                        enemy.health -= 1;
+                        if (enemy.health <= 0) {
+                            enemies.splice(index, 1);
+                            score += 10;
+                        }
+                    }
+                });
+            });
+
+            bosses.forEach((boss, index) => {
+                boss.y += boss.speed;
+                if (boss.y > canvas.height) bosses.splice(index, 1);
+
+                player.bullets.forEach((bullet, bulletIndex) => {
+                    if (isColliding(bullet, boss)) {
+                        player.bullets.splice(bulletIndex, 1);
+                        boss.health -= 1;
+                        if (boss.health <= 0) {
+                            bosses.splice(index, 1);
+                            score += 200; // Bosses give more points
+                        }
+                    }
+                });
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // ctx.fillStyle = player.color;
+            // ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.drawImage(player.img, player.x, player.y, player.width, player.height)
+
+            player.bullets.forEach((bullet) => {
+                ctx.fillStyle = "black";
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            });
+
+            enemies.forEach((enemy) => {
+                ctx.fillStyle = enemy.color;
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            });
+
+            bosses.forEach((boss) => {
+                ctx.fillStyle = boss.color;
+                ctx.fillRect(boss.img, boss.x, boss.y, boss.width, boss.height);
+            });
+
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 10, 30);
+        }
+
+        function shootBullet() {
+            player.bullets.push({
+                x: player.x + player.width / 2 - 5,
+                y: player.y,
+                width: 10,
+                height: 20
+            });
+        }
+
+        function isColliding(rect1, rect2) {
+            return (
+                rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.y + rect1.height > rect2.y
+            );
+        }
+
+        function resetGame() {
+            player.bullets = [];
+            enemies.length = 0;
+            bosses.length = 0;
+            score = 0;
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 50;
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
