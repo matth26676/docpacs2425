@@ -1,16 +1,78 @@
 // importing required modules
 const express = require('express');
 const app = express();
-const http = require('http').Server(app);
-const ws = require('ws');
-const wss = new ws.WebSocketServer({ server: http });
 
-http.listen(3000, () => { console.log(`Server started on http://localhost:3000`); });
+const sqlite3 = require('sqlite3');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const session = require('express-session');
+const { log } = require('console');
+
+app.use(express.urlencoded({ extended: true }));
 
 // setting up routes
 app.get('/', (req, res) => {
     res.render('index');
 });
+
+app.use(session({
+    secret: "put your secret here- Nah I'm Good",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.post('/login', (req, res) => {
+    if (req.body.user && req.body.pass) {
+        db.get('SELECT * FROM users WHERE username=?;', req.body.user, (err, row) => {
+            if (err) {
+                console.error(err);
+                res.send("There was an error:\n" + err);
+            } else if (!row) {
+                // create a new salt forthis user
+                const salt = crypto.randomBytes(16).toString('hex');
+
+                // use salt to "hash"
+                crypto.pbkdf2(req.body.pass, salt, 1000, 64, 'sha512', (err, derivedKey) => {
+                    if (err) {
+                        res.send("Error hashing password: " + err);
+                    } else {
+                        const hashedPassword = derivedKey.toString('hex');
+                        db.run('INSERT INTO users (username, password, salt) VALUES (?, ?, ?);', [req.body.user, hashedPassword, salt], (err) => {
+                            if (err) {
+                                res.send("Databse error:\n" + err)
+                            } else {
+                                res.send("Created new user")
+                            }
+                        });
+                    }
+                });
+
+            } else if (row) {
+                // compare stored password w provided password
+                crypto.pbkdf2(req.body.pass, row.salt, 1000, 64, 'sha512', (err, derivedKey) => {
+                    if (err) {
+                        res.send("Error hashinf password: " + err);
+                    } else {
+                        const hashedPassword = derivedKey.toString('hex');
+
+                        if (row.password === hashedPassword) {
+                            req.session.user = req.body.user;
+                            res.redirect('/home');
+                        } else {
+                            res.send("Incorrect Password")
+                        }
+                    }
+                })
+            }
+        })
+    } else {
+        res.send("You need a username and password");
+    }
+})
 
 // chat route
 app.get('/chat', (req, res) => {
@@ -21,46 +83,33 @@ app.get('/chat', (req, res) => {
     )
 });
 
+app.get('/home', isAuthenticated, (req, res) => {
+    res.render('home.ejs', { user: req.session.user })
+})
+
+app.post('/chat', (req, res) => {
+    const userMessage = req.body.message;
+    // Here you can process the message and generate a response
+    const reply = `You said: ${userMessage}`; // Example response
+    res.json({ reply });
+});
+
+function isAuthenticated(req, res, next) {
+    if (req.session.user) next()
+    else res.redirect('/login')
+};
+
+const db = new sqlite3.Database('data/Mydatabase.db', (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('initialize');
+    }
+});
+
 // setting up view engine
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
 
-
-function broadcast(wss, message) {
-    console.log(message)
-    // Send the message to all connected clients
-    wss.clients.forEach((client) => {
-        client.send(JSON.stringify(message));
-    });
-}
-
-// Generate a list of usernames of connected clients
-function userList(wss) {
-    const userList = [];
-    for (const client of wss.clients) {
-        if (client.name) {
-            userList.push(client.name);
-        }
-    }
-    return { list: userList };
-}
-
-// WebSocket connection
-wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-        const parsedMessage = JSON.parse(message);
-
-        if (parsedMessage.text) {
-            broadcast(wss, parsedMessage);
-        }
-
-        if (parsedMessage.name) {
-            ws.name = parsedMessage.name;
-            broadcast(wss, userList(wss));
-        }
-    });
-
-    ws.on('close', () => {
-        broadcast(wss, userList(wss));
-    });
-});
+app.listen(3000, (err) => {
+    log("running on port 3000")
+})
