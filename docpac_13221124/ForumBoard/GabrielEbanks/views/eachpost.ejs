@@ -1,4 +1,4 @@
-*<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,10 @@
 </head>
 <body>
     <div>
-        
+        <% post.forEach((con) => { %>
+          
+            <p> <%= con.time %> <%= con.poster %> <%= con.content %></p>
+        <% }) %>
     </div>
 </body>
 </html>

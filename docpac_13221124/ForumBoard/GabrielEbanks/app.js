@@ -48,7 +48,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/conversations', isAuthenticated, (req, res) => {
-    db.all('SELECT * from conversations;', (error, row) => {
+    db.all('SELECT * FROM conversations;', (error, row) => {
         if (error) {
             res.send(error);
         } else if (row) {
@@ -61,14 +61,14 @@ app.get('/conversations', isAuthenticated, (req, res) => {
 app.get('/thread/:id', isAuthenticated, (req, res) => {
     console.log(req.params.id);
     
-    // db.all('SELECT * from posts WHERE convo_id = ?;', req.params.id, (error, row) => {
-    //     if (error) {
-    //         res.send(error);
-    //     } else if (row) {
-    //         console.log(row);
-    //         res.render('conversations', { user: req.session.user, conversations: row });
-    //     }
-    // })
+    db.all('SELECT * FROM post WHERE convo_id = ?;', req.params.id, (error, row) => {
+        if (error) {
+            res.send(error);
+        } else if (row) {
+            console.log(row);
+            res.render('eachpost', { user: req.session.user, post: row });
+        }
+    })
 });
 
 
