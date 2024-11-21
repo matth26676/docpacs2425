@@ -36,11 +36,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    console.log(req.query.token);
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
         req.session.user = tokenData.username;
+        console.log(req.session.user)
         res.redirect('/conversations');
     } else {
         res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`);
@@ -52,7 +52,6 @@ app.get('/conversations', isAuthenticated, (req, res) => {
         if (error) {
             res.send(error);
         } else if (row) {
-            console.log(row);
             res.render('conversations', { user: req.session.user, conversations: row });
         }
     })
@@ -60,17 +59,45 @@ app.get('/conversations', isAuthenticated, (req, res) => {
 
 app.get('/thread/:id', isAuthenticated, (req, res) => {
     console.log(req.params.id);
-    
+
     db.all('SELECT * FROM post WHERE convo_id = ?;', req.params.id, (error, row) => {
         if (error) {
             res.send(error);
         } else if (row) {
-            console.log(row);
-            res.render('eachpost', { user: req.session.user, post: row });
+            res.render('eachpost', { user: req.session.user, post: row, convo: req.params.id });
         }
     })
 });
 
+app.post('/conversations', isAuthenticated, (req, res) => {
+    console.log(req.body.fname);
+    if (req.body.fname) {
+        db.run('INSERT INTO conversations(title) VALUES (?)', [req.body.fname], (err) => {
+            if (err) {
+                console.log(err.message);
+            }
+        });
+        res.redirect('/conversations')
+    }
+});
+
+// 
+// fix req.body.timeStamp
+// 
+
+
+
+app.post('/thread/:id', isAuthenticated, (req, res) => {
+    console.log(req.body.threadId);
+    if (req.body.threadId && req.body.message) {
+        db.run('INSERT INTO post(content,time,convo_id) VALUES (?,?,?)', [req.body.message, req.body.timeStamp, req.body.threadId], (err) => {
+            if (err) {
+                console.log(err.message);
+            }
+        });
+        res.redirect(`/thread/${req.body.threadId}`);
+    }
+});
 
 
 app.listen(3000, () => {

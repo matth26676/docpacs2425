@@ -1,16 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>makethisthepostname</title>
 </head>
+
 <body>
+   
+
     <div>
-        <% post.forEach((con) => { %>
-          
-            <p> <%= con.time %> <%= con.poster %> <%= con.content %></p>
-        <% }) %>
+        <form name="convoMessage" onsubmit="return validateForm()" method="post">
+            <label for="fname">Send Message: </label>
+            <input type="text" name="message">
+            <input type="hidden" name="threadId" value="<%- convo %>">
+            <input type="submit" value="Submit">
+            <!-- make a input that has timestamp vlaue in it somehow so that i can use req.body.timeStamp cus im lazy -->
+        </form>
     </div>
+
+    <div>
+        <% post.forEach((con)=> { %>
+
+            <p>
+                <%= con.time %>
+                    <%= con.poster %>
+                        <%= con.content %>
+            </p>
+            <% }) %>
+    </div>
+
+    <script>
+         const timeStamp = new Date().toISOString();;
+        console.log(timeStamp);
+      
+
+        function validateForm() {
+            let x = document.forms["convoMessage"]["message"].value;
+            if (x.trim() === "") {
+                alert("Message cannot be empty.");
+                return false;
+            }
+            return true;
+        }
+
+    </script>
 </body>
+
 </html>
