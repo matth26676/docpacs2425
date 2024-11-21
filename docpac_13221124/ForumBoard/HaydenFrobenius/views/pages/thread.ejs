@@ -14,16 +14,24 @@
 <center>
 <div class="page-selector">
 
+    <% 
+
+    let previousPage = page - 1;
+    let nextPage = page + 1;
+
+    if(page === 1) {
+        previousPage = 1;
+    }
+
+    if(page >= totalPages) { 
+        nextPage = totalPages;
+    } 
+
+     %>
+
     <a href="/thread/<%= thread.uid %>/1"><button>&lt;&lt;</button></a>
-
-    <% if(page > 1) { %>
-        <a href="/thread/<%= thread.uid %>/<%= page - 1 %>"><button>&lt;</button></a>
-    <% } %>
-
-    <% if(page !== totalPages) { %>
-        <a href="/thread/<%= thread.uid %>/<%= page + 1 %>"><button>&gt;</button></a>
-    <% } %>
-
+    <a href="/thread/<%= thread.uid %>/<%= previousPage %>"><button>&lt;</button></a>
+    <a href="/thread/<%= thread.uid %>/<%= nextPage %>"><button>&gt;</button></a>
     <a href="/thread/<%= thread.uid %>/<%= totalPages %>"><button>&gt;&gt;</button></a>
 
 

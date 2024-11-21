@@ -37,10 +37,22 @@ button:active {
     justify-content: space-between;
 }
 
+.header button {
+    margin: 10px 10px;
+}
+
 #logo {
     width: 200px;
     display: block;
     margin: 0 auto;
+}
+
+#logo:hover {
+    cursor: pointer;
+}
+
+#logo-link {
+    text-decoration: none;
 }
 
 #login-button {
