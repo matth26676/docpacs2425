@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "expressjs": "^1.0.1",
+    "init": "^0.1.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodejs": "^0.0.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
