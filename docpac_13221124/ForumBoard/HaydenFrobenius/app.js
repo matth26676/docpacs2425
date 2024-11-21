@@ -46,13 +46,22 @@ app.get('/login', async (req, res) => {
     if (req.query.token) {
 
         let tokenData = jwt.decode(req.query.token);
-        req.session.user = tokenData;
 
         let user = await dbController.get(db, "SELECT * FROM users WHERE fb_id = ?", [tokenData.id]);
 
         // if the user is not in the database, add them
         if (!user) {
-            await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
+
+            let uid = await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
+
+            req.session.user = {
+                uid: uid,
+                fb_id: tokenData.id,
+                fb_name: tokenData.username
+            };
+
+        } else {
+            req.session.user = user;
         }
 
         res.redirect('/');
