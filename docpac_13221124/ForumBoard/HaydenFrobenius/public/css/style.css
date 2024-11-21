@@ -72,9 +72,9 @@ button:active {
     background-color: #f5f5f5;
 }
 
-/* I did not know this existed. Very nifty. */
-.thread:last-child {
-    border-bottom: none;
+/* I did not know you could do this. Very nifty. */
+.thread:first-of-type {
+    border-top: 1px solid #ddd;
 }
 
 .thread-title {
@@ -85,4 +85,27 @@ button:active {
 
 .thread-content {
     margin: 10px 0 0;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+}
+
+.post-author {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.post-content {
+    margin: 10px 0px;
+}
+
+.post-timestamp {
+    font-size: 12px;
+    color: #888;
 }

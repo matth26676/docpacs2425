@@ -1,0 +1,33 @@
+<%- include('../partials/header.ejs', {pageTitle: thread.title}); %>
+
+<b id="thread-title">Thread: </b><%= thread.title %>
+<b id="thread-page">Page: </b><%= page %>
+
+<% locals.posts.forEach((post, index) => { %>
+    <div class="post">
+        <div class="post-author"><a href="/profile/<%= post.poster_uid %>"><%= post.fb_name %></a></div>
+        <div class="post-timestamp"><%= post.time %></div>
+        <div class="post-content"><%= post.content %></div>
+    </div>
+<% }); %>
+
+<center>
+<div class="page-selector">
+
+    <a href="/thread/<%= thread.uid %>/1"><button>&lt;&lt;</button></a>
+
+    <% if(page > 1) { %>
+        <a href="/thread/<%= thread.uid %>/<%= page - 1 %>"><button>&lt;</button></a>
+    <% } %>
+
+    <% if(page !== totalPages) { %>
+        <a href="/thread/<%= thread.uid %>/<%= page + 1 %>"><button>&gt;</button></a>
+    <% } %>
+
+    <a href="/thread/<%= thread.uid %>/<%= totalPages %>"><button>&gt;&gt;</button></a>
+
+
+</div>
+</center>
+
+<%- include('../partials/footer.ejs'); %>

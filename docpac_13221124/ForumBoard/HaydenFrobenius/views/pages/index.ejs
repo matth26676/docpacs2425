@@ -2,9 +2,12 @@
 
 <script>
     function goToThreadPage(id) {
-        window.location.href = `/thread/${id}`;
+        window.location.href = `/thread/${id}/1`;
     }
 </script>
+
+<!-- embrace tradition -->
+<center><h1>Popular Threads</h1></center>
 
 <% locals.threads.forEach((thread, index) => { %>
     <div class="thread" onclick="goToThreadPage('<%= thread.uid %>');">

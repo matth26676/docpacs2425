@@ -7,8 +7,6 @@ const sql = require('sqlite3').verbose();
 const config = require('./config.json');
 const dbController = require('./dbWrapper');
 
-const auth = require('./middleware/auth');
-
 const app = express();
 const PORT = 3000;
 const THIS_URL = 'http://localhost:' + PORT;
@@ -28,6 +26,18 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+//automatically pass user info to views
+app.use((req, res, next) => {
+    res.locals.loggedIn = (typeof req.session.user !== 'undefined');
+    res.locals.user = req.session.user;
+    next();
+});
+
+function isLoggedIn(req, res, next) {
+    if (req.session.user) next()
+    else res.redirect('/login')
+};
 
 app.listen(PORT);
 
@@ -54,23 +64,35 @@ app.get('/login', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    let loggedIn = (typeof req.session.user != 'undefined');
     let threads = await dbController.all(db, "SELECT * FROM threads");
 
-    res.render('pages/index', {threads: threads, loggedIn: loggedIn, user: req.session.user});
+    res.render('pages/index', {threads: threads});
 });
 
-app.get('/thread/:id', async (req, res) => {
+app.get('/thread/:id/:page', async (req, res) => {
     const id = req.params.id;
+    const page = req.params.page - 1;
+
+    if(page < 0) {
+        res.render('pages/404');
+        return;
+    }
+
+    const postsPerPage = config.postsPerPage;
     const thread = await dbController.get(db, "SELECT * FROM threads WHERE uid = ?", [id]);
-    const posts = await dbController.all(db, "SELECT * FROM posts WHERE thread_uid = ?", [id]);
 
     if (!thread) {
         res.render('pages/404');
         return;
     }
 
-    res.render('pages/thread', {thread: thread, posts: posts});
+    let totalPages = await dbController.get(db, "SELECT COUNT(*) as count FROM posts WHERE thread_uid = ?;", [id]);
+    totalPages = Math.ceil(totalPages.count / postsPerPage);
+    if(totalPages === 0) totalPages = 1;
+
+    const posts = await dbController.all(db, "SELECT * FROM posts INNER JOIN users ON poster_uid = users.uid WHERE thread_uid = ? LIMIT ? OFFSET ?;", [id, postsPerPage, page * postsPerPage]);
+
+    res.render('pages/thread', {thread: thread, posts: posts, page: page + 1, totalPages: totalPages});
 });
 
 app.get('/profile/:id', async (req, res) => {
@@ -82,7 +104,7 @@ app.get('/profile/:id', async (req, res) => {
         return;
     }
 
-    res.render('pages/profile', {user: user});
+    res.render('pages/profile', {userProfile: user});
 });
 
 app.all('*', (req, res) => {
