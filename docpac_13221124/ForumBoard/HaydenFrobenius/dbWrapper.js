@@ -4,7 +4,7 @@ function run(db, sql, params) {
     return new Promise(async (resolve, reject) => {
         db.run(sql, params, function(err) {
             if (err) reject(err);
-            resolve({rowID: this.lastID});
+            resolve(this.lastID);
         });
     });
 }

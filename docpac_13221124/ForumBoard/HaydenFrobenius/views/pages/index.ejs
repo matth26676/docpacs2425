@@ -18,4 +18,10 @@
     </div>
 <% }); %>
 
+<% if(locals.loggedIn) { %>
+    <center>
+        <a href="/create-thread"><button>Create Thread</button></a>
+    </center>
+<% } %>
+
 <%- include('../partials/footer.ejs') %>

@@ -1,0 +1,13 @@
+<%- include('../partials/header.ejs', {pageTitle: 'Create Thread'}); %>
+
+<center>
+    <h1>Create Thread</h1>
+    <form action="/create-thread" method="POST">
+        <input type="text" name="title" minlength="<%= config.minThreadTitleLength %>" maxlength="<%= config.maxThreadTitleLength %>" placeholder="Title" required>
+        <textarea name="description" minlength="<%= config.minThreadDescriptionLength %>" maxlength="<% config.maxThreadDescriptionLength" placeholder="Description"></textarea>
+        <textarea name="content" minlength="<%= config.minPostLength %>" maxlength="<%= config.maxPostLength %>" placeholder="First Post" required></textarea>
+        <button type="submit">Create</button>
+</center>
+
+
+<%- include('../partials/footer.ejs') %>

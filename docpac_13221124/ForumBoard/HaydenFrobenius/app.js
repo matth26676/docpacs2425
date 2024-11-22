@@ -6,11 +6,13 @@ const util = require('./util');
 const sql = require('sqlite3').verbose();
 const config = require('./config.json');
 const dbController = require('./dbWrapper');
+const auth = require('./middleware/auth');
 
 const app = express();
 const PORT = 3000;
 const THIS_URL = 'http://localhost:' + PORT;
-const FB_URL = 'http://172.16.3.100:420';
+//const FB_URL = 'http://172.16.3.100:420';
+const FB_URL = 'http://localhost:420';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
 
@@ -31,13 +33,9 @@ app.use(session({
 app.use((req, res, next) => {
     res.locals.loggedIn = (typeof req.session.user !== 'undefined');
     res.locals.user = req.session.user;
+    res.locals.config = config;
     next();
 });
-
-function isLoggedIn(req, res, next) {
-    if (req.session.user) next()
-    else res.redirect('/login')
-};
 
 app.listen(PORT);
 
@@ -52,10 +50,10 @@ app.get('/login', async (req, res) => {
         // if the user is not in the database, add them
         if (!user) {
 
-            let uid = await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
+            let row = await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
 
             req.session.user = {
-                uid: uid,
+                uid: row.uid,
                 fb_id: tokenData.id,
                 fb_name: tokenData.username
             };
@@ -114,6 +112,19 @@ app.get('/profile/:id', async (req, res) => {
     }
 
     res.render('pages/profile', {userProfile: user});
+});
+
+app.get('/create-thread', auth.isLoggedIn, (req, res) => {
+    res.render('pages/create-thread');
+});
+
+app.post('/create-thread', auth.isLoggedIn, auth.checkThreadValid, auth.checkPostValid, async (req, res) => {
+    let thread = req.body;
+
+    let threadRow = await dbController.run(db, "INSERT INTO threads (title, description, poster_uid) VALUES(?,?,?)", [thread.title, thread.description, req.session.user.uid]);
+    await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid) VALUES(?,?,?)", [thread.content, threadRow.uid, req.session.user.uid]);
+
+    res.redirect(`/thread/${threadRow.uid}/1`);
 });
 
 app.all('*', (req, res) => {
