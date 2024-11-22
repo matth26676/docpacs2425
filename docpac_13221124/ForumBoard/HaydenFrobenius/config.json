@@ -1,6 +1,6 @@
 {
-    "threadsPerPage": 10,
-    "postsPerPage": 2,
+    "threadsPerPage": 15,
+    "postsPerPage": 15,
     "minThreadTitleLength": 5,
     "maxThreadTitleLength": 50,
     "minThreadDescriptionLength": 5,

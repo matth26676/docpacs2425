@@ -121,3 +121,18 @@ button:active {
     font-size: 12px;
     color: #888;
 }
+
+#post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#post-textarea {
+    height: 100px;
+    margin: 10px 0;
+    resize: none;
+}
+
+#post-button {
+    align-self: flex-end;
+}

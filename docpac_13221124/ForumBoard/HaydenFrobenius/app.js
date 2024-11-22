@@ -13,8 +13,8 @@ const formValidation = require('./middleware/formValidation');
 const app = express();
 const PORT = 3000;
 const THIS_URL = 'http://localhost:' + PORT;
-//const FB_URL = 'http://172.16.3.100:420';
-const FB_URL = 'http://localhost:420';
+const FB_URL = 'http://172.16.3.100:420';
+//const FB_URL = 'http://localhost:420';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
 
@@ -105,6 +105,15 @@ app.get('/thread/:id/:page', async (req, res) => {
     res.render('pages/thread', {thread: thread, posts: posts, page: page + 1, totalPages: totalPages});
 });
 
+app.post('/thread/:id/create-post', auth.isLoggedIn, formValidation.checkPostValid, async (req, res) => {
+    let threadID = req.params.id;
+    console.log(threadID);
+    let post = req.body;
+
+    await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid, time) VALUES(?,?,?,?)", [post.content, threadID, req.session.user.uid, new Date().toISOString()]);
+    res.redirect(req.get('referer'));
+});
+
 app.get('/profile/:id', async (req, res) => {
     const id = req.params.id;
     let user = await dbController.get(db, "SELECT * FROM users WHERE uid = ?", [id]);
@@ -130,6 +139,11 @@ app.post('/create-thread', auth.isLoggedIn, formValidation.checkThreadValid, for
     await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid, time) VALUES(?,?,?,?)", [thread.content, threadRow.uid, req.session.user.uid, new Date().toISOString()]);
 
     res.redirect(`/thread/${threadRow.uid}/1`);
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
 });
 
 app.all('*', (req, res) => {
