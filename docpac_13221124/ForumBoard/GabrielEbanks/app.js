@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+
 app.get('/login', (req, res) => {
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
@@ -81,16 +82,10 @@ app.post('/conversations', isAuthenticated, (req, res) => {
     }
 });
 
-// 
-// fix req.body.timeStamp
-// 
-
-
 
 app.post('/thread/:id', isAuthenticated, (req, res) => {
-    console.log(req.body.threadId);
     if (req.body.threadId && req.body.message) {
-        db.run('INSERT INTO post(content,time,convo_id) VALUES (?,?,?)', [req.body.message, req.body.timeStamp, req.body.threadId], (err) => {
+        db.run('INSERT INTO post(poster,content,time,convo_id) VALUES (?,?,?,?)',[ req.body.poster, req.body.message, req.body.dateTime, req.body.threadId], (err) => {
             if (err) {
                 console.log(err.message);
             }
@@ -103,4 +98,5 @@ app.post('/thread/:id', isAuthenticated, (req, res) => {
 app.listen(3000, () => {
     console.log(`Server started on port 3000`);
 });
+
 
