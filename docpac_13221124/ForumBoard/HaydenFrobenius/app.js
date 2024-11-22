@@ -6,7 +6,9 @@ const util = require('./util');
 const sql = require('sqlite3').verbose();
 const config = require('./config.json');
 const dbController = require('./dbWrapper');
+
 const auth = require('./middleware/auth');
+const formValidation = require('./middleware/formValidation');
 
 const app = express();
 const PORT = 3000;
@@ -50,7 +52,8 @@ app.get('/login', async (req, res) => {
         // if the user is not in the database, add them
         if (!user) {
 
-            let row = await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
+            let rowID = await dbController.run(db, "INSERT INTO users (fb_id, fb_name) VALUES(?,?)", [tokenData.id, tokenData.username]);
+            let row = await dbController.get(db, "SELECT * FROM users WHERE uid = ?", [rowID]);
 
             req.session.user = {
                 uid: row.uid,
@@ -118,11 +121,13 @@ app.get('/create-thread', auth.isLoggedIn, (req, res) => {
     res.render('pages/create-thread');
 });
 
-app.post('/create-thread', auth.isLoggedIn, auth.checkThreadValid, auth.checkPostValid, async (req, res) => {
+app.post('/create-thread', auth.isLoggedIn, formValidation.checkThreadValid, formValidation.checkPostValid, async (req, res) => {
     let thread = req.body;
 
-    let threadRow = await dbController.run(db, "INSERT INTO threads (title, description, poster_uid) VALUES(?,?,?)", [thread.title, thread.description, req.session.user.uid]);
-    await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid) VALUES(?,?,?)", [thread.content, threadRow.uid, req.session.user.uid]);
+    let rowID = await dbController.run(db, "INSERT INTO threads (title, description) VALUES(?,?)", [thread.title, thread.description]);
+    let threadRow = await dbController.get(db, "SELECT * FROM threads WHERE uid = ?", [rowID]);
+
+    await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid, time) VALUES(?,?,?,?)", [thread.content, threadRow.uid, req.session.user.uid, new Date().toISOString()]);
 
     res.redirect(`/thread/${threadRow.uid}/1`);
 });
