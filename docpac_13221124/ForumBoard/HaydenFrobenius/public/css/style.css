@@ -10,20 +10,22 @@ body {
 }
 
 button {
-	padding: 10px 20px;
+    padding: 10px 20px;
     background-color: #ffffff;
     border-radius: 20px;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 
 }
+
 button:hover {
     cursor: pointer;
-	background-color:#ddd;
+    background-color: #ddd;
 }
+
 button:active {
-	position:relative;
-	top:1px;
+    position: relative;
+    top: 1px;
 }
 
 .header {
@@ -34,17 +36,20 @@ button:active {
     text-align: center;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:end;
 }
 
 .header button {
-    margin: 10px 10px;
+
+    margin: 10px;
 }
 
 #logo {
     width: 200px;
     display: block;
-    margin: 0 auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #logo:hover {
@@ -55,11 +60,9 @@ button:active {
     text-decoration: none;
 }
 
-#login-button {
-}
+#login-button {}
 
-#greeting {
-}
+#greeting {}
 
 .container {
     display: flex;
@@ -92,7 +95,11 @@ button:active {
 .thread-title {
     font-size: 18px;
     font-weight: bold;
-    margin: 0;
+    margin-left: 10px;
+}
+
+.thread-description {
+    margin-left: 10px;
 }
 
 .thread-content {
@@ -135,4 +142,37 @@ button:active {
 
 #post-button {
     align-self: flex-end;
+}
+
+.tabs {
+    display: flex;
+    justify-content: start;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    width: 100px;
+    height: 40px;
+    font-size: 1rem;
+    /*margin: 0px 5px;*/
+    border-radius: 0px;
+    cursor: pointer;
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-button.active {
+    background-color: rgb(71, 71, 71);
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 }

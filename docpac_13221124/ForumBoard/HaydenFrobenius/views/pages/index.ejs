@@ -9,14 +9,15 @@
 <!-- embrace tradition -->
 <center><h1>Popular Threads</h1></center>
 
+<% if(locals.threads.length === 0) { %>
+    <center><p>no threads ):</p></center>
+<% } %>
+
 <% locals.threads.forEach((thread, index) => { %>
-    <div class="thread" onclick="goToThreadPage('<%= thread.uid %>');">
-        <div class="thread-title"><%= thread.title %></div>
-        <div class="thread-description">
-            <%= (thread.description !== '') ? thread.description : 'No Description.' %>
-        </div>
-    </div>
+    <%- include('../partials/thread-listing.ejs', {thread: thread}) %>
 <% }); %>
+
+<br><br>
 
 <% if(locals.loggedIn) { %>
     <center>

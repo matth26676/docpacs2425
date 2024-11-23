@@ -4,11 +4,11 @@
     <h1>Create Thread</h1>
     <form action="/create-thread" method="POST">
         <input type="text" name="title" minlength="<%= config.minThreadTitleLength %>" maxlength="<%= config.maxThreadTitleLength %>" placeholder="Title" required>
-        <br>
+        <br><br>
         <textarea name="description" minlength="<%= config.minThreadDescriptionLength %>" maxlength="<%= config.maxThreadDescriptionLength %>" placeholder="Description"></textarea>
-        <br>
+        <br><br>
         <textarea name="content" minlength="<%= config.minPostLength %>" maxlength="<%= config.maxPostLength %>" placeholder="First Post" required></textarea>
-        <br>
+        <br><br>
         <button type="submit">Create</button>
 </center>
 

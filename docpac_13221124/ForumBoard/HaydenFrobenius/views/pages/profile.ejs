@@ -1,5 +1,47 @@
 <%- include('../partials/header', {pageTitle: `${userProfile.fb_name}'s Profile`}) %>
+    <h1>
+        <%= userProfile.fb_name %>'s Profile
+    </h1>
 
-<h1><%= userProfile.fb_name %>'s Profile</h1>
+    <div class="tabs">
+        <button class="tab-button" onclick="openTab(event, 'posts-tab')">Posts</button>
+        <button class="tab-button" onclick="openTab(event, 'threads-tab')">Threads</button>
+    </div>
 
-<%- include('../partials/footer') %>
+    <div id="posts-tab" class="tab-content">
+        <% userProfile.posts.forEach((post, index) => { %>
+            <p>In <a href="/thread/<%= post.thread_uid %>/1"><%= post.title //this is actually the thread title. don't worry about it%></a></p>
+            <%- include('../partials/post-listing.ejs', {post: post}) %>
+        <% }); %>
+    </div>
+
+    <div id="threads-tab" class="tab-content">
+        <% userProfile.threads.forEach((thread, index) => { %>
+            <%- include('../partials/thread-listing.ejs', {thread: thread}) %>
+        <% }); %>
+    </div>
+
+    <script>
+
+        function openTab(evt, tabName) {
+
+            let tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            let tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+
+            evt.currentTarget.classList.add('active');
+        }
+
+        document.querySelector('.tab-button').click();
+
+    </script>
+
+    <%- include('../partials/footer') %>

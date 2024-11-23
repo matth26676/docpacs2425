@@ -4,11 +4,7 @@
 <b id="thread-page">Page: </b><%= page %>
 
 <% locals.posts.forEach((post, index) => { %>
-    <div class="post">
-        <div class="post-author"><a href="/profile/<%= post.poster_uid %>"><%= post.fb_name %></a></div>
-        <div class="post-timestamp"><%= new Date(post.time).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></div>
-        <div class="post-content"><%= post.content %></div>
-    </div>
+    <%- include('../partials/post-listing.ejs', {post: post}); %>
 <% }); %>
 
 <center>
@@ -28,6 +24,9 @@
     } 
 
      %>
+
+     <br>
+
     <% if(locals.loggedIn) { %>
         <form action="/thread/<%= thread.uid %>/create-post" method="post" id="post-form">
             <textarea id="post-textarea" name="content" minlength="<%= config.minPostLength %>" maxlength="<%= config.maxPostLength %>"  placeholder="Reply to thread..."></textarea>

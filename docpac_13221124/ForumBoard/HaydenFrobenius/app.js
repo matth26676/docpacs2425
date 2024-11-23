@@ -13,8 +13,8 @@ const formValidation = require('./middleware/formValidation');
 const app = express();
 const PORT = 3000;
 const THIS_URL = 'http://localhost:' + PORT;
-const FB_URL = 'http://172.16.3.100:420';
-//const FB_URL = 'http://localhost:420';
+//const FB_URL = 'http://172.16.3.100:420';
+const FB_URL = 'http://localhost:420';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
 
@@ -101,13 +101,11 @@ app.get('/thread/:id/:page', async (req, res) => {
     if(totalPages === 0) totalPages = 1;
 
     const posts = await dbController.all(db, "SELECT * FROM posts INNER JOIN users ON poster_uid = users.uid WHERE thread_uid = ? LIMIT ? OFFSET ?;", [id, postsPerPage, page * postsPerPage]);
-
     res.render('pages/thread', {thread: thread, posts: posts, page: page + 1, totalPages: totalPages});
 });
 
 app.post('/thread/:id/create-post', auth.isLoggedIn, formValidation.checkPostValid, async (req, res) => {
     let threadID = req.params.id;
-    console.log(threadID);
     let post = req.body;
 
     await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid, time) VALUES(?,?,?,?)", [post.content, threadID, req.session.user.uid, new Date().toISOString()]);
@@ -123,6 +121,12 @@ app.get('/profile/:id', async (req, res) => {
         return;
     }
 
+    let threads = await dbController.all(db, "SELECT * FROM threads WHERE creator_uid = ? ORDER BY uid DESC LIMIT ?", [id, config.threadsPerPage]);
+    let posts = await dbController.all(db, "SELECT * FROM posts INNER JOIN threads ON thread_uid = threads.uid WHERE poster_uid = ? ORDER BY uid DESC LIMIT ?", [id, config.postsPerPage]);
+
+    user.threads = threads;
+    user.posts = posts;
+
     res.render('pages/profile', {userProfile: user});
 });
 
@@ -133,7 +137,7 @@ app.get('/create-thread', auth.isLoggedIn, (req, res) => {
 app.post('/create-thread', auth.isLoggedIn, formValidation.checkThreadValid, formValidation.checkPostValid, async (req, res) => {
     let thread = req.body;
 
-    let rowID = await dbController.run(db, "INSERT INTO threads (title, description) VALUES(?,?)", [thread.title, thread.description]);
+    let rowID = await dbController.run(db, "INSERT INTO threads (title, description, creator_uid) VALUES(?,?,?)", [thread.title, thread.description, req.session.user.uid]);
     let threadRow = await dbController.get(db, "SELECT * FROM threads WHERE uid = ?", [rowID]);
 
     await dbController.run(db, "INSERT INTO posts (content, thread_uid, poster_uid, time) VALUES(?,?,?,?)", [thread.content, threadRow.uid, req.session.user.uid, new Date().toISOString()]);

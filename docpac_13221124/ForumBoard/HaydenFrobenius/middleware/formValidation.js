@@ -2,8 +2,10 @@ function checkThreadValid(req, res, next) {
 
     let thread = req.body;
 
-    if(thread && thread.title && thread.description){
+    if(thread && thread.title && thread.content){
         next();
+    } else {
+        req.send('wrong');
     }
 }
 
@@ -12,6 +14,8 @@ function checkPostValid(req, res, next){
 
     if(post && post.content){
         next();
+    } else {
+        req.send('wrong');
     }
 }
 
