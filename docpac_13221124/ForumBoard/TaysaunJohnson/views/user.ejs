@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% if (conversations) { %>
+        <h3>Associated Conversations</h3>
+        <ul>
+            <% Object.keys(conversations).forEach((conversation) => { %>
+                <li><a href="/conversation/<%=conversation%>"><%= conversations[conversation] %></a></li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <h3>No Conversations</h3>
+    <% } %>
+
+</body>
+</html>
