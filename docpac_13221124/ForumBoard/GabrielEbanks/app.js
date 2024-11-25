@@ -7,7 +7,7 @@ const sqlite3 = require('sqlite3');
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
-const FBJS_URL = 'http://172.16.3.100:420';
+const FBJS_URL = 'https://formbar.yorktechapps.com';
 const THIS_URL = 'http://localhost:3000/login';
 const API_KEY = 'bd4cf1e837768719675cf8bfa360a3e60348af7898a0b61d385a560323423204a9445d4d25bedc5ec4b34626b89598474e45152a9f4ce523d444b0887cf90ed4';
 let Authetication = false
@@ -27,12 +27,41 @@ const db = new sqlite3.Database('data/database.db', (err) => {
 });
 
 function isAuthenticated(req, res, next) {
-    if (req.session.user) next();
+    if (req.session.user) {
+        db.get('SELECT * FROM users WHERE fb_id = ?', [req.session.token.id], (err, row) => {
+            if (err) {
+                console.log(err.message);
+            } else if (row) {
+                next()
+            } else {
+                db.run('INSERT INTO users(fb_name,fb_id) VALUES (?,?)', [req.session.user, req.session.token.id], (err) => {
+                    if (err) {
+                        console.log(err.message);
+                    }
+                });
+                next()
+
+            }
+        })
+
+    }
     else res.redirect(`/login?redirectURL=${THIS_URL}`);
 }
 
 app.get('/', (req, res) => {
     res.render('index');
+});
+
+app.get('/eachposter/:id', (req, res) => {
+    db.all('SELECT * FROM post JOIN conversations ON post.convo_id=conversations.uid WHERE post.poster = ?;', req.params.id, (error, row) => {
+        if (error) {
+            res.send(error);
+        } else if (row) {
+            console.log(row)
+            console.log(req.params.id)
+            res.render('eachposter',{ user: req.session.user, conversations: row });      
+        }
+    })
 });
 
 
@@ -41,7 +70,8 @@ app.get('/login', (req, res) => {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
         req.session.user = tokenData.username;
-        console.log(req.session.user)
+        req.session.id = tokenData.id
+        console.log(req.session.token.id)
         res.redirect('/conversations');
     } else {
         res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`);
@@ -49,7 +79,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/conversations', isAuthenticated, (req, res) => {
-    db.all('SELECT * FROM conversations;', (error, row) => {
+    db.all('SELECT * FROM conversations', (error, row) => {
         if (error) {
             res.send(error);
         } else if (row) {
@@ -61,11 +91,12 @@ app.get('/conversations', isAuthenticated, (req, res) => {
 app.get('/thread/:id', isAuthenticated, (req, res) => {
     console.log(req.params.id);
 
-    db.all('SELECT * FROM post WHERE convo_id = ?;', req.params.id, (error, row) => {
+    db.all('SELECT * FROM post JOIN users ON post.poster=users.uid WHERE convo_id = ?;', req.params.id, (error, row) => {
         if (error) {
             res.send(error);
         } else if (row) {
             res.render('eachpost', { user: req.session.user, post: row, convo: req.params.id });
+            console.log(req.params.id)
         }
     })
 });
@@ -85,12 +116,15 @@ app.post('/conversations', isAuthenticated, (req, res) => {
 
 app.post('/thread/:id', isAuthenticated, (req, res) => {
     if (req.body.threadId && req.body.message) {
-        db.run('INSERT INTO post(poster,content,time,convo_id) VALUES (?,?,?,?)',[ req.body.poster, req.body.message, req.body.dateTime, req.body.threadId], (err) => {
-            if (err) {
-                console.log(err.message);
-            }
-        });
-        res.redirect(`/thread/${req.body.threadId}`);
+        db.get('SELECT * FROM users WHERE fb_id =?;',req.session.token.id, (err,row) => {
+            db.run('INSERT INTO post(poster,content,time,convo_id) VALUES (?,?,?,?)', [row.uid, req.body.message, req.body.dateTime, req.body.threadId], (err) => {
+                if (err) {
+                    console.log(err.message);
+                }
+            });
+            res.redirect(`/thread/${req.body.threadId}`);
+        })
+
     }
 });
 

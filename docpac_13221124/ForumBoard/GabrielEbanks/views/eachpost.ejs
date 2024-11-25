@@ -8,7 +8,7 @@
     <style>
         #eachPost {
             border-style: solid;
-            border-color: rgb(49, 226, 43);
+            border-color: rgb(168, 43, 226);
             width: 300px;
             overflow-y: auto;
             overflow-x: scroll;
@@ -17,7 +17,7 @@
 
         #individualPost {
             border-style: solid;
-            border-color: rgb(61, 43, 226);
+            border-color: rgb(230, 170, 238);
             width: 300px;
             overflow-y: auto;
             margin-top: 10px;
@@ -31,10 +31,11 @@
         <% post.forEach((con)=> { %>
 
             <div id="individualPost">
-                <p><%= con.poster %> <%= con.content %></p>
+                <a href="/eachposter/<%=con.poster%>"><%= con.fb_name %></a>
+                <p> <%= con.content %></p>
                 <p><%= con.time %></p>
             </div>
-            <% }) %>
+        <% }) %>
     </div>
 
     <div>
@@ -52,7 +53,7 @@
 
     <script>
     
-        const poster = null
+        const poster = '<%- user %>'
         function validateForm() {
             let x = document.forms["convoMessage"]["message"].value;
             if (x.trim() === "") {
