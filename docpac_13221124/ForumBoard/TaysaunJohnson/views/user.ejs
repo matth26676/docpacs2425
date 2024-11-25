@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <% if (conversations) { %>
+    <% if (Object.keys(conversations).length > 0) { %>
         <h3>Associated Conversations</h3>
         <ul>
             <% Object.keys(conversations).forEach((conversation) => { %>
