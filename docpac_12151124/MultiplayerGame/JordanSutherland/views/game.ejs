@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming</title>
+    <style>
+        html,
+        body,
+        canvas {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    // load funny images
+
+    const FUNNY = [];
+
+    for (var filename = 1; filename < 22; filename++) {
+        var img = new Image();
+        img.src = "funnyImages/jerma" + filename + ".png";
+        FUNNY.push(img);
+    }
+
+    var yourImage = FUNNY[Math.floor(Math.random() * FUNNY.length)];
+
+    const socket = io();
+
+    let users = [];
+    let user = {
+        name: '<%= user %>',
+        userId: socket.id,
+    };
+
+    socket.emit('new-user', user);
+    socket.on('user-connected', data => {
+        console.log(data.user.name + ' connected');
+    });
+    socket.on('user-disconnected', data => {
+        console.log(data.user.name + ' disconnected');
+    });
+    socket.on('update', (data) => {
+        // Update the local player list
+        users = data.users;
+    });
+
+
+
+</script>
+
+<body>
+    <canvas id="canvas" height="100%" width="100%"></canvas>
+
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.addEventListener("click", async () => {
+        if (!document.pointerLockElement) {
+            try {
+                await canvas.requestPointerLock({
+                    unadjustedMovement: true,
+                });
+            } catch (error) {
+                if (error.name === "NotSupportedError") {
+                    // Some platforms may not support unadjusted movement.
+                    await canvas.requestPointerLock();
+                } else {
+                    throw error;
+                }
+            }
+        }
+    });
+
+    window.onresize = function () {
+        socket.emit('resize', {
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height,
+            WIDTH: Math.floor(window.innerWidth / 3),
+            HEIGHT: Math.floor(window.innerHeight / 3),
+            HALF_WIDTH: Math.floor(window.innerWidth / 3) / 2,
+            HALF_HEIGHT: Math.floor(window.innerHeight / 3) / 2,
+        });
+    }
+
+    function onLoad() {
+        socket.emit('resize', {
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height,
+            WIDTH: Math.floor(window.innerWidth / 3),
+            HEIGHT: Math.floor(window.innerHeight / 3),
+            HALF_WIDTH: Math.floor(window.innerWidth / 3) / 2,
+            HALF_HEIGHT: Math.floor(window.innerHeight / 3) / 2,
+        });
+    }
+
+    //Raycasting Stuff  
+
+    // 88888888ba                                                                        88                                ad88888ba                          ad88     ad88  
+    // 88      "8b                                                                ,d     ""                               d8"     "8b  ,d                    d8"      d8"    
+    // 88      ,8P                                                                88                                      Y8,          88                    88       88     
+    // 88aaaaaa8P'  ,adPPYYba,  8b       d8   ,adPPYba,  ,adPPYYba,  ,adPPYba,  MM88MMM  88  8b,dPPYba,    ,adPPYb,d8     `Y8aaaaa,  MM88MMM  88       88  MM88MMM  MM88MMM  
+    // 88""""88'    ""     `Y8  `8b     d8'  a8"     ""  ""     `Y8  I8[    ""    88     88  88P'   `"8a  a8"    `Y88       `"""""8b,  88     88       88    88       88     
+    // 88    `8b    ,adPPPPP88   `8b   d8'   8b          ,adPPPPP88   `"Y8ba,     88     88  88       88  8b       88             `8b  88     88       88    88       88     
+    // 88     `8b   88,    ,88    `8b,d8'    "8a,   ,aa  88,    ,88  aa    ]8I    88,    88  88       88  "8a,   ,d88     Y8a     a8P  88,    "8a,   ,a88    88       88     
+    // 88      `8b  `"8bbdP"Y8      Y88'      `"Ybbd8"'  `"8bbdP"Y8  `"YbbdP"'    "Y888  88  88       88   `"YbbdP"Y8      "Y88888P"   "Y888   `"YbbdP'Y8    88       88     
+    //                              d8'                                                                    aa,    ,88                                                        
+    //                             d8'                                                                      "Y8bbdP"                                                         
+
+    // FPS
+    const FPS = 60;
+    const cycleDelay = Math.floor(1000 / FPS);
+    var oldCycleTime = 0;
+    var cycleCount = 0;
+    var fps_rate = '...';
+
+    // map
+    const MAP_SIZE = 32;
+    const MAP_SCALE = 128;
+    const MAP_RANGE = MAP_SCALE * MAP_SIZE;
+    const MAP_SPEED = (MAP_SCALE / 2) / 10;
+    var map = [
+        1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    ];
+
+    // handle key down events
+    document.addEventListener('keydown', function (event) {
+        var key = event.keyCode;
+        socket.emit('keydown', key);
+    });
+    document.addEventListener('keyup', function (event) {
+        var key = event.keyCode;
+        socket.emit('keyup', key);
+    });
+    var movementX = 0;
+    document.addEventListener('mousemove', function (event) {
+        movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        var scaleFactor = Math.abs(movementX) / 10;
+        var direction = movementX > 0 ? 1 * scaleFactor : (movementX < 0 ? -1 * scaleFactor : 0);
+        socket.emit('mousemove', direction);
+    });
+
+    // screen
+    const WIDTH = window.innerWidth, HALF_WIDTH = WIDTH / 2;
+    const HEIGHT = window.innerHeight, HALF_HEIGHT = HEIGHT / 2;
+
+    // camera
+    const DOUBLE_PI = Math.PI * 2;
+    const FOV = Math.PI / 3;
+    const HALF_FOV = FOV / 2;
+    const STEP_ANGLE = FOV / WIDTH;
+
+    // graphics
+    const WALLS = [];
+
+    // load wall textures
+    for (var filename = 0; filename < 3; filename++) {
+        var img = new Image();
+        img.src = "walls/" + filename + ".png";
+        WALLS.push(img);
+    }
+
+    const EMPQ = [];
+
+    // load empty question mark
+    for (var filename = 0; filename < 4; filename++) {
+        var img = new Image();
+        img.src = "empQs/" + filename + ".png";
+        EMPQ.push(img);
+    }
+
+
+
+    // Game Loop
+    function gameLoop() {
+        if (movementX != 0) {
+            movementX = 0;
+            socket.emit('mousemove', movementX);
+        }
+        // Resize dynamically
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Draw Background
+        ctx.drawImage(WALLS[0], canvas.width / 2 - HALF_WIDTH, canvas.height / 2 - HALF_HEIGHT, WIDTH, HEIGHT);
+
+        for (i in users) {
+            let itUser = users[i];
+
+            if (itUser.userId == socket.id) {
+
+                // Raycast users
+                var userX = itUser.playerX;
+                var userY = itUser.playerY;
+                var userAngle = itUser.playerAngle;
+
+                // Raycasting
+                var rayStartX = Math.floor(userX / MAP_SCALE) * MAP_SCALE;
+                var rayStartY = Math.floor(userY / MAP_SCALE) * MAP_SCALE;
+
+                // Calculate map & player offsets
+                var mapOffsetX = Math.floor(HALF_WIDTH - HALF_WIDTH);
+                var mapOffsetY = Math.floor(HALF_WIDTH - HALF_HEIGHT);
+                var playerMapX = (userX / MAP_SCALE) * 5 + mapOffsetX;
+                var playerMapY = (userY / MAP_SCALE) * 5 + mapOffsetY;
+
+                // loop for casted rays
+                for (var ray = 0; ray < WIDTH; ray++) {
+                    // get current angle sin & cos
+                    var currentSin = Math.sin(currentAngle); currentSin = currentSin ? currentSin : .000001;
+                    var currentCos = Math.cos(currentAngle); currentCos = currentCos ? currentCos : .000001;
+
+                    // vertical line intersection
+                    var rayEndX, rayEndY, rayDirectionX, verticalDepth, textureEndY, textureY;
+                    if (currentSin > 0) { rayEndX = rayStartX + MAP_SCALE; rayDirectionX = 1 }
+                    else { rayEndX = rayStartX; rayDirectionX = -1 }
+                    for (var offset = 0; offset < MAP_RANGE; offset += MAP_SCALE) {
+                        verticalDepth = (rayEndX - userX) / currentSin;
+                        rayEndY = userY + verticalDepth * currentCos;
+                        var mapTargetX = Math.floor(rayEndX / MAP_SCALE);
+                        var mapTargetY = Math.floor(rayEndY / MAP_SCALE);
+                        if (currentSin <= 0) mapTargetX += rayDirectionX;
+                        var targetSquare = mapTargetY * MAP_SIZE + mapTargetX;
+                        if (targetSquare < 0 || targetSquare >= map.length - 1) break;
+                        if (map[targetSquare] != 0) { textureY = map[targetSquare]; break; };
+                        rayEndX += rayDirectionX * MAP_SCALE;
+                    }
+                    textureEndY = rayEndY;
+
+                    // horizontal line intersection
+                    var rayEndY, rayEndX, rayDirectionY, horizontalDepth, textureEndX, textureX;
+                    if (currentCos > 0) { rayEndY = rayStartY + MAP_SCALE; rayDirectionY = 1 }
+                    else { rayEndY = rayStartY; rayDirectionY = -1 }
+                    for (var offset = 0; offset < MAP_RANGE; offset += MAP_SCALE) {
+                        horizontalDepth = (rayEndY - userY) / currentCos;
+                        rayEndX = userX + horizontalDepth * currentSin;
+                        var mapTargetX = Math.floor(rayEndX / MAP_SCALE);
+                        var mapTargetY = Math.floor(rayEndY / MAP_SCALE);
+                        if (currentCos <= 0) mapTargetY += rayDirectionY;
+                        var targetSquare = mapTargetY * MAP_SIZE + mapTargetX;
+                        if (targetSquare < 0 || targetSquare >= map.length - 1) break;
+                        if (map[targetSquare] != 0) { textureX = map[targetSquare]; break; };
+                        rayEndY += rayDirectionY * MAP_SCALE;
+                    }
+                    textureEndX = rayEndX;
+
+                    // render 3D projection
+                    var depth = verticalDepth < horizontalDepth ? verticalDepth : horizontalDepth;
+                    var textureImage = verticalDepth < horizontalDepth ? textureY : textureX;
+                    var textureOffset = verticalDepth < horizontalDepth ? textureEndY : textureEndX;
+                    textureOffset = textureOffset - Math.floor(textureOffset / MAP_SCALE) * MAP_SCALE;
+                    depth *= Math.cos(userAngle - currentAngle);
+                    var wallHeight = Math.min(Math.floor(MAP_SCALE * HEIGHT / (depth + 0.0001)), 50000);
+
+                    ctx.drawImage(
+                        WALLS[textureImage],
+                        textureOffset,  // Source img x offset
+                        0,  // Source img y offset
+                        1, // Source img width
+                        128, // Source img height
+                        0 + ray, // Target image x offset
+                        0 + (HALF_HEIGHT - Math.floor(wallHeight / 2)), // Target image y offset
+                        1, // Target image width
+                        wallHeight, // Target image height
+                    );
+
+                    var currentAngle = userAngle + HALF_FOV - ray * STEP_ANGLE;
+                    var raySin = Math.sin(currentAngle);
+                    var rayCos = Math.cos(currentAngle);
+
+                    for (var depth = 0; depth < MAP_RANGE; depth += 5) {
+                        var targetX = userX + depth * raySin;
+                        var targetY = userY + depth * rayCos;
+
+                        if (map[Math.floor(targetY / MAP_SCALE) * MAP_SIZE + Math.floor(targetX / MAP_SCALE)] != 0) {
+                            break;
+                        }
+
+                        for (let targetUser of Object.values(users)) {
+                            if (targetUser.userId !== itUser.userId) {
+                                let distance = Math.sqrt(Math.pow(targetUser.playerX - targetX, 2) + Math.pow(targetUser.playerY - targetY, 2));
+                                if (distance < 5) {
+                                    var userDepth = depth * Math.cos(userAngle - currentAngle);
+                                    var userHeight = Math.min(Math.floor(MAP_SCALE * HEIGHT / (userDepth + 0.0001)), 50000);
+                                    ctx.fillStyle = targetUser.color;
+                                    ctx.fillRect(
+                                        ray,
+                                        (HALF_HEIGHT - Math.floor(userHeight / 2)),
+                                        1,
+                                        userHeight
+                                    );
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Capture point
+                        let tDistance = Math.sqrt(Math.pow(itUser.capture.playerX - targetX, 2) + Math.pow(itUser.capture.playerY - targetY, 2));
+                        if (itUser.capture && tDistance < 5) {
+                            var userDepth = depth * Math.cos(userAngle - currentAngle);
+                            var userHeight = Math.min(Math.floor(MAP_SCALE * HEIGHT / (userDepth + 0.0001)), 50000);
+                            ctx.fillStyle = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                            ctx.fillRect(
+                                ray,
+                                (HALF_HEIGHT - Math.floor(userHeight / 2)),
+                                1,
+                                userHeight
+                            );
+                            break;
+                        }
+                    }
+
+                    ctx.restore();
+                    currentAngle -= STEP_ANGLE;
+
+                }
+
+                // // Draw other users
+                // for (let targetUser of Object.values(users)) {
+                //     if (targetUser.userId !== socket.id) {
+                //         let targetAngle = Math.atan2(targetUser.playerY - userY, targetUser.playerX - userX);
+                //         let angleDiff = targetAngle - userAngle;
+                //         if (angleDiff > Math.PI) angleDiff -= DOUBLE_PI;
+                //         if (angleDiff < -Math.PI) angleDiff += DOUBLE_PI;
+
+                //         if (Math.abs(angleDiff) < HALF_FOV) {
+                //             let distance = Math.sqrt((targetUser.playerX - userX) ** 2 + (targetUser.playerY - userY) ** 2);
+                //             let targetHeight = Math.min(Math.floor(MAP_SCALE * HEIGHT / (distance + 0.0001)), 50000);
+                //             let targetWidth = targetHeight * (yourImage.width / yourImage.height);
+                //             let targetX = HALF_WIDTH + Math.tan(angleDiff) * HALF_WIDTH - targetWidth / 2;
+                //             let targetY = HALF_HEIGHT - targetHeight / 2;
+
+                //             ctx.drawImage(
+                //                 FUNNY[targetUser.imgNum],
+                //                 0, 0, yourImage.width, yourImage.height,
+                //                 targetX, targetY, targetWidth, targetHeight
+                //             );
+                //         }
+                //     }
+                // }  
+
+                if (itUser.userId == socket.id) {
+                    // Draw 2d map
+                    for (var row = 0; row < MAP_SIZE; row++) {
+                        for (var col = 0; col < MAP_SIZE; col++) {
+                            var square = row * MAP_SIZE + col;
+                            if (map[square] != 0) {
+                                ctx.fillStyle = 'green';
+                                ctx.fillRect(col * 5, row * 5, 5, 5);
+                            } else {
+                                ctx.fillStyle = '#aaa';
+                                ctx.fillRect(col * 5, row * 5, 5, 5);
+                            }
+                        }
+
+                        for (i in users) {
+                            let itUser = users[i];
+                            let color = itUser.userId != socket.id ? 'blue' : 'red';
+                            ctx.fillStyle = color;
+                            ctx.beginPath();
+                            ctx.arc(itUser.playerX / MAP_SCALE * 5, itUser.playerY / MAP_SCALE * 5, 3, 0, DOUBLE_PI, true);
+                            ctx.fill();
+                            ctx.strokeStyle = color;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(itUser.playerX / MAP_SCALE * 5, itUser.playerY / MAP_SCALE * 5);
+                            ctx.lineTo(itUser.playerX / MAP_SCALE * 5 + Math.sin(itUser.playerAngle) * 5, itUser.playerY / MAP_SCALE * 5 + Math.cos(itUser.playerAngle) * 5);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+            }
+        }
+        // Update FPS
+        cycleCount++;
+        if (cycleCount >= 60) cycleCount = 0;
+        var startTime = Date.now();
+        var cycleTime = startTime - oldCycleTime;
+        oldCycleTime = startTime;
+        if (cycleCount % 60 == 0) fps_rate = Math.floor(1000 / cycleTime);
+
+        // Draw FPS
+        ctx.font = '1vi Arial';
+        ctx.fillText('FPS: ' + fps_rate, 0, MAP_SIZE * 5 + 20);
+
+        let temp = 20;
+        for (i in users) {
+            let itUser = users[i];
+            ctx.fillStyle = 'black';
+            ctx.font = '1vi Arial';
+            ctx.fillText(itUser.name + ': ' + itUser.score, 0, MAP_SIZE * 5 + 40 + Object.keys(users).indexOf(itUser.name) * 15 + temp);
+            temp += 20;
+        }
+
+
+        //inf loop
+        setTimeout(gameLoop, cycleDelay);
+
+    } window.onload = function () { gameLoop(); onLoad(); };
+</script>
+
+</html>

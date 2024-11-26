@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+
+</head>
+
+
+<style>
+
+#chatbox {
+    max-width: 40%;
+    min-width: 40%;
+    min-height: 200px;
+    max-height: 200px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 7px;
+    border: 2px dotted #000000;
+    margin-left: 30%;
+    margin-right: 30%;
+    padding-bottom: 1px;
+
+}
+
+#chat {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+
+
+
+</style>
+
+
+<body>
+    <div id="list">
+        <ul id="userList">
+        </ul>
+    </div>
+    <div id="chatbox">
+        <div id="chat">
+        </div>
+        <div id="messagebox">
+            <input type="text" id="mess" placeholder="Type your message here" required>
+            <button type="button" id="send">Send</button>
+        </div>
+    </div>
+</body>
+<script>
+    let ws = new WebSocket("ws://localhost:3000")
+    let msgBox = document.getElementById('mess')
+    let chat = document.getElementById('chat')
+    let sndBtn = document.getElementById('send')
+    let userList = document.getElementById('userList')
+    let list = document.getElementById('list')
+    let tempName = `<%= name %>`
+    
+    function userData(list) {
+        userList.innerHTML = ''
+    
+        for (let i = 0; i < list.length; i++) {
+            let li = document.createElement('li')
+            li.textContent = list[i]
+            userList.appendChild(li)
+        }
+    }
+    
+    function addMessage(name, messages) {
+        console.log(name, messages)
+        let div = document.createElement('div')
+        div.classList.add('message')
+        div.innerHTML = `<span>${name}:</span> ${messages}`
+        chat.appendChild(div)
+        chat.scrollTop = chat.scrollHeight
+    }
+    ws.onopen = function () {
+        ws.send(JSON.stringify({ name: tempName }))
+    }
+
+    ws.onmessage = function (message) {
+        const data = JSON.parse(message.data)
+
+        if (data.hasOwnProperty('list')) {
+            userData(data.list)
+        }
+
+        if (data.hasOwnProperty('text')) {
+            addMessage(data.name, data.text)
+        }
+    }
+
+    sndBtn.addEventListener('click', (event) => {
+        let messages = msgBox.value
+        msgBox.value = ''
+        ws.send(JSON.stringify({ name: tempName, text: messages }))
+    })
+
+</script>
+
+</html>
