@@ -1,2 +1,4 @@
 */node_modules/*
 ~*.docx
+*/*/node_modules/*
+*/*/*/node_modules/*

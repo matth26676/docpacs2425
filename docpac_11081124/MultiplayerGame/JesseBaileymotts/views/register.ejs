@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<link rel='icon' href='/favicon.ico' type='image/x-icon'>
+    <link rel='stylesheet' href='/style.css'>
+	<title>SplatoonD - Signup</title>
+</head>
+<body>
+	<h1 id='menuHeader'>SplatoonD Registry</h1>
+	<div id='registerMenu'>
+		<form id='registerForm' action='/register' method='post'>
+			<input class='registerInput' type='text' name='username' placeholder='Username' required><br>
+			<!-- <input type='text' name='email' placeholder='Email' required> -->
+			<input class='registerInput' type='password' name='password' placeholder='Password' required><br>
+			<input class='menuItems' id='registerSubmit' type='submit' value='Submit'>
+		</form>
+		<button class='menuItems' onclick='window.location.href = `/oauth`'>Formbar Oauth2</button>
+        <button class='menuItems' onclick='window.location.href = `/login`'>Login</button>
+	</div>
+</body>
+</html>

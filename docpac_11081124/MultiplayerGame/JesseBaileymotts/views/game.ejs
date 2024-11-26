@@ -5,7 +5,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='icon' href='/favicon.ico' type='image/x-icon'>
     <link rel='stylesheet' href='/style.css'>
-    <title>SplatoonD</title>
+    <title>SplatoonD - Game</title>
 </head>
 <body>
     <!-- Splatoon 2D -->
@@ -27,6 +27,10 @@
         <div id='clock'></div>
         <div id='players'></div>
         <div id='scoring'></div>
+        <div id='powerups'>
+            <p class='powerup-text' id="powerup1"></p>
+            <p class='powerup-text' id="powerup2"></p>
+        </div>
     </div>    
 
     <!-- Game Board -->
@@ -47,9 +51,12 @@
         const players = document.getElementById('players');
         const scoring = document.getElementById('scoring');
         const board = document.getElementById('board');
+        const powerupText = document.getElementsByClassName('powerup-text');
+
+        let powerupNames = [];
         
         //// Splatoon 2D Variables
-        // It is poor practice to make the websocket like this. However my dearest little webfiends, it okay
+        // let ws = new WebSocket('ws://172.16.3.206:9090');
         let ws = new WebSocket('ws://localhost:9090');
         let clientID = null;
         let gameID = null;
@@ -112,6 +119,30 @@
             ws.send(JSON.stringify(payload));
             location.reload();
         });
+
+        document.addEventListener('keydown', function(event){
+            let key = event.key.toLowerCase();
+
+            switch (key){
+                case '1':
+                    requestPowerup(0);
+                    break;
+                case '2':
+                    requestPowerup(1);
+                    break;
+            }
+        });
+
+        function requestPowerup(index){
+            const payload = {
+                'method': 'requestPowerup',
+                'clientID': clientID,
+                'gameID': gameID,
+                'powerupIndex': index
+            };
+            ws.send(JSON.stringify(payload));
+        }
+
         // On recieving a websocket message...
         ws.onmessage = (message) => {
             // Set response to the parsed message data
@@ -136,11 +167,6 @@
                     defOpt.style.display = 'none';
                 };
             };
-            // If the method is disconnect...
-            if (response.method === 'disconnect') {
-                // Remove the player div with that client's ID
-                player.removeChild(document.getElementById(response.clientID));
-            };
             // If the method is create...
             if (response.method === 'create') {
                 // Assign and relay the game ID
@@ -151,6 +177,7 @@
                 option.value = gameID;
                 option.text = gameID;
                 option.selected = true;
+
                 // Append it to the code select
                 code.appendChild(option);
                 // Set the option to the selected option in the gameList form
@@ -160,14 +187,18 @@
                 // Set the text of the clock div to the remaining time
                 clock.innerText = `Time: ${response.game.time}`;
                 clock.style.display = 'inline-block';
+                gameInfo.style.display = 'block';
                 // Dislpay the start game button
                 startGame.style.display = 'inline-block';
                 leaveGame.style.display = 'inline-block';
+
+                powerupNames = response.game.powerupNames;
+
                 // If the game has less than two clients...
                 if (response.game.clients.length < 2) {
                     // Disable the start game button
                     startGame.disabled = true;
-                // Else...
+                    // Else...
                 } else {
                     // Enable the start game button
                     startGame.disabled = false;
@@ -207,7 +238,7 @@
                     // Add clicking functionality to the button
                     box.addEventListener('click', (e) => {
                         // Set the clicked box to the player color
-                        box.style.background = pColor;
+                        //box.style.background = pColor; //don't jew this
                         // Create the play payload
                         const payload = {
                             'method': 'play',
@@ -237,14 +268,36 @@
                 // For each box, set the box to enabled
                 allBoxes.forEach((box) => box.disabled = false);
                 const game = response.game;
+                const client = game.clients.find((c) => c.clientID === clientID);
                 // Update the text of the clock div to the current game time
                 clock.innerText = `Time: ${game.time}`;
+                // Update powerup display
+                for(p in powerupText){
+                    const textObj = powerupText[p];
+                    const powerupIndex = client.powerups[p];
+                    let powerupName = powerupNames[powerupIndex];
+
+                    if(!powerupName){
+                        powerupName = 'None';
+                    }
+
+                    textObj.innerText = `Powerup ${Number(p)+1}: ${powerupName}`;
+
+                    //if the powerup is selected, add the selected class
+                    //don't worky. don't feel like fixing.
+                    /*if(client.selectedPowerup === powerupIndex){
+                        powerupText[client.selectedPowerup].classList.add('selected');
+                    } else {
+                        powerupText[client.selectedPowerup].classList.remove('selected');
+                    }*/
+
+                }
                 // For each client in the game...
                 game.clients.forEach((c) => {
                     // If the player div exists...
                     if (document.getElementById(c.clientID)) {
                         // Set the playerBox constant equal to that client's ID
-                        const playerBox = document.getElementById(c.clientID)
+                        const playerBox = document.getElementById(c.clientID);
                         // Update the text content with that player's score
                         playerBox.textContent = `${c.player}: ${c.score}`;
                     };
@@ -253,18 +306,25 @@
                 if (!game.state) game.state = {};
                 // For boxes of the game's state...
                 for (const b of Object.keys(game.state)) {
+
+                    //modulo is so handy
+                    let boxID = (b % (game.boxes+1));
+                    let box = game.state[boxID];
                     // Set color to the color of said box
-                    const color = game.state[b];
+                    const color = box.color;
+                    const disabled = box.disabled;
                     // Set boxObj to said box on the board
-                    const boxObj = document.getElementById('b' + b);
+                    const boxObj = document.getElementById('b' + boxID);
+
+                    //set the boxObj's disabled status depending on its server side disabled status
+                    boxObj.disabled = disabled;
+
                     // Set the boxObj's background color to the color gotten
                     boxObj.style.backgroundColor = color;
                 };
                 // If the game's time is less than or equal to 0...
                 if (game.time <= 0) {
                     if (gameEnd === false) {
-                        // // Set allBoxes to all buttons within the board
-                        // const allBoxes = document.querySelectorAll('#board button');
                         // For each box, set the box to disabled
                         allBoxes.forEach((box) => box.disabled = true);
                         // Let scores equal an empty array
@@ -276,26 +336,41 @@
                         });
                         // Sort scores with the compare functions
                         scores.sort(compare);
-                        // 
+                        // For each client in the game...
                         game.clients.forEach((c) => {
+                            // Create a div element
                             const div = document.createElement('div');
+                            // Set the ID to the player's number and set the content to the number and score of the player
                             div.id = c.player;
                             div.textContent = `${c.player}: ${c.score}`;
+                            // If the client's ID matches the current client, set the font weight to bold
                             if (c.clientID === clientID) div.style.fontWeight = 'bold';
+                            // If the client's score is the highest score, add in (Winner!)
                             if (c.score === scores[scores.length - 1]) div.textContent = div.textContent + ' (Winner!)';
-                            div.style.width = '5rem';
+                            // Style the div
+                            div.style.width = '5.5rem';
                             div.style.color = c.color;
                             div.style.backgroundColor = '#FFFFFF';
+                            // Append the div to the scoring div
                             scoring.appendChild(div);
                         });
+                        // Hide the players div and set the gameEnd to true
                         players.style.display = 'none';
                         gameEnd = true;
                     };
                 };
             };
-            // If the method is leave, reload the page
-            if (repsonse.method === 'leave') location.reload();
+            // If the method is disconnect...
+            if (response.method === 'disconnect' || response.method === 'leave') {
+                // Remove the player from the players div by getting the client ID
+                players.removeChild(document.getElementById(response.clientID));
+                // Set the grid to the number of players with a max of 3 per row
+                const grid = `repeat(${Math.min(3, game.clients.length - 1)}, 1fr)`;
+                // Set the grid template columns of the players and scoring divs to the grid
+                players.style.gridTemplateColumns = grid;
+                scoring.style.gridTemplateColumns = grid;
+            };
         };
-    </script>
+        </script>
 </body>
 </html>
