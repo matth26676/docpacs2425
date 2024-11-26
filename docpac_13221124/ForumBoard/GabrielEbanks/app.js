@@ -53,13 +53,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/eachposter/:id', (req, res) => {
-    db.all('SELECT * FROM post JOIN conversations ON post.convo_id=conversations.uid WHERE post.poster = ?;', req.params.id, (error, row) => {
+    db.all('SELECT * FROM post JOIN users ON post.poster=users.uid WHERE post.poster = ?;', req.params.id, (error, row) => {
         if (error) {
             res.send(error);
         } else if (row) {
             console.log(row)
-            console.log(req.params.id)
-            res.render('eachposter',{ user: req.session.user, conversations: row });      
+            console.log(req.params.id)   
+            res.render('eachposter', { user: req.session.user, post: row, convo: req.params.id });    
         }
     })
 });

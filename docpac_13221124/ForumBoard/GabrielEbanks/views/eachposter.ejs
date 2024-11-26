@@ -4,16 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>poster</title>
-</head>
+<style>
+   
+        #eachPost {
+            border-style: solid;
+            border-color: rgb(168, 43, 226);
+            width: 300px;
+            overflow-y: auto;
+            overflow-x: scroll;
+            padding: 30px;
+        }
+
+        #individualPost {
+            border-style: solid;
+            border-color: rgb(230, 170, 238);
+            width: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    
+</style>
+  </head>
 <body>
     <div>
-        <ul>
-          <% for (const convo of conversations) { %>
-          <li>
-             <a href="/thread/<%- convo.uid %>"><%- convo.title %></a>
-          </li>
-          <% } %>
-        </ul>
-     </div>
+      <div id="eachPost">
+        <% post.forEach((con)=> { %>
+
+            <div id="individualPost">
+                <a href="/eachposter/<%=con.poster%>"><%= con.fb_name %></a>
+                <p> <%= con.content %></p>
+                <p><%= con.time %></p>
+            </div>
+        <% }) %>
+    </div>
 </body>
 </html>
