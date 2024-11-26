@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackith Jackith</title>
+    <link rel="stylesheet" href="public/css/styles.css">
+
+</head>
+<body>
+    <h1>Roomith codeith: <%= gameCode %></h1>
+    <h2>Dealerith: <span id="dealerSum"> Total:</span></h2> 
+    <div id="dealerCards">
+        <img id="dealerFace" src="public\img\2ofClubs.png" alt="">
+        <img id="dealerBack" src="public\img\back.png" alt="">
+    </div>
+    <div class="players">
+        <div id="player1">
+            <img id="p1CardFace" src="" alt="">
+            <img id="p1CardBack" src="" alt="">
+        </div>
+        <div id="player2">
+            <img id="p2CardFace" src="" alt="">
+            <img id="p2CardBack" src="" alt="">
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+   const socket = io();
+</script>
+</html>

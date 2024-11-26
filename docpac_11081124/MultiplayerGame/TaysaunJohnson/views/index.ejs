@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+    }
+</style>
+
+<body>
+    <canvas id="canvas" style="display: block"></canvas>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io()
+    var canvas;
+    var c;
+    var body = document.querySelector('body')
+
+    
+    var mouseX;
+    var mouseY;
+    var mouseXEvents = [];
+    var mouseYEvents = [];
+    
+    
+    function init() {
+        canvas = document.getElementById('canvas')
+        c = canvas.getContext('2d')
+        
+        canvas.width = 1366
+        canvas.height = 784
+        canvas.style.border = '1px solid black'
+        
+        window.onmousemove = function (e) {
+            mouseX = e.clientX
+            mouseY = e.clientY
+            mouseXEvents.push(mouseX)
+            mouseYEvents.push(mouseY)
+            if (mouseXEvents.length > 2) {
+                mouseXEvents.splice(0, mouseXEvents.length - 2)
+            }
+            if (mouseYEvents.length > 2) {
+                mouseYEvents.splice(0, mouseYEvents.length - 2)
+            }
+            let xSpeed = mouseXEvents[1] - mouseXEvents[0]
+            let ySpeed = mouseYEvents[1] - mouseYEvents[0]
+            let speed = Math.sqrt(xSpeed**2 + ySpeed**2)
+            let angle;
+            if (ySpeed >= 0) {
+                angle = Math.acos(xSpeed / speed)
+            }
+            if (ySpeed < 0) {
+                angle = -Math.acos(xSpeed / speed)
+            }
+            console.log(speed)
+            console.log(angle)
+            socket.emit('mousemove', mouseX, mouseY, xSpeed, ySpeed, speed, angle)
+        }
+    }
+    init()
+
+    socket.on('init', doInit)
+    socket.on('newstate', doNewState)
+    function paintGame(state) {
+        c.clearRect(0, 0, canvas.width, canvas.height)
+        
+        makeBall(state.ball)
+        makePlayer(state.players.player1)
+        createRay(state.ball)
+        createPlayRay(state.players.player1)
+    }
+
+    function makeBall(ball) {
+        c.beginPath();
+        c.arc(ball.x.position, ball.y.position, ball.r, 0, 2 * Math.PI);
+        c.fillStyle = "red";
+        c.fill()
+        c.stroke();
+    }
+
+    function createRay(ball) {
+        c.beginPath()
+        c.moveTo(ball.ray.beginX, ball.ray.beginY)
+        c.lineTo(ball.ray.x, ball.ray.y)
+        // c.stroke()
+    }
+
+    function createPlayRay(player) {
+        c.beginPath()
+        c.moveTo(player.playRay.beginX, player.playRay.beginY)
+        c.lineTo(player.playRay.x, player.playRay.y)
+        // c.stroke()
+    }
+
+    function makePlayer(player) {
+        c.fillStyle = player.color
+        c.fillRect(player.x, player.y, player.w, player.h)
+    }
+
+
+    function doInit(msg) {
+        console.log(msg)
+    }
+
+    function doNewState(state) {
+        state = JSON.parse(state)
+        requestAnimationFrame(() => paintGame(state))
+    }
+
+</script>
+
+</html>
