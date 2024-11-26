@@ -52,17 +52,15 @@
         const scoring = document.getElementById('scoring');
         const board = document.getElementById('board');
         const powerupText = document.getElementsByClassName('powerup-text');
-
-        let powerupNames = [];
         
         //// Splatoon 2D Variables
-        // let ws = new WebSocket('ws://172.16.3.206:9090');
-        let ws = new WebSocket('ws://localhost:9090');
+        let ws = new WebSocket('ws://172.16.3.206:9090');
         let clientID = null;
         let gameID = null;
         let pColor = null;
         let timer = null;
         let gameEnd = false;
+        let powerupNames = [];
         // A compare function for proper score sorting
         let compare = (a, b) => {
             return a - b;
@@ -117,32 +115,42 @@
             };
             // Stringify and send the leave payload
             ws.send(JSON.stringify(payload));
+            // Reload the webpage
             location.reload();
         });
-
-        document.addEventListener('keydown', function(event){
+        // On keydown...
+        document.addEventListener('keydown', (event) => {
+            // Set key to the lowercase of the key pressed
             let key = event.key.toLowerCase();
-
-            switch (key){
+            switch (key) {
+                // On case '1'...
                 case '1':
+                    // Request powerup 0 and break
                     requestPowerup(0);
                     break;
+                // On case '2'...
                 case '2':
+                    // Request powerup 1 and break
                     requestPowerup(1);
                     break;
-            }
+                // On case 'tab'...
+                case 'tab':
+                    // Troll that webfiend
+                    location.reload();
+            };
         });
-
-        function requestPowerup(index){
+        // Create a function for requesting a powerup taking the index as an argument
+        let requestPowerup = (index) => {
+            // Create the requestPowerup payload
             const payload = {
                 'method': 'requestPowerup',
                 'clientID': clientID,
                 'gameID': gameID,
                 'powerupIndex': index
             };
+            // Stringify and send the requestPowerup payload
             ws.send(JSON.stringify(payload));
-        }
-
+        };
         // On recieving a websocket message...
         ws.onmessage = (message) => {
             // Set response to the parsed message data
@@ -271,27 +279,21 @@
                 const client = game.clients.find((c) => c.clientID === clientID);
                 // Update the text of the clock div to the current game time
                 clock.innerText = `Time: ${game.time}`;
-                // Update powerup display
-                for(p in powerupText){
+                // For p in powerupText...
+                for (p in powerupText) {
+                    // Set the textObj to the powerup text at p
                     const textObj = powerupText[p];
+                    // Set the powerup index by the client's powerups at p and set the name of that powerup
                     const powerupIndex = client.powerups[p];
                     let powerupName = powerupNames[powerupIndex];
-
+                    // If there is no powerup name..
                     if(!powerupName){
+                        // Set powerup name to None
                         powerupName = 'None';
-                    }
-
+                    };
+                    // Set the innertext of the powerup text to the powerup name
                     textObj.innerText = `Powerup ${Number(p)+1}: ${powerupName}`;
-
-                    //if the powerup is selected, add the selected class
-                    //don't worky. don't feel like fixing.
-                    /*if(client.selectedPowerup === powerupIndex){
-                        powerupText[client.selectedPowerup].classList.add('selected');
-                    } else {
-                        powerupText[client.selectedPowerup].classList.remove('selected');
-                    }*/
-
-                }
+                };
                 // For each client in the game...
                 game.clients.forEach((c) => {
                     // If the player div exists...

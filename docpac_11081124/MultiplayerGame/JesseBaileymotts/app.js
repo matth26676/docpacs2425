@@ -35,14 +35,11 @@ Create a settings page to change your display name, color, and other settings
     __Power Ups__
 Add power ups to the game to give players an advantage
 Possible power ups:
-    - Inkroller (Covers a 3x3 area)
-    - Inkwall (Prevents a 3x3 area from being clicked. Lasts 5 seconds)
     - Inkshield (Prevents a 3x3 area from being clicked. Lasts 3 clicks per box)
     - Inknade (Erases color in a 5x5 area)
     - Inkstrike (Covers a whole column)
     - Inkzooka (Covers a whole row)
     - Inkjet (Covers a 3x3 area with a random color)
-    - Inkmine (Covers a 5x5 area if another player clicks on it. Does nothing if the player who placed it clicks on it)
     - Inkstorm (Covers a 5x5 area with a random color)
 
     __Teams__
@@ -76,16 +73,17 @@ Fix bugs that will inevitably arise
 
 // Set up the variables
 const express = require('express');
-const app = express();
 const {createServer} = require('http');
 const ws = require('websocket').server;
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const sqlite3 = require('sqlite3');
+const crypto = require("crypto");
+const powerups = require('./powerups');
+const app = express();
 const AUTH_URL = 'http://172.16.3.100:420/oauth';
 const THIS_URL = 'http://172.16.3.206:3000/oauth';
 const SECRET = 'secret'
-const crypto = require("crypto");
 
 // Make the static directory the current directory
 app.use(express.static(__dirname + '/'));
@@ -279,25 +277,26 @@ app.get('/leaderboard', (req, res) => {
 //                                                      //
 //////////////////////////////////////////////////////////
 
-const powerups = require('./powerups');
-const powerupMap = [powerups.InkRoller, powerups.InkWall, powerups.InkMine];
-
-const powerupTime = 5; //time in seconds until powerups drop.
 
 // Create the http server 
 const httpServer = createServer();
 // Listen on port 9090. Listen on all network interfaces
 httpServer.listen(9090, '0.0.0.0', console.log(`HTTP: Listening on port 9090`));
 
-// Create the client and game hashmap for all your webfiends
-const clients = {};
-const games = {};
-
 // Create the websocket server
 // My socks are soggy and gross!
 const wss = new ws({
     'httpServer': httpServer
 });
+
+// Create the client and game hashmap for all your webfiends
+const clients = {};
+const games = {};
+
+// Set the powerup map to the powerups from powerups.js
+const powerupMap = [powerups.InkRoller, powerups.InkWall, powerups.InkMine];
+// Set the time to get each powerup to 5 seconds
+const powerupTime = 5;
 
 // On connecting to the server..
 wss.on('request', (request) => {
@@ -366,7 +365,6 @@ wss.on('request', (request) => {
                 'powerupNames': powerupMap.map(p => p.name),
                 'creator': clientID,
             };
-
             // Create the create payload 
             const payload = {
                 'method': 'create',
@@ -416,7 +414,6 @@ wss.on('request', (request) => {
                 'method': 'join',
                 'game': game
             };
-            
             // For each client in the game...
             game.clients.forEach((c) => {
                 // Send a stringified payload to each client to notify that a new client has joined
@@ -431,26 +428,21 @@ wss.on('request', (request) => {
             const gameID = res.gameID;
             const player = res.player;
             const game = games[gameID];
-            game.state = {};
-
-            //make powerups go
-            setInterval(() => givePowerups(gameID), powerupTime * 1000)
-
-            //initialize the game state
-            for(let b = 1; b <= game.boxes; b++){
-                game.state[b] = {color: null, powerup: null, disabled: false};
-            }
-
             // If there is no gameID and the user is not player 1, return
             if (!gameID || player !== 'Player 1') {
                 return;
             };
+            // Set the game's state to an empty object
+            game.state = {};
+            // Set the interval at which powerups will be given in the game
+            setInterval(() => givePowerups(gameID), powerupTime * 1000)
+            // Let b be one. If b is less than or equal to the amount of boxes in the game, increment b by one, and...
+            for (let b = 1; b <= game.boxes; b++) {
+                // Set the game's state at box b to have a color of null, a powerup of null, and disabled to false
+                game.state[b] = {color: null, powerup: null, disabled: false};
+            };
             // If there is more than one client, start the game
             if (game.clients.length > 1) update(gameID);
-            const payload = {
-                'method': 'start',
-                'game': game
-            };
         };
         // If the method is play... 
         if (res.method === 'play') {
@@ -459,50 +451,52 @@ wss.on('request', (request) => {
             const clientID = res.clientID;
             const boxID = res.boxID;
             const color = res.color;
-
+            // Set the game, player, and box
             let game = games[gameID];
             let player = game.clients.find(c => c.clientID === clientID);
             let box = game.state[boxID];
             // Assign the state of the game 
             let state = game.state;
-
-            //if the box has a powerup, change the gamestate through the powerup's click handler
+            // If the box has a powerup... 
             if(box.powerup){
+                // Change the box through the powerup's click handler
                 box.powerup.onClick(state);
+            // Else...
             } else {
+                // Set the box's color to the player's color
                 box.color = color;
             }
-
-            //if the player  has a selected powerup, give the box a new instance of that powerup, and clear the player's selected powerup.
+            // If the player has a selected powerup... 
             if(player.selectedPowerup !== null){
-                
+                // Set the powerup index to the player's power up they selected
                 let powerupIndex = player.powerups[player.selectedPowerup];
+                // Set the powerup class to the powerup map at the powerup index
                 let powerupClass = powerupMap[powerupIndex];
-
-                //give the box the powerup
+                // Set the box's powerup property to a new powerup instance
                 box.powerup = new powerupClass(boxID, player, game.boxes);
                 box.powerup.onUse(state);
-
+                // Remove the used power up and set their selected powerup to null
                 player.powerups[player.selectedPowerup] = null;
                 player.selectedPowerup = null;
-            }
-
-            //update game state
+            };
+            // Update the game's state
             game.state = state;
         };
-
+        // If the method is requestPowerup...
         if(res.method === 'requestPowerup'){
+            // Set the game's ID, the client's ID, and the powerup's index
             const gameID = res.gameID;
             const clientID = res.clientID;
             const powerupIndex = res.powerupIndex;
-
+            // Set the game and the player
             let game = games[gameID];
             let player = game.clients.find(c => c.clientID === clientID);
-
+            // If the player has a power up in that spot...
             if(player.powerups[powerupIndex] !== null){
+                // Set the player's selected powerup to the powerup index
                 player.selectedPowerup = powerupIndex;
-            }
-        }
+            };
+        };
         // If the method is restart...
         if (res.method === 'restart') {
             // Set the game's ID and set the game using the ID
@@ -602,23 +596,25 @@ let update = (gameID) => {
             };
         };
     });
-
-    //remove any powerups that are to be removed
+    // For boxes of the game's state...
     for (const b of Object.keys(gameState)) {
+        // Set the box to the game's state at box b
         const box = game.state[b];
+        // If the box has a powerup and the powerup is to be removed... 
         if(box.powerup && box.powerup.toBeRemoved){
+            // Set the box's powerup to null
             box.powerup = null;
-        }
+        };
     };
-
-    //cleans any extra data out of the state so just the colors and disabled status are sent to the clients
+    // Clean any extra data out of the state so just the colors and disabled status are sent to the clients
+    // Necessary information only
     const packedState = Object.fromEntries(
         Object.entries(game.state).map(([key, value]) => [key, {color: value.color, disabled: value.disabled}])
     );
-
-    let packedGame = JSON.parse(JSON.stringify(game)); //js really needs to add a feature to explicitely tell it when to pass by reference and by value cuz this is just weird.
+    // Create a packed game by parsing the stringified game
+    let packedGame = JSON.parse(JSON.stringify(game)); // JS really needs to add a feature to explicitely tell it when to pass by reference and by value cuz this is just weird
+    // Set the packed game's state to the packed state
     packedGame.state = packedState;
-
     // Create the update payload
     const payload = {
         'method': 'update',
@@ -635,7 +631,6 @@ let update = (gameID) => {
     // 20 frames per second
     setTimeout(() => update(gameID), 50);
 };
-
 // Create a function to check if a client is in a game taking clientID and method as arguments
 let comb = (clientID, method) => {
     // Set combed to false
@@ -662,19 +657,21 @@ let comb = (clientID, method) => {
     // Return combed
     return combed;
 };
-
-function givePowerups(gameID){
+// Create a function to give powerups to a game, taking the gameID as an argument
+let givePowerups = (gameID) => {
+    // Set the game by the game's ID
     const game = games[gameID];
     const powerupNames = game.powerupNames;
-    //give all the little kiddies some delicious powerups
-    for(const c of game.clients){
+    // Give all the webfiends some delicious powerups
+    // For each client in the game's clients...
+    for (const c of game.clients) {
+        // Let i be 0. If i is less than the client's powerups's length, increment i by one, and...
         for(let i = 0; i < c.powerups.length; i++){
+            // Set the powerup index to a random number between 0 and the powerup names length all rounded down
             const powerupIndex = Math.floor(Math.random() * powerupMap.length);
-
-            // if there's already a powerup in that slot, let em keep it
-            if(c.powerups[i] !== null){
-                continue;
-            };
+            // If there's already a powerup in that slot, continue
+            if (c.powerups[i] !== null) continue;
+            // Update the client's powerups at index i to the powerup index
             c.powerups[i] = powerupIndex;
         };
     };
