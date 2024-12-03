@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Lesson 6 Application Project</title>
+
+    <script type="text/javascript">
+        function display_image(selectedImage) {
+
+            var selectionName = selectedImage.options[selectedImage.selectedIndex].text;
+            var selection = selectedImage.options[selectedImage.selectedIndex].value;
+        }
+        // i am still have trouble understanding this project
+    </script>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <p>
+        Select an image:
+    </p>
+    <select onchange="display_image(selectionName)" name="images">
+        <option value="" />one</option>
+        <option value="" />two</option>
+
+    </select>
+
+
+</body>
+
+</html>
