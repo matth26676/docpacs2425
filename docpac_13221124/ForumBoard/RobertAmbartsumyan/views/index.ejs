@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            background-size: cover;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: rgba(95, 10, 112, 0.137);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(159, 2, 250, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .container h1 {
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 24px;
+        }
+        .container a {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            width: 100%;
+            text-decoration: none;
+            color: #fff;
+            background-color: #6200ea;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .container a:hover {
+            background-color: #3700b3;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Choose Forum Page</h1>
+        <a href="/chat?name=<%= name %>&b=2">Chat Forum</a>
+        <a href="/help?name=<%= name %>&b=2">Help Forum</a>
+        <a href="/profile">Your Profile</a>
+    </div>
+</body>
+
+</html>
