@@ -56,6 +56,14 @@ io.on('connection', (socket) => {
             }
         }
     })
+
+    socket.on('disconnect', () => {
+        players.forEach((player, i) => {
+            if (player.id == socket.id) {
+                players.splice(i, 1)
+            }
+        })
+    })
 })
 
 app.get('/', (req, res) => {
