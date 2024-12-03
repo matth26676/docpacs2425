@@ -28,7 +28,7 @@ function isAuthenticated(req, res, next) {
 };
 
 
-const db = new sqlite3.Database('data/database.db', (err) => {
+const db = new sqlite3.Database('data/Mydatabase.db', (err) => {
     if (err) {
         console.log(err);
     } else {

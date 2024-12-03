@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogaungaga</title>
+    <script>
+        // create a new websocket object
+        var ws = new WebSocket('ws://localhost:443');
+        ws.onmessage = (message) => {
+            message = JSON.parse(message.data);
+            if (message.name) {
+                console.log('Name: ' + message.name);
+            }
+            if (message.text) {
+                console.log(message.user + ": " + message.text);
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <form action="">
+        <input type="text" name="text">
+        <input type="submit" value="Submit" onclick=" ws.send(text) ">
+    </form>
+    
+</body>
+</html>

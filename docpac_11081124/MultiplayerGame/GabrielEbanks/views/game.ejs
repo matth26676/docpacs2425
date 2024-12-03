@@ -5,15 +5,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas Mover</title>
+    <title>Click faster than other person game</title>
+
+    <script>
+        const username = "<%= name %>"
+    </script>
 
     <style>
         #startGame {
             width: 90px;
-            height: 30px;
+            height: 60px;
             border: black;
             margin: 150px auto;
             background-color: rgb(162, 0, 255);
+            border-style: groove;
 
 
         }
@@ -31,27 +36,12 @@
             border-color: rgb(61, 43, 226);
             width: 300px;
             height: 300px;
-            position: absolute;
-            top: 0;
-            left: 0;
 
 
         }
 
 
-        #button2Div {
-            border-style: solid;
-            border-color: rgb(226, 110, 43);
-            width: 300px;
-            height: 300px;
-            position: absolute;
-            top: 0;
-            right: 0;
-
-
-        }
-
-        #button1 {
+        #button {
             border-style: solid;
             border-color: rgb(61, 43, 226);
             width: 300px;
@@ -59,14 +49,19 @@
 
 
 
+
         }
 
-        #button2 {
-            border-style: solid;
-            border-color: rgb(226, 110, 43);
-            width: 300px;
-            height: 300px;
+        #scoreAndTime {
+            width: 100px;
+            margin: auto;
+        }
 
+
+        #TestsDiv {
+            align-items: center;
+            justify-content: center;
+            display: flex;
         }
     </style>
 </head>
@@ -75,39 +70,98 @@
 <body>
 
 
-    <div id="bigDiv">
-        <div id='button1Div'>
-            <button onclick="scoreUp1()" id="button1">p1</button>
-        </div>
-
-
-        <div id='button2Div'>
-            <button onclick="scoreUp2()" id="button2">p2</button>
+    <div id='TestsDiv' style="display:none" class="bigDiv">
+        <div id='buttonDiv'>
+            <button onclick="scoreDoer()" id="button">Click This!</button>
         </div>
     </div>
 
 
+    <div id=scoreAndTime>
+        <p id="scoreBox" style="text-align: left;">Score 0</p>
+        <p id="timerBox" style="text-align: left;">20</p>
+    </div>
+
+
+
+
     <div id='startGameDiv'>
-        <button onclick="startGame()" id="startGame"> Click here to start game </button>
+        <button onclick="TestsFunction()" id="startGame"> Click here to start game </button>
     </div>
 
 
 </body>
 
 <script>
-    function scoreUp1() {
-        console.log('p1 clicked')
+    const webSocket = new WebSocket('ws://localhost:443/');
+
+    const scoreBox = document.getElementById('scoreBox')
+    var score = 0
+    const timer = document.getElementById('timerBox');
+    let timeLeft = 20;
+    let timerID;
+    
+
+    webSocket.addEventListener("open", () => {
+        console.log("We are connected");
+        webSocket.send(JSON.stringify({
+            type: 'playerUsername',
+            username: username
+        }));
+    });
+
+    webSocket.addEventListener("message", (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.type == 'startCountdown') {
+            startCountdown(message.timeLeft);
+        }
+
+
+        else if (message.type == 'gameOver') {
+           alert(message.result)
+            resetGame();
+        }
+    });
+    
+    function TestsFunction() {
+            webSocket.send(JSON.stringify({ type: 'startGame' }));
+        }
+
+    function countDown() {
+        if (timeLeft <= 0) {
+            clearInterval(timerID);
+            webSocket.send(JSON.stringify({ type: 'endGame' }));
+        } else {
+            timeLeft--;
+            timerBox.innerHTML = 'Time Remaining '+timeLeft;
+        }
     }
 
-    function scoreUp2() {
-        console.log('p2 clicked')
+
+    function scoreDoer() {
+        if (timeLeft > 0) {
+            score++;
+            scoreBox.innerHTML = score;
+            webSocket.send(JSON.stringify({
+                type: 'scoreUpdate',
+                username: username,
+                score: score,
+            }));
+        }
     }
 
-    function startGame() {
-        console.log("start game clicked");
-        
-    }
+    function startCountdown(startTime) {
+            document.getElementById("TestsDiv").style.display = "flex";
+            document.getElementById("startGameDiv").style.display = "none";
+            timeLeft = startTime;
+            timerBox.innerHTML = timeLeft;
+            timerID = setInterval(countDown, 1000);
+        }
 
+    function resetGame() {
+        location.reload();
+    }
 </script>
 
 </html>
