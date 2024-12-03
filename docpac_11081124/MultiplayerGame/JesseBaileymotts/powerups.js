@@ -155,12 +155,22 @@ class InkMine extends Powerup {
         const boxID = this.boxID;
         // Set the coordinates of the box
         const coords = this.boxCoords;
+        // If the player that placed the powerup is the same as the player that clicked the box, return
+        if (this.player === gameState[boxID].player) return;
         // Coords for up, down, left, and right, respectively
         const directions = [
             {col: coords.col, row: coords.row-1}, // Up
+            {col: coords.col, row: coords.row-2}, // Up 2
             {col: coords.col, row: coords.row+1}, // Down
+            {col: coords.col, row: coords.row+2}, // Down 2
             {col: coords.col-1, row: coords.row}, // Right
-            {col: coords.col+1, row: coords.row}  // Left
+            {col: coords.col-2, row: coords.row}, // Right 2
+            {col: coords.col+1, row: coords.row},  // Left
+            {col: coords.col+2, row: coords.row},  // Left 2
+            {col: coords.col-1, row: coords.row-1}, // Up Right
+            {col: coords.col-1, row: coords.row+1}, // Down Right
+            {col: coords.col+1, row: coords.row-1}, // Up Left
+            {col: coords.col+1, row: coords.row+1}  // Down Left
         ];
         // Set the color of the box the powerup is used on
         gameState[boxID].color = color; // Center

@@ -254,16 +254,17 @@ app.get(`/user`, isAuthenticated, (req, res) => {
 
 // When the user gets /leaderboard...
 app.get('/leaderboard', (req, res) => {
-        // Orders users by their score in descending order
-        db.all('SELECT * FROM users ORDER BY score DESC', (err, rows) => {
-            if (err) {
-                console.error(err.message);
-            };
-            // Get only the top 10
-            rows = rows.slice(0, 10);
-            // Render the leaderboard page and assign the rows to users
-            res.render('leaderboard', {users: rows});
-        });
+        // // Orders users by their score in descending order
+        // db.all('SELECT * FROM users ORDER BY score DESC', (err, rows) => {
+        //     if (err) {
+        //         console.error(err.message);
+        //     };
+        //     // Get only the top 10
+        //     rows = rows.slice(0, 10);
+        //     // Render the leaderboard page and assign the rows to users
+        //     res.render('leaderboard', {users: rows});
+        // });
+    res.render('index');
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,7 +294,6 @@ const wss = new ws({
 const clients = {};
 const games = {};
 
-// Set the powerup map to the powerups from powerups.js
 const powerupMap = [powerups.InkRoller, powerups.InkWall, powerups.InkMine];
 // Set the time to get each powerup to 5 seconds
 const powerupTime = 5;
