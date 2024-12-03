@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Lesson 6 Application Project</title>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <p>
+        Select an image:
+    </p>
+    <select name="images" onchange="display_image(this)">
+        <option value="">Select an image</option>
+        <option value="img1.jpg">Random house</option>
+        <option value="img2.jpg">Me</option>
+        <option value="img3.jpg">Rando</option>
+        <option value="img4.jpg">Peach</option>
+        <option value="img5.jpg">WWII</option>
+        <option value="img6.jpg">EMOJI</option>
+    </select>
+
+
+</body>
+
+</html>
+<script type="text/javascript">
+    function display_image(selectedImage) {
+        var selectionName = selectedImage.options[selectedImage.selectedIndex].text;
+        var selection = selectedImage.options[selectedImage.selectedIndex].value;
+
+        if (selection) {
+            var newWindow = window.open("", "ImageWindow", "width=400,height=400");
+            newWindow.document.write("<html><head><title>Image Preview</title></head>");
+            newWindow.document.write("<body style='text-align:center; background-color:#f0f0f0; color:#000;'>");
+            newWindow.document.write("<h3>" + selectionName + "</h3>");
+            newWindow.document.write("<img src='" + selection + "' width='150' height='150' />");
+            newWindow.document.write("<form><input type='button' value='Close' onclick='window.close()'></form>");
+            newWindow.document.write("</body></html>");
+            newWindow.document.close();
+            newWindow.focus();
+        }
+    }
+</script>

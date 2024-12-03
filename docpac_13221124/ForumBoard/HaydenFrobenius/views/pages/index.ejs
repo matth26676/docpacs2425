@@ -1,0 +1,28 @@
+<%- include('../partials/header.ejs', {pageTitle: 'Home'}); %>
+
+<script>
+    function goToThreadPage(id) {
+        window.location.href = `/thread/${id}/1`;
+    }
+</script>
+
+<!-- embrace tradition -->
+<center><h1>Popular Threads</h1></center>
+
+<% if(locals.threads.length === 0) { %>
+    <center><p>no threads ):</p></center>
+<% } %>
+
+<% locals.threads.forEach((thread, index) => { %>
+    <%- include('../partials/thread-listing.ejs', {thread: thread}) %>
+<% }); %>
+
+<br><br>
+
+<% if(locals.loggedIn) { %>
+    <center>
+        <a href="/create-thread"><button>Create Thread</button></a>
+    </center>
+<% } %>
+
+<%- include('../partials/footer.ejs') %>
