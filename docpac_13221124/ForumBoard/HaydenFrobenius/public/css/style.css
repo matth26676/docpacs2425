@@ -1,0 +1,178 @@
+:root {
+    --header-color: #ff4500;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #3a3a3a;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+button:active {
+    position: relative;
+    top: 1px;
+}
+
+.header {
+    height: 50px;
+    background-color: var(--header-color);
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content:end;
+}
+
+.header button {
+
+    margin: 10px;
+}
+
+#logo {
+    width: 200px;
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#logo:hover {
+    cursor: pointer;
+}
+
+#logo-link {
+    text-decoration: none;
+}
+
+#login-button {}
+
+#greeting {}
+
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.content {
+    width: 60%;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.thread {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0px;
+}
+
+.thread:hover {
+    cursor: pointer;
+    background-color: #f5f5f5;
+}
+
+/* I did not know you could do this. Very nifty. */
+.thread:first-of-type {
+    border-top: 1px solid #ddd;
+}
+
+.thread-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.thread-description {
+    margin-left: 10px;
+}
+
+.thread-content {
+    margin: 10px 0 0;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+}
+
+.post-author {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.post-content {
+    margin: 10px 0px;
+}
+
+.post-timestamp {
+    font-size: 12px;
+    color: #888;
+}
+
+#post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#post-textarea {
+    height: 100px;
+    margin: 10px 0;
+    resize: none;
+}
+
+#post-button {
+    align-self: flex-end;
+}
+
+.tabs {
+    display: flex;
+    justify-content: start;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    width: 100px;
+    height: 40px;
+    font-size: 1rem;
+    /*margin: 0px 5px;*/
+    border-radius: 0px;
+    cursor: pointer;
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-button.active {
+    background-color: rgb(71, 71, 71);
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}

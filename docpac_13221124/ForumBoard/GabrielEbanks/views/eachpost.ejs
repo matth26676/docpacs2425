@@ -1,16 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>makethisthepostname</title>
+    <title>Post</title>
+    <style>
+        #eachPost {
+            border-style: solid;
+            border-color: rgb(168, 43, 226);
+            width: 300px;
+            overflow-y: auto;
+            overflow-x: scroll;
+            padding: 30px;
+        }
+
+        #individualPost {
+            border-style: solid;
+            border-color: rgb(230, 170, 238);
+            width: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
 </head>
+
 <body>
-    <div>
-        <% post.forEach((con) => { %>
-          
-            <p> <%= con.time %> <%= con.poster %> <%= con.content %></p>
+
+    <div id="eachPost">
+        <% post.forEach((con)=> { %>
+
+            <div id="individualPost">
+                <a href="/eachposter/<%=con.poster%>"><%= con.fb_name %></a>
+                <p> <%= con.content %></p>
+                <p><%= con.time %></p>
+            </div>
         <% }) %>
     </div>
+
+    <div>
+        
+        <form name="convoMessage" onsubmit="return validateForm()" method="post">
+        <label for="fname">Send Message: </label>
+        <input type="text" name="message">
+        <input type="hidden" name="threadId" value="<%- convo %>">
+        <input type="submit" value="Submit">
+        <input type="hidden" id="dateTime" name="dateTime" value="">
+        <input type="hidden" id="poster" name="poster" value="">
+        </form>
+    </div>
+
+
+    <script>
+    
+        const poster = '<%- user %>'
+        function validateForm() {
+            let x = document.forms["convoMessage"]["message"].value;
+            if (x.trim() === "") {
+                alert("Message cannot be empty.");
+                return false;
+            }
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const currentDate = `${year}-${month}-${day}`;
+            const militaryTime = `${hours}:${minutes}`;
+            const dateTime = `${currentDate} ${militaryTime}`;
+            document.getElementById('dateTime').value = dateTime;
+            console.log(dateTime);
+            document.getElementById('poster').value = poster;
+            return true;
+        }
+
+
+
+    </script>
 </body>
+
 </html>
