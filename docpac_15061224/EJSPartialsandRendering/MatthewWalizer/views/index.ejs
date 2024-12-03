@@ -1,0 +1,13 @@
+<%- include('../partials/head') %>
+<body>
+    <div id="test">test</div>
+    <button id="printbutton" onclick="window.location.href='/print'">Print Page</button>
+
+    <script>
+        if (`<%-viewport%>` == 'online') {
+            document.getElementById('printbutton').style.visibility = 'visible';
+            
+        }
+    </script>
+</body>
+<%- include('../partials/foot') %>
