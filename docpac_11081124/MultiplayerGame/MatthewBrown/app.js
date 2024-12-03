@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // Make sure to change this IP address to your local machine's IP address
-const localMachineIP = '192.???.???.?';
+const localMachineIP = '172.16.3.187';
 
 // use your own local machine IP address starting with '172' if you want other devices to connect to your server
 // const localMachineIP = '172.??.?.???';
