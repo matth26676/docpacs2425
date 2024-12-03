@@ -1,0 +1,4 @@
+<div class="thread" onclick="window.location = '/thread/<%= thread.uid %>/1';">
+    <div class="thread-title"><%= thread.title %></div>
+    <div class="thread-description"><%= (thread.description !=='' ) ? thread.description : 'No Description.' %></div>
+</div>
