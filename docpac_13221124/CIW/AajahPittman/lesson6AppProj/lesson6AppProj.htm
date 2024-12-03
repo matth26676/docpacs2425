@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=utf-8">
+<title>Lesson 6 Application Project</title>
+
+<script type="text/javascript">
+    var images = null
+
+    function display_image(selectedImage) {
+  
+        var selectionName = selectedImage.options[selectedImage.selectedIndex].text;
+        var selection = selectedImage.options[selectedImage.selectedIndex].value;
+        selectionName.document.open()
+        selectionName.document.write("<img src='selctedImage'>")
+        }
+</script>
+</head>
+<body>
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+<p>
+Select an image:
+</p>
+<select id="images" name="images">
+	<option value="lesson6AppProj\hellokitty.png" >Hello Kitty!</option>
+    <option value="lesson6AppProj\hellokitty.png" >Hello Kitty!!</option>
+</select>
+
+<script>
+    if (images){
+        display_image(images)
+    }
+</script>
+
+</body>
+</html>
