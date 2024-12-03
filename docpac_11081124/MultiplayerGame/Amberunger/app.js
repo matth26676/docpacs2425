@@ -105,8 +105,8 @@ const checkWinner = (board) => {
 
     return null;
 };
-const localMachineIP = '172.16.3.122';
+const localMachineIP = '172.16.3.187';
 const PORT = process.env.PORT || 4040;
-server.listen(4040, localMachineIP, () => {
-    console.log(`Server is running on http://${localMachineIP}:4040`);
+server.listen(3000, localMachineIP, () => {
+    console.log(`Server is running on http://${localMachineIP}:3000`);
 });
