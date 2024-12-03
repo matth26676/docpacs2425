@@ -1,66 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smithit</title>
+    <title>Forum Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f7f8;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: #ff4500;
-            color: white;
-            padding: 10px 20px;
+            background-color: black;
+            background-size: cover;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
             display: flex;
+            justify-content: center;
             align-items: center;
-        }
-        .header h1 {
+            height: 100vh;
             margin: 0;
-            font-size: 24px;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(95, 10, 112, 0.137);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(159, 2, 250, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
         }
-        .post {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
+        .container h1 {
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 24px;
         }
-        .post:last-child {
-            border-bottom: none;
+        .container a {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            width: 100%;
+            text-decoration: none;
+            color: #fff;
+            background-color: #6200ea;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
-        .post-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
+        .container a:hover {
+            background-color: #3700b3;
         }
-        .post-content {
-            font-size: 14px;
-            color: #666;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="header">
-        <h1>Smithit</h1>
-    </div>
     <div class="container">
-        <div class="post">
-            <div class="post-title">Welcome to Smithit</div>
-            <div class="post-content">This is a sample post content.</div>
-        </div>
-        <div class="post">
-            <div class="post-title">Another Post</div>
-            <div class="post-content">This is another sample post content.</div>
-        </div>
+        <h1>Choose Forum Page</h1>
+        <a href="/chat?name=<%= name %>&b=2">Chat Forum</a>
+        <a href="/help?name=<%= name %>&b=2">Help Forum</a>
+        <a href="/profile">Your Profile</a>
     </div>
 </body>
-</html></div>
+
+</html>
