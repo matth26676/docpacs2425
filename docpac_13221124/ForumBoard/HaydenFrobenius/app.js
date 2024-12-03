@@ -12,9 +12,9 @@ const formValidation = require('./middleware/formValidation');
 
 const app = express();
 const PORT = 3000;
-const THIS_URL = 'http://localhost:' + PORT;
+const THIS_URL = 'http://172.16.3.187:' + PORT;
 //const FB_URL = 'http://172.16.3.100:420';
-const FB_URL = 'http://localhost:420';
+const FB_URL = 'https://formbar.yorktechapps.com';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
 
