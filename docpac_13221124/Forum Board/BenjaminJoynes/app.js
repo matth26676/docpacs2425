@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3')
 const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 const session = require('express-session')
-
+ 
 const db = new sqlite3.Database('data/data.db', (err) => {
     if (err) {
         console.log(err);
@@ -13,27 +13,30 @@ const db = new sqlite3.Database('data/data.db', (err) => {
         console.log('Connected to the data/Database.db!')
     }
 });
-
+ 
 const FBJS_URL = 'http://172.16.3.100:420'
-const THIS_URL = 'http://localhost:3000/login'
-
+var THIS_URL = ''
+ 
 function isAuthenticated(req, res, next) {
     if (req.query.name) next()
-    else res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+    else {
+    THIS_URL = 'http://'+req.headers.host+req.url+'login'
+    res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+    }
 }
-
+ 
 app.use(express.urlencoded({ extended: true }))
-
+ 
 app.use(express.json());
-
+ 
 app.set('view engine', "ejs")
-
+ 
 app.use(session({
     secret: 'big raga the opp stoppa',
     resave: false,
     saveUninitialized: false
 }))
-
+ 
 app.get('/', isAuthenticated, (req, res) => {
     db.all('SELECT * FROM conversation', (err, row) => {
         if (err) {
@@ -44,7 +47,7 @@ app.get('/', isAuthenticated, (req, res) => {
         }
     });
 });
-
+ 
 app.post('/', (req, res) => {
     db.run('INSERT INTO conversation (title) VALUES(?)', req.body.newConversationName, (err) => {
         if (err) {
@@ -55,7 +58,7 @@ app.post('/', (req, res) => {
         }
     });
 });
-
+ 
 app.get('/chat', isAuthenticated, (req, res) => {
     db.get('SELECT * FROM conversation WHERE uid=?', req.query.conversationNumber, (err, convoNumber) => {
         if (err) {
@@ -75,7 +78,7 @@ app.get('/chat', isAuthenticated, (req, res) => {
         }
     });
 });
-
+ 
 app.post('/chat', (req, res) => {
     db.get('SELECT * FROM users WHERE fb_name=?', req.body.name, (err, uid) => {
         db.run('INSERT INTO posts(poster, convo_id, content, time, date) VALUES(?, ?, ?, ?, ?);', [uid.uid, req.body.conversationNumber, req.body.message, req.body.time, req.body.date], (err) => {
@@ -87,7 +90,7 @@ app.post('/chat', (req, res) => {
         })
     })
 })
-
+ 
 app.get('/userpage', (req, res) => {
     if (req.query.searchName) {
         db.get('SELECT * FROM users WHERE fb_name=?', req.query.searchName, (err, user) => {
@@ -100,7 +103,7 @@ app.get('/userpage', (req, res) => {
                         console.log(err);
                     } else {
                         console.log(post);
-                        
+                       
                         res.render('userpage', { user: user, posts: JSON.stringify(post) });
                     }
                 });
@@ -110,7 +113,7 @@ app.get('/userpage', (req, res) => {
         res.redirect('/');
     }
 });
-
+ 
 app.get('/login', (req, res) => {
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
@@ -118,7 +121,7 @@ app.get('/login', (req, res) => {
         console.log(tokenData)
         req.session.user = tokenData.username;
         req.session.userid = tokenData.id;
-
+ 
         db.get('SELECT * FROM users WHERE fb_name=?', req.session.user, (err, row) => {
             if (err) {
                 console.log(err)
@@ -137,10 +140,10 @@ app.get('/login', (req, res) => {
         res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
     };
 });
-
+ 
 // const { WebSocketServer } = require('ws')
 // const wss = new WebSocketServer({ port: 443 })
-
+ 
 // wss.on('connection', ws => {
 //     console.log("Client connected");
 //     ws.send(JSON.stringify({ name: "Server", text: "Hello and welcome to the server!" }))
@@ -154,10 +157,10 @@ app.get('/login', (req, res) => {
 //             broadcast(wss, {list: userList(wss)})
 //         }
 //         if (message.text) {
-
+ 
 //             broadcast(wss, message)
-
-
+ 
+ 
 //         }
 //         if (message.name) {
 //             ws.name = message.name
@@ -166,11 +169,11 @@ app.get('/login', (req, res) => {
 //     ws.on('close', ws => {
 //         broadcast(wss, {name: "Server", text: "A user has disconnected!"})
 //         broadcast(wss, {list: userList(wss)})
-
+ 
 //     })
 // });
-
-
+ 
+ 
 app.listen(3000, () => {
     console.log(`Listening on ${3000}`)
 });
