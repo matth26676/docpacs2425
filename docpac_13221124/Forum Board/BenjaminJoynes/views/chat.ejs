@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+
+<style>
+ #mainpage {
+    position: absolute;
+    top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: aqua;
+    }
+
+    #subpage {
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      height: 92%;
+      width: 96%;
+      border: 5px solid aliceblue;
+      border-radius: 10%;
+      background-color: cadetblue;
+    }
+
+    #message {
+      width: 60%;
+      height: 100%;
+    }
+
+    #messagebutton {
+      width: 50%;
+      height: 30%;
+    }
+
+    #messagebutton:hover {
+      cursor: pointer;
+    }
+
+    #sendmessage {
+      position: absolute;
+      top: 10%;
+      left: 36%;
+      width: 20%;
+      height: 10%;
+      align-content: center;
+      text-align: center;
+    }
+
+    #messagelog {
+      position: absolute;
+      top: 10%;
+      left: 58%;
+      width: 40%;
+      height: 80%;
+      border: 1px solid black;
+      overflow-y: scroll;
+      overflow-x: scroll;
+      background-color: aqua;
+    }
+
+    #userlist {
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      width: 30%;
+      height: 80%;
+      background-color: aquamarine;
+      border: 1px solid black;
+      overflow-y: scroll;
+    }
+
+    #conversationButton {
+      position: absolute;
+      top: 2%;
+      left: 5%;
+      width: 10%;
+      height: 5%;
+      background-color: darkgray;
+      border: 1px solid black;
+    }
+
+    #conversationButton:hover {
+      cursor: pointer;
+      background-color: gray;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="mainpage">
+    <div id="subpage">
+    <button id="conversationButton" onclick="location.href=`/?name=${new URLSearchParams(window.location.search).get('name')}`">Back to Conversation List</button>
+    <div id="sendmessage" onload="isName()" class="messageElements">
+      <label for="message">Enter Message:</label>
+      <input type="text" id="message" name="message" class="messageElements" required><br><br>
+      <button id="messagebutton" onclick="sendMessage()" class="messageElements">Send Message</button>
+    </div>
+    <div id="messagelog"></div>
+    <div id="userlist"></div>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      var inputMessage = document.getElementById('message').value;
+      if (inputMessage.trim() != '') {
+        let date = new Date().toString();
+        let time = Date.now();
+        document.getElementById('message').value = '';
+
+        fetch('/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: inputMessage,
+            time: time,
+            date: date,
+            name: new URLSearchParams(window.location.search).get('name'),
+            conversationNumber: new URLSearchParams(window.location.search).get('conversationNumber')
+          })
+        })
+        location.reload();
+      } else {
+        alert('Please enter a message.');
+      }
+    }
+    function isName() {
+      let urlParams = new URLSearchParams(window.location.search);
+      let name = urlParams.get('name');
+
+      if (name) {
+        document.getElementById('sendmessage').style.visibility = 'visible';
+      } else {
+        document.getElementById('sendmessage').style.visibility = 'hidden';
+      }
+    }
+    // Parse the posts data from the server-side template
+    posts = JSON.parse(`<%- posts %>`)
+
+    // Loop through each message in the posts array
+    for (message in posts) {
+      console.log(posts[message]);
+      let user = posts[message].fb_name;
+
+      // Create a new div element for the message box
+      let newMessageBox = document.createElement('div');
+
+      // Create a new div element for the message content
+      let newMessage = document.createElement('div');
+
+      // Create a new div element for the date box
+      let newDateBox = document.createElement('div');
+
+      // Create a new button element for the user page link
+      let newUserPage = document.createElement('button');
+
+      // Style the date box
+      newDateBox.style.position = 'absolute';
+      newDateBox.style.left = '0%';
+      newDateBox.style.bottom = '0%';
+      newDateBox.style.width = '100%';
+      newDateBox.style.height = '30%';
+      newDateBox.style.backgroundColor = 'darkgray';
+      newDateBox.style.fontSize = '14px';
+      newDateBox.style.textAlign = 'center';
+      newDateBox.textContent = posts[message].date;
+
+      // Style the whole message box
+      newMessageBox.style.backgroundColor = 'white';
+      newMessageBox.style.position = 'relative';
+      newMessageBox.style.height = '60px';
+
+      // Style the message box
+      newMessage.style.backgroundColor = 'lightgray';
+      newMessage.style.position = 'absolute';
+      newMessage.style.left = '20%';
+      newMessage.style.width = '80%';
+      newMessage.style.height = '100%';
+      newMessage.style.contentalign = 'center';
+      newMessage.textContent = posts[message].fb_name + ' says: ' + posts[message].content;
+
+      // Style the user page button
+      newUserPage.style.position = 'absolute';
+      newUserPage.style.left = '0%';
+      newUserPage.style.width = '20%';
+      newUserPage.style.height = '100%';
+      newUserPage.textContent = posts[message].fb_name + "'s User Page";
+
+      // Set the onclick event for the user page button
+      newUserPage.onclick = function() {
+        window.location.href = `/userpage?searchName=${user}&name=${new URLSearchParams(window.location.search).get('name')}`;
+      };
+
+      // Append the date box to the message content
+      newMessage.appendChild(newDateBox);
+
+      // Append the message content and user page button to the message box
+      newMessageBox.appendChild(newMessage);
+      newMessageBox.appendChild(newUserPage);
+
+      // Append the message box to the message log
+      document.getElementById('messagelog').appendChild(newMessageBox);
+      console.log('New message box added');
+    }
+    </script>
+</body>
+
+
+</html>

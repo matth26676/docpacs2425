@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lab 6-2</title>
+
+    <script type="text/javascript">
+
+        var myWindow;
+
+        function smallWindow() {
+            // Open a new window with a specific size and name
+            myWindow = window.open('', 'myNewWindow', 'width=100,height=100');
+
+            // Add content to the new window using document.write()
+            myWindow.document.write('<h3>New Window Content</h3>');
+            myWindow.document.write('<form>');
+            myWindow.document.write('<input type="button" value="Close" onClick="closeWindow();" />');
+            myWindow.document.write('</form>');
+        }
+
+        function closeWindow() {
+            // Close the window when the "Close" button is clicked
+            myWindow.close();
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+
+    <form name="myForm">
+        <input type="button" value="Open New Window" onClick="smallWindow();" />
+    </form>
+
+</body>
+
+</html>
