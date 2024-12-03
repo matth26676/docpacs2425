@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Hello, <%= user %></h1>
-    <% if (conversations) { %>
+    <% if (conversations.length > 0) { %>
         <h3>Available Conversations</h3>
         <ul>
             <% conversations.forEach((conversation) => { %>
