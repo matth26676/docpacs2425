@@ -1,0 +1,1 @@
+This is a painting game made by me, Matthew.C.Walizer, and Ben. You must have at least 2 connections for the game to start and has a max of 8 players
