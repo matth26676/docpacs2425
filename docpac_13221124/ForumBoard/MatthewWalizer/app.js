@@ -15,11 +15,14 @@ const db = new sqlite3.Database('data/data.db', (err) => {
 });
 
 const FBJS_URL = 'http://172.16.3.100:420'
-const THIS_URL = 'http://localhost:3000/login'
+var THIS_URL = ''
 
 function isAuthenticated(req, res, next) {
     if (req.query.name) next()
-    else res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+    else {
+    THIS_URL = 'http://'+req.headers.host+req.url+'login'
+    res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+    }
 }
 
 app.use(express.urlencoded({ extended: true }))
