@@ -1,21 +1,37 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = 3000;
 
 app.set('view engine', 'ejs');
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.get('/', (req, res) => {
-    res.send("Hello World");
+    res.render('pages/index', {viewport: "online"});
 });
 
 app.get('/print', (req, res) => {
-    res.send("Printed");
+    app.render('pages/index', {viewport: "offline"}, (err, html) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('An error occurred');
+        }
+
+        // Save the rendered HTML to a file
+        fs.writeFile('index.html', html, (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('An error occurred');
+            }
+
+            return res.status(200).send('File Written');
+
+        });
+
+    });
 });
 
 // Start the server
