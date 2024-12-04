@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum: <%- forumName %></title>
+</head>
+<link rel="stylesheet" href="/style.css">
+<body>
+    <div id="contentBox">
+        <div id="textLog">
+            <% messages.forEach(message => { %>
+                <div>
+                    <strong><a href="/user/<%= message.user %>"><%= message.user %></a></strong> [<%= new Date(message.date).toLocaleString() %>]: <%= message.content %>
+                </div>
+            <% }) %>
+        </div>
+        <div id="inputBar">
+            <form action="/chat/<%= forumName %>" method="post">
+                <input type="text" name="message" placeholder="Message">
+                <input type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

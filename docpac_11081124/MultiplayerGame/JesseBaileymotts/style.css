@@ -18,8 +18,25 @@
     padding: 1rem;
     place-items: center;
     align-items: center;
-    background: linear-gradient(225deg, #da0000, #000bda, #00961c, #c7de00);
-    /* , #b700b1, #eaa400); */
+    background: linear-gradient(225deg, #da0000, #000bda, #00961c, #c7de00, #da0000, #000bda, #00961c);
+    background-size: 400% 100%;
+    animation: gradientRoll 5s linear infinite;
+}
+
+#gameInfo {
+    display: none;
+    grid-gap: 1rem;
+    width: 20rem;
+}
+
+.powerup-text {
+    color: rgb(192, 192, 192);
+    font-weight: normal;
+}
+
+.powerup-text.selected {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
 }
 
 #players {
@@ -53,7 +70,6 @@
 #clock {
     border: #000000 solid 0.0625rem;
     padding: .5rem;
-    display: none;
     width: 5rem;
     color: #181a1b;
     background-color: #FFFFFF;
@@ -64,9 +80,55 @@
     margin-bottom: 1rem;
 }
 
+#loginSubmit {
+    width: 15rem;
+}
+
+#loginMenu {
+    /* display: grid;
+    grid-template-columns: 1fr 3fr; */
+    grid-gap: 1rem;
+    width: 40rem;
+    height: 20rem;
+    border: 0.0625rem solid #000000;
+    padding: 1rem;
+    place-items: center;
+    align-items: center;
+    background: linear-gradient(225deg, #da0000, #000bda, #00961c, #c7de00, #da0000, #000bda, #00961c);
+    background-size: 400% 100%;
+    animation: gradientRollAlt 5s linear infinite;
+}
+
+#loginForm {
+    background: none;
+}
+
+#registerSubmit {
+    width: 15rem;
+}
+
+#registerMenu {
+    /* display: grid;
+    grid-template-columns: 1fr 3fr; */
+    grid-gap: 1rem;
+    width: 40rem;
+    height: 20rem;
+    border: 0.0625rem solid #000000;
+    padding: 1rem;
+    place-items: center;
+    align-items: center;
+    background: linear-gradient(135deg, #da0000, #000bda, #00961c, #c7de00, #da0000, #000bda, #00961c);
+    background-size: 400% 100%;
+    animation: gradientRollAlt 5s linear infinite;
+}
+
+#registerForm {
+    background: none;
+}
+
 /* Style for Classes */
 .player {
-    width: 5rem;
+    width: 5.5rem;
     color: #FFFFFF;
 }
 
@@ -96,4 +158,35 @@
 .menuItems:hover {
     transform: scale(1.05);
     box-shadow: 0 .25rem .25rem #0000008c;
+}
+
+.loginInput {
+    width: 15rem;
+    height: 1rem;
+    margin-bottom: 1rem;
+}
+
+.registerInput {
+    width: 15rem;
+    height: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Style for Keyframes */
+@keyframes gradientRoll {
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 5% 50%;
+    }
+}
+
+@keyframes gradientRollAlt {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
 }
