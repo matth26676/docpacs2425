@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.1",
-    "http": "^0.0.1-security",
-    "uuidv4": "^6.2.13",
-    "ws": "^8.18.0"
-  }
-}
