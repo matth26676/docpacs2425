@@ -10,17 +10,17 @@
 function strFun() {
   
 	 //Add the alert() shown in Figure 7-1
-	
+	alert("THE FOLLOWING PAGE LINKS TO: \n \n CIW \n UCERTIFY LOGIN \n ICT");
 	// Change case using toUpperCase method
-	  
+	  var newString = new String('the following page links to: \n \n ciw \n ucertify login \n ict')
+	  alert(newString.toUpperCase());
 	}
-
 //-->
 </script>
 
 </head>
 
-<body>
+<body onload="strFun()">
 <h3>CIW JavaScript Specialist</h3>
 <hr />
 
@@ -29,6 +29,7 @@ function strFun() {
 <a href="https://www.ciwcertified.com">CIW</a><br />
 <a href="http://ciw.ucertify.com">uCertify Login</a><br />
 <a href="http://www.ictcertified.com">ICT</a>
+
 
 </body>
 </html>
