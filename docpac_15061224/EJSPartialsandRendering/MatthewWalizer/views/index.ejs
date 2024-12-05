@@ -1,13 +1,18 @@
-<%- include('../partials/head') %>
+<%- include('partials/header') %>
 <body>
     <div id="test">test</div>
-    <button id="printbutton" onclick="window.location.href='/print'">Print Page</button>
 
     <script>
         if (`<%-viewport%>` == 'online') {
-            document.getElementById('printbutton').style.visibility = 'visible';
+            var printButton = document.createElement('button');
+            printButton.id = 'printbutton';
+            printButton.innerHTML = 'Print New Page';
+            printButton.onclick = function() {
+                window.location.href = '/print';
+            };
+            document.body.appendChild(printButton);
             
         }
     </script>
 </body>
-<%- include('../partials/foot') %>
+<%- include('partials/footer') %>
