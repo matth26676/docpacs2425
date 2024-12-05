@@ -89,7 +89,13 @@ socket.on('updateBoard', function (data) {
     board = data.newBoard;
 });
 
-socket.on('win', function (data) {
+socket.on('gameEnd', function (data) {
+
+    if(!data.winner){
+        endGame('Draw');
+        return;
+    }
+
     let winner = (data.winner === myTurn) ? 'You' : 'Opponent';
     let grammar = (data.winner === myTurn) ? '' : 's';
     endGame(`${winner} Win${grammar}`);

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lab 6-6</title>
+
+  <script type="text/javascript">
+
+    function openWindow() {
+      var info = "";
+
+      info += "Welcome, " + navigator.appCodeName;
+      info += " user!\nYou are using the " + navigator.appName + " browser,\nversion " + navigator.appVersion;
+      info += ".\nYour user agent information is " + navigator.userAgent;
+
+      alert(info);
+    }
+
+  </script>
+</head>
+
+<body>
+  <h3>CIW JavaScript Specialist</h3>
+  <hr />
+
+  <script type="text/javascript">
+    document.write("<p>User Agent: " + navigator.userAgent + "</p>");
+  </script>
+
+  <form name="myForm">
+    <input type="button" name="buttonClick" value="Click for More Browser Info" onClick="openWindow()" />
+  </form>
+
+</body>
+
+</html>

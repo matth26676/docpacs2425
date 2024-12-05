@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Cats</title>
+
+    <script type="text/javascript">
+        function display_image(selectedImage) {
+            var selectionName = selectedImage.options[selectedImage.selectedIndex].text;
+            var selection = selectedImage.options[selectedImage.selectedIndex].value;
+
+            var previewWindow = window.open('', 'ImagePreview', 'width=400, height=300');
+
+            previewWindow.document.write('<html>');
+            previewWindow.document.write('<head>');
+            previewWindow.document.write('<title>Image Preview</title>');
+            previewWindow.document.write('</head>');
+            previewWindow.document.write('<body style="background-color: lightgray; color: black; text-align: center;">');
+            previewWindow.document.write('<h3>' + selectionName + '</h3>');
+            previewWindow.document.write('<img src="' + selection + '" width="150" height="150" />');
+            previewWindow.document.write('<form>');
+            previewWindow.document.write('<input type="button" value="Close Window" onclick="window.close();" />');
+            previewWindow.document.write('</form>');
+            previewWindow.document.write('</body>');
+            previewWindow.document.write('</html>');
+
+            previewWindow.document.close();
+
+            previewWindow.focus();
+        }
+
+    </script>
+</head>
+
+<h1 id="h3">Cat Images</h1>
+<hr />
+<p>Select an image:</p>
+<select name="images" onchange="display_image(this)">
+    <option value="mexicanCat.jpg">Mexican Cat</option>
+    <option value="dancingCat.jpg">Cats dancing</option>
+
+</select>
+
+<body background="funnyCat.png">
+
+    <style>
+        #h3 {
+            color: white;
+            size: 60px;
+            text-justify: auto;
+            background-color: grey;
+            border: 50px;
+        }
+
+        p {
+            color: rgb(255, 255, 255);
+        }
+
+        body {
+            background-size: cover;
+        }
+    </style>
+
+</body>
+
+</html>

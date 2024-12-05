@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>conversation</title>
+</head>
+<body>
+    <h1><%= conversation.name %></h1>
+    <h3><a href="/user/<%=conversation.fb_name%>"><%= conversation.fb_name %></a>: <%= conversation.sendContent %></h3>
+    <% content.forEach((con) => { %>
+        <p><b><%= con.date %> <a href="/user/<%=con.fb_name%>"><%= con.fb_name %></a>:</b> <%= con.content %></p>
+    <% }) %>
+
+    <br>
+    <form method="POST" action="/conversation/<%=conversation.uid%>">
+        <label for="convoText">Post: </label>
+        <textarea name="convoText" id="conText" rows="5" cols="40"></textarea>
+        <input type="submit">
+    </form>
+</body>
+</html>
