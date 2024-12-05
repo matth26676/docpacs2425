@@ -118,10 +118,11 @@
             });
         }
 
+        //Sends an alert if the player wins
         socket.on('winner', () => {
             alert('You Win!')
         })
-
+        //Sends an alert if the player loses
         socket.on('loser', () => {
             alert('You Lose.')
         })
