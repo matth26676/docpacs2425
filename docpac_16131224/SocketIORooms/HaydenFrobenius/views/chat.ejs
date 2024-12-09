@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            display: flexbox;
+        }
+
+        #messagesContainer {
+            width: calc(100vw - 217px);
+            height: 90vh;
+            background-color: #fff;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: -10px 0 15px rgba(40, 40, 40, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            float: right;
+        }
+
+        #usersContainer {
+            width: 200px;
+            background-color: #eee;
+            padding: 3rem;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            height: 100vh;
+            float: left;
+        }
+
+        #messageBox {
+            font-size: 2em;
+            width: 60%;
+        }
+
+        #sendBtn {
+            background: #3498db;
+            background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+            background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+            background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+            background-image: -o-linear-gradient(top, #3498db, #2980b9);
+            background-image: linear-gradient(to bottom, #3498db, #2980b9);
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 20px;
+            padding: 10px 20px 10px 20px;
+            text-decoration: none;
+            width: 100px;
+            height: 50px;
+        }
+
+        #sendBtn:hover {
+            cursor: pointer;
+            background: #3cb0fd;
+            background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+            text-decoration: none;
+        }
+
+        #userList {
+            list-style: none;
+        }
+    </style>
+
+    <script src="/public/js/socket.io.js" ></script>
+</head>
+
+<body>
+    <div id="usersContainer">
+        <ul id="userList">
+        </ul>
+    </div>
+    <div id="messagesContainer">
+    </div>
+    <input type="text" id="messageBox">
+    <button id="sendBtn">Send</button>
+    <script>
+
+        const socket = io();
+
+        const messageBox = document.getElementById('messageBox');
+        const sendBtn = document.getElementById('sendBtn');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const userList = document.getElementById('userList');
+
+        sendBtn.addEventListener('click', () => {
+            const message = {
+                message: messageBox.value,
+                userID: socket.id
+            }
+            
+            if (message.trim() !== '') {
+                socket.emit('chat message', message);
+                messageBox.value = '';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
