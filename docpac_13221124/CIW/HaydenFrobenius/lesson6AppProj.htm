@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Lesson 6 Application Project</title>
+
+    <script type="text/javascript">
+
+        const imgDir = 'images/';
+
+        function display_image(selectedImage) {
+
+            var selectionName = selectedImage.options[selectedImage.selectedIndex].text;
+            var selection = selectedImage.options[selectedImage.selectedIndex].value;
+
+            var img = new Image();
+            img.src = imgDir + selection;
+
+            var newWindow = window.open("", selectionName, "width=1000, height=600");
+
+            newWindow.document.open();
+            newWindow.document.write(`<html><head><title>${selectionName}</title></head><body style="background-color: black;"><img src=${img.src} width="150px" height="150px"></body></html>`);
+            newWindow.document.close();
+
+            newWindow.focus();
+        }
+    </script>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <p>
+        Select an image:
+    </p>
+    <select name="images" onchange="display_image(this)">
+        <option value="" disabled selected>Select an option</option>
+        <option value="fbts.jpg" onselect="display_image(this)">fbts</option>
+        <option value="fireshirt.jpg" onselect="display_image(this)">fireshirt</option>
+        <option value="real.jpg" onselect="display_image(this)">real</option>
+        <option value="STEVEN.jpg" onselect="display_image(this)">STEVEN</option>
+        <option value="w.jpg" onselect="display_image(this)">w</option>
+    </select>
+
+
+</body>
+
+</html>

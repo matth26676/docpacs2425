@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogaungaga</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        #users {
+            width: 200px;
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            float: left;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #users ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #users ul li {
+            padding: 5px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        #chat {
+            width: calc(100% - 200px);
+            height: calc(100vh - 60px);
+            background-color: #ecf0f1;
+            float: left;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        #input-container {
+            width: calc(100% - 200px);
+            height: 50px;
+            background-color: #ecf0f1;
+            float: left;
+            padding: 10px;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+            left: 200px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 110px);
+            padding: 10px;
+            margin: 0;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="button"] {
+            padding: 10px 20px;
+            margin: 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="users">
+        <ul></ul>
+    </div>
+    <div id="chat"></div>
+    <div id="input-container">
+        <input type="text" name="text">
+        <input type="button" value="Submit" onclick="sendMessage()">
+    </div>
+</body>
+<script>
+    let name = '<%= name %>';
+    // create a new websocket object
+    var ws = new WebSocket('ws://localhost:3000');
+    ws.onopen = () => {
+        console.log('Connected to the server');
+        console.log(name);
+        ws.send(JSON.stringify({ name: name }));
+    }
+    ws.onmessage = (message) => {
+        const data = JSON.parse(message.data);
+        if (data.name) {
+            console.log('Name: ' + data.name);
+        }
+        if (data.text) {
+            console.log('received message');
+            console.log(data.name + ": " + data.text);
+            if (data.name === name) {
+                document.querySelector('#chat').innerHTML += '<p style="text-align: right;">' + data.name + ': ' + data.text + '</p>';
+            } else {
+                document.querySelector('#chat').innerHTML += '<p>' + data.name + ': ' + data.text + '</p>';
+            }
+        }
+        if (data.list) {
+            for (let i = 0; i < data.list.length; i++) {
+                console.log(data.list);
+                for (document.querySelector('#users ul').innerHTML = '', i = 0; i < data.list.length; i++) {
+                    if (data.list[i] === name) {
+                        document.querySelector('#users ul').innerHTML += '<li style="color: red;">' + data.list[i] + '</li>';
+                    } else {
+                        document.querySelector('#users ul').innerHTML += '<li>' + data.list[i] + '</li>';
+                    }
+                }
+            }
+        }
+    }
+
+    function sendMessage() {
+        let object = {
+            text: document.querySelector('input[name="text"]').value,
+            name: name
+        }
+        console.log('Sending message');
+        document.querySelector('input[name="text"]').value = '';
+        ws.send(JSON.stringify(object));
+    }
+
+    document.onkeydown = function (e) {
+        if (e.keyCode == 13) {
+            sendMessage();
+        }
+    }
+
+</script>
+
+</html>

@@ -5,8 +5,8 @@ class Board {
         this.board = new Array(rows).fill(0).map(() => new Array(cols).fill(0));
     }
 
-    dropPiece(col, turn) {
-        let row = this.getLowestAvailableRow(col);
+    dropPiece(col, row, turn) {
+        //let row = this.getLowestAvailableRow(col);
         if (row === -1) {
             return;
         }
@@ -28,6 +28,15 @@ class Board {
         }
 
         return this.board[row][col];
+    }
+
+    checkFull(){
+        for (let i = 0; i < this.cols; i++) {
+            if (this.board[0][i] === 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     checkWin() {

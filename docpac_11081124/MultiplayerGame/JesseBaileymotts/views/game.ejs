@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='icon' href='/favicon.ico' type='image/x-icon'>
+    <link rel='stylesheet' href='/style.css'>
+    <title>SplatoonD - Game</title>
+</head>
+<body>
+    <!-- Splatoon 2D -->
+    <h1>SplatoonD</h1>
+    <!-- Game Creation -->
+    <button class='menuItems' id='newGame'>New Game</button>
+    <button class='menuItems' id='joinGame'>Join Game</button>
+    <form id='gameList'>
+        <label for='code'>Game Code:</label>
+        <select id='code'>
+            <option id='defOpt' value='' disabled selected>Select a Game</option>
+        </select>
+    </form>
+    <div id='divider'></div>
+    <!-- Game Information -->
+    <button class='menuItems' id='startGame'>Start Game</button>
+    <button class='menuItems' id='leaveGame'>Leave Game</button>
+    <div id='gameInfo'>
+        <div id='clock'></div>
+        <div id='players'></div>
+        <div id='scoring'></div>
+        <div id='powerups'>
+            <p class='powerup-text' id="powerup1"></p>
+            <p class='powerup-text' id="powerup2"></p>
+        </div>
+    </div>    
+
+    <!-- Game Board -->
+    <div id='board'></div>
+    <!-- JS Code -->
+    <script>
+        //// HTML Elements
+        // In order of which they appear
+        const newGame = document.getElementById('newGame');
+        const joinGame = document.getElementById('joinGame');
+        const gameList = document.getElementById('gameList');
+        const defOpt = document.getElementById('defOpt');
+        const code = document.getElementById('code');
+        const startGame = document.getElementById('startGame');
+        const leaveGame = document.getElementById('leaveGame');
+        const gameInfo = document.getElementById('gameInfo');
+        const clock = document.getElementById('clock');
+        const players = document.getElementById('players');
+        const scoring = document.getElementById('scoring');
+        const board = document.getElementById('board');
+        const powerupText = document.getElementsByClassName('powerup-text');
+        
+        //// Splatoon 2D Variables
+        let ws = new WebSocket('ws://172.16.3.206:9090');
+        // let ws = new WebSocket('ws://localhost:9090');
+        let clientID = null;
+        let gameID = null;
+        let pColor = null;
+        let timer = null;
+        let gameEnd = false;
+        let powerupNames = [];
+        // A compare function for proper score sorting
+        let compare = (a, b) => {
+            return a - b;
+        };
+
+        //// HTML Events
+        // On clicking join game...
+        joinGame.addEventListener('click', (e) => {
+            // If there is no gameID, assign it to the code input's value
+            if (gameID === null) {
+                gameID = (code.value).toUpperCase();
+            };
+            // Create the join payload
+            const payload = {
+                'method': 'join',
+                'clientID': clientID,
+                'gameID': gameID
+            };
+            // Stringify and send the join payload
+            ws.send(JSON.stringify(payload));
+        });
+        // On clicking new game...
+        newGame.addEventListener('click', (e) => {
+            // Create the create payload
+            const payload = {
+                'method': 'create',
+                'clientID': clientID
+            };
+            // Stringify and send the create payload
+            ws.send(JSON.stringify(payload));
+        });
+        // On clicking start game...
+        startGame.addEventListener('click', (e) => {
+            // Create the start payload
+            const payload = {
+                'method': 'start',
+                'clientID': clientID,
+                // Where the client's ID in game.clients, set the number to the player
+                'player': game.clients.find((c) => c.clientID === clientID).player,
+                'gameID': gameID
+            };
+            // Stringify and send the start payload
+            ws.send(JSON.stringify(payload));
+        });
+        // On clicking leave game...
+        leaveGame.addEventListener('click', (e) => {
+            // Create the leave payload
+            const payload = {
+                'method': 'leave',
+                'clientID': clientID,
+                'gameID': gameID
+            };
+            // Stringify and send the leave payload
+            ws.send(JSON.stringify(payload));
+            // Reload the webpage
+            location.reload();
+        });
+        // On keydown...
+        document.addEventListener('keydown', (event) => {
+            // Set key to the lowercase of the key pressed
+            let key = event.key.toLowerCase();
+            switch (key) {
+                // On case '1'...
+                case '1':
+                    // Request powerup 0 and break
+                    requestPowerup(0);
+                    break;
+                // On case '2'...
+                case '2':
+                    // Request powerup 1 and break
+                    requestPowerup(1);
+                    break;
+                // On case 'tab'...
+                case 'tab':
+                    // Troll that webfiend
+                    location.reload();
+            };
+        });
+        // Create a function for requesting a powerup taking the index as an argument
+        let requestPowerup = (index) => {
+            // Create the requestPowerup payload
+            const payload = {
+                'method': 'requestPowerup',
+                'clientID': clientID,
+                'gameID': gameID,
+                'powerupIndex': index
+            };
+            // Stringify and send the requestPowerup payload
+            ws.send(JSON.stringify(payload));
+        };
+        // On recieving a websocket message...
+        ws.onmessage = (message) => {
+            // Set response to the parsed message data
+            const response = JSON.parse(message.data);
+            // If the method is connect...
+            if (response.method === 'connect') {
+                // Assign and relay the client ID
+                clientID = response.clientID;
+                // For each game in the games object...
+                Object.keys(response.games).forEach((g) => {
+                    // Create an option element
+                    const option = document.createElement('option');
+                    // Assign the game ID to the value and text
+                    option.value = g;
+                    option.text = g;
+                    // Append it to the code select
+                    code.appendChild(option);
+                });
+                // If there are games...
+                if (response.games.length !== 0) {
+                    // Hide the default option
+                    defOpt.style.display = 'none';
+                };
+            };
+            // If the method is create...
+            if (response.method === 'create') {
+                // Assign and relay the game ID
+                gameID = response.game.id;
+                // Create an option element
+                const option = document.createElement('option');
+                // Assign the game ID to the value and text
+                option.value = gameID;
+                option.text = gameID;
+                option.selected = true;
+
+                // Append it to the code select
+                code.appendChild(option);
+                // Set the option to the selected option in the gameList form
+            };
+            // If the method is join...
+            if (response.method === 'join') {
+                // Set the text of the clock div to the remaining time
+                clock.innerText = `Time: ${response.game.time}`;
+                clock.style.display = 'inline-block';
+                gameInfo.style.display = 'block';
+                // Dislpay the start game button
+                startGame.style.display = 'inline-block';
+                leaveGame.style.display = 'inline-block';
+
+                powerupNames = response.game.powerupNames;
+
+                // If the game has less than two clients...
+                if (response.game.clients.length < 2) {
+                    // Disable the start game button
+                    startGame.disabled = true;
+                    // Else...
+                } else {
+                    // Enable the start game button
+                    startGame.disabled = false;
+                };
+                // Assign the game
+                game = response.game;
+                // While the players div has elements, remove the first element
+                while (players.firstChild) players.removeChild(players.firstChild);
+                // For each client in the game...
+                game.clients.forEach((c) => {
+                    // Create a div element, style it, and add into it the client ID
+                    const div = document.createElement('div');
+                    div.id = c.clientID;
+                    div.style.background = c.color;
+                    div.className = 'player';
+                    div.textContent = `${c.player}: ${c.score}`;
+                    // If the client's ID matches the current client, their player color is the client's color
+                    if (c.clientID === clientID) pColor = c.color;
+                    // Append the client's div to the players div
+                    players.appendChild(div);
+                });
+                const grid = `repeat(${Math.min(3, game.clients.length)}, 1fr)`;
+                players.style.gridTemplateColumns = grid;
+                scoring.style.gridTemplateColumns = grid;
+                // While the board div has elements, remove the first element
+                while (board.firstChild) board.removeChild(board.firstChild);
+                // Start i at 0. While i is less than the game boxes, increment i by 1 and...
+                for (let i = 0; i < game.boxes; i++) {
+                    // Create a button element and assign an ID and Tag
+                    const box = document.createElement('button')
+                    box.id = 'b'+(i+1);
+                    box.tag = i+1;
+                    box.className = 'box';
+                    box.disabled = true;
+                    // Style the button
+                    box.textContent = i+1;
+                    // Add clicking functionality to the button
+                    box.addEventListener('click', (e) => {
+                        // Set the clicked box to the player color
+                        //box.style.background = pColor; //don't jew this
+                        // Create the play payload
+                        const payload = {
+                            'method': 'play',
+                            'clientID': clientID,
+                            'gameID': gameID,
+                            'boxID': box.tag,
+                            'color': pColor
+                        }
+                        // Stringify and send the play payload
+                        ws.send(JSON.stringify(payload));
+                    });
+                    // Append the box to the board
+                    board.appendChild(box);
+                    // If the boxes divided by the square root of itself can divide i plus one with no remainder, break
+                    // Results in a 8 x 8 grid if there are 64 boxes
+                    // If the total boxes are increased, it must be exponentially to result in an evenly distributed and, thus, square grid
+                    // For example, a 12 x 12 grid would be 144 boxes. A 20 x 20 grid would be 400
+                    if (((i + 1) % (game.boxes / Math.sqrt(game.boxes))) === 0) board.appendChild(document.createElement('br'));
+                };
+            };
+            // If the method is update...
+            if (response.method === 'update') {
+                // If the game has ended, return
+                if (gameEnd === true) return;
+                // Set allBoxes to all buttons within the board
+                const allBoxes = document.querySelectorAll('#board button');
+                // For each box, set the box to enabled
+                allBoxes.forEach((box) => box.disabled = false);
+                const game = response.game;
+                const client = game.clients.find((c) => c.clientID === clientID);
+                // Update the text of the clock div to the current game time
+                clock.innerText = `Time: ${game.time}`;
+                // For p in powerupText...
+                for (p in powerupText) {
+                    // Set the textObj to the powerup text at p
+                    const textObj = powerupText[p];
+                    // Set the powerup index by the client's powerups at p and set the name of that powerup
+                    const powerupIndex = client.powerups[p];
+                    let powerupName = powerupNames[powerupIndex];
+                    // If there is no powerup name..
+                    if(!powerupName){
+                        // Set powerup name to None
+                        powerupName = 'None';
+                    };
+                    // Set the innertext of the powerup text to the powerup name
+                    textObj.innerText = `Powerup ${Number(p)+1}: ${powerupName}`;
+                };
+                // For each client in the game...
+                game.clients.forEach((c) => {
+                    // If the player div exists...
+                    if (document.getElementById(c.clientID)) {
+                        // Set the playerBox constant equal to that client's ID
+                        const playerBox = document.getElementById(c.clientID);
+                        // Update the text content with that player's score
+                        playerBox.textContent = `${c.player}: ${c.score}`;
+                    };
+                });
+                // If there is no game state, make one
+                if (!game.state) game.state = {};
+                // For boxes of the game's state...
+                for (const b of Object.keys(game.state)) {
+
+                    //modulo is so handy
+                    let boxID = (b % (game.boxes+1));
+                    let box = game.state[boxID];
+                    // Set color to the color of said box
+                    const color = box.color;
+                    const disabled = box.disabled;
+                    // Set boxObj to said box on the board
+                    const boxObj = document.getElementById('b' + boxID);
+
+                    //set the boxObj's disabled status depending on its server side disabled status
+                    boxObj.disabled = disabled;
+
+                    // Set the boxObj's background color to the color gotten
+                    boxObj.style.backgroundColor = color;
+                };
+                // If the game's time is less than or equal to 0...
+                if (game.time <= 0) {
+                    if (gameEnd === false) {
+                        // For each box, set the box to disabled
+                        allBoxes.forEach((box) => box.disabled = true);
+                        // Let scores equal an empty array
+                        let scores = [];
+                        // For each client in the game... 
+                        game.clients.forEach((c) => {
+                            // Push their score to scores
+                            scores.push(c.score);
+                        });
+                        // Sort scores with the compare functions
+                        scores.sort(compare);
+                        // For each client in the game...
+                        game.clients.forEach((c) => {
+                            // Create a div element
+                            const div = document.createElement('div');
+                            // Set the ID to the player's number and set the content to the number and score of the player
+                            div.id = c.player;
+                            div.textContent = `${c.player}: ${c.score}`;
+                            // If the client's ID matches the current client, set the font weight to bold
+                            if (c.clientID === clientID) div.style.fontWeight = 'bold';
+                            // If the client's score is the highest score, add in (Winner!)
+                            if (c.score === scores[scores.length - 1]) div.textContent = div.textContent + ' (Winner!)';
+                            // Style the div
+                            div.style.width = '5.5rem';
+                            div.style.color = c.color;
+                            div.style.backgroundColor = '#FFFFFF';
+                            // Append the div to the scoring div
+                            scoring.appendChild(div);
+                        });
+                        // Hide the players div and set the gameEnd to true
+                        players.style.display = 'none';
+                        gameEnd = true;
+                    };
+                };
+            };
+            // If the method is disconnect...
+            if (response.method === 'disconnect' || response.method === 'leave') {
+                // Remove the player from the players div by getting the client ID
+                players.removeChild(document.getElementById(response.clientID));
+                // Set the grid to the number of players with a max of 3 per row
+                const grid = `repeat(${Math.min(3, game.clients.length - 1)}, 1fr)`;
+                // Set the grid template columns of the players and scoring divs to the grid
+                players.style.gridTemplateColumns = grid;
+                scoring.style.gridTemplateColumns = grid;
+            };
+        };
+        </script>
+</body>
+</html>

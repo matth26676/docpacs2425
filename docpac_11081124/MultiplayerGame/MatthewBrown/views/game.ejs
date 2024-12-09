@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Button</title>
+    <style>
+        html {
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            display: flex;
+            background-image: linear-gradient(#fcf0de, #d3bc9a);
+
+        }
+
+        .globalCounter {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        button {
+            border-radius: 250px;
+            font-weight: 900;
+            padding: 30px;
+            border: 1px solid #d3bc9a;
+            color: rgb(0, 0, 0);
+            background-color: #ffebcd;
+        }
+
+        .leaderboard {
+            margin-left: 20px;
+            border: 1px solid #d3bc9a;
+            background-color: #ffebcd;
+            padding: 10px;
+            width: 200px;
+        }
+
+        .leaderboard h3 {
+            margin-top: 0;
+        }
+
+        .leaderboard ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .leaderboard li {
+            margin-bottom: 5px;
+        }
+
+        .messageInput {
+            margin-top: 10px;
+            display: flex;
+        }
+
+        .messageInput button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="globalCounter" id="globalCounter">Total Clicks: 0</div>
+        <button id="globalButton" onclick="globalIncrease()">Click Me for I am GOD</button>
+    </div>
+    <div class="leaderboard" id="leaderboard">
+        <h3>Leaderboard</h3>
+        <ul id="leaderboardList"></ul>
+    </div>
+    <script>
+        var localName = '<%= localUser %>';
+        const localMachineIP = '<%= localMachineIP %>';
+        const ws = new WebSocket(`ws://${localMachineIP}:3000`);
+
+        var counter = 0
+        var tempCounter = 0
+        var cheat = false
+
+        ws.onmessage = (message) => {
+            const parsedMessage = JSON.parse(message.data);
+            if (parsedMessage.totalClicks !== undefined) {
+                document.getElementById('globalCounter').textContent = `Total Clicks: ${parsedMessage.totalClicks}`;
+            }
+            if (parsedMessage.leaderboard !== undefined) {
+                const leaderboardList = document.getElementById('leaderboardList');
+                leaderboardList.innerHTML = '';
+                parsedMessage.leaderboard.forEach((user, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${index + 1}. ${user.name}: ${user.clicks}`;
+                    leaderboardList.appendChild(listItem);
+                });
+                // Check if local user is in the top 15
+                const localUserInTop15 = parsedMessage.leaderboard.some(user => user.name === localName);
+                if (!localUserInTop15) {
+                    // Fetch local user's rank and clicks
+                    ws.send(JSON.stringify({ requestUserRank: localName }));
+                }
+            }
+            if (parsedMessage.userRank !== undefined) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${parsedMessage.userRank.rank}. ${parsedMessage.userRank.name}: ${parsedMessage.userRank.clicks}`;
+                document.getElementById('leaderboardList').appendChild(listItem);
+            }
+        };
+
+        function timer() {
+            const intervalId1 = setInterval(() => {
+                if (counter > 20) {
+                    cheat = true;
+                    console.log(cheat);
+                    tempCounter = counter;
+                } else {
+                    counter = 0;
+                }
+            }, 1000);
+
+            const intervalId2 = setInterval(() => {
+                if (cheat) {
+                    ws.send(JSON.stringify({ name: localName, score: -9999 }));
+                    alert(`You've reached higher than the average human possible clicks per second (${tempCounter}). Either you're a clicker master or using an autoclicker. If you're the latter, you suck. If you're the former, sorry, this isn't for professionals. Please head to the world clicker tournament with Coku and Aagita.`);
+                    console.log(tempCounter);
+                    cheat = false;
+                    counter = 0; // Reset counter for next detection
+                }
+            }, 15000);
+        }
+
+        function globalIncrease() {
+            ws.send(JSON.stringify({ name: localName, score: 1 }));
+            counter++;
+        }
+
+        timer();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatroom</title>
+</head>
+
+<body>
+    <h1>CHAT WITH OTHER FANS OF: <%= aForum %>
+    </h1>
+    <div id="messages">
+        <% messages.forEach(message=> { %>
+            <div>
+                <strong>
+                    <%= message.user %>
+                </strong> [<%= new Date(message.date).toLocaleString() %>]: <%= message.content %>
+            </div>
+            <% }) %>
+    </div>
+    <form action="/chatroom/<%= aForum %>" method="post">
+        <input type="text" name="message" placeholder="Message">
+        <input type="submit" value="Send">
+    </form>
+    <script>
+        var messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    </script>
+</body>
+
+</html>
