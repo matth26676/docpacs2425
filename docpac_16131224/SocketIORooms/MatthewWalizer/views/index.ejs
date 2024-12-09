@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatrooms</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="mainPage">
+        <div id="contentBox">
+            <div id="conversationBox">
+
+            </div>
+            <div id="chatBox">
+
+            </div>
+            <div id="messageContainer">
+                <input type="text" id="messageBox" placeholder="Type your message here">
+                <button id="messageButton" onclick="">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io('http://localhost:3000');
+
+        messageButton.addEventListener('click', () => {
+            const message = messageBox.value;
+            socket.emit('message', message);
+            messageBox.value = '';
+        });
+
+        socket.on('message', message => {
+            const messageElement = document.createElement('div');
+            messageElement.innerText = message;
+            conversationBox.appendChild(messageElement);
+        });
+    </script>
+</body>
+</html>
