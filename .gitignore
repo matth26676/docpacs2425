@@ -1,3 +1,5 @@
 */node_modules/
 ~*.docx
 /docpac_15061224/EJSPartialsandRendering/node_modules
+docpac_15061224/EJSPartialsandRendering/GabrielEbanks/node_modules/.bin/ejs.cmd
+/docpac_15061224/EJSPartialsandRendering/GabrielEbanks/node_modules

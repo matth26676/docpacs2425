@@ -11,21 +11,20 @@ app.get('/', (req, res) => {
 });
 
 app.get('/print', (req, res) => {
+    console.log(viewport);  
+    ejs.renderFile('./views/index.ejs', {viewport: 'offline'},(err, renderedTemplate) => {
+        console.log(renderedTemplate);
+        fs.writeFile('index.html', renderedTemplate, (err) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('Online File created successfully');
+            }
+        });
+    });
     res.send('File created succesfully');
 });
 
-viewport = 'online';
-console.log(viewport);  
-ejs.renderFile('./views/index.ejs', {viewport},(err, renderedTemplate) => {
-    // console.log(renderedTemplate);
-    fs.writeFile('index.html', renderedTemplate, (err) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('Online File created successfully');
-        }
-    });
-});
 
 app.listen(port, () => {    
     console.log('Server is running on port 3000');
