@@ -1,3 +1,9 @@
-<%- include('partials/header') %>
-
-<%- include('partials/footer') %>
+<%- include('partials/head.ejs') %>
+<body>
+    <% if (viewport === 'online') { %>
+        <button onclick="location.href='/print'">Print</button>
+    <% } else { %>
+        <p>The Print button is not available.</p>
+    <% } %>
+</body>
+<%- include('partials/foot.ejs') %>

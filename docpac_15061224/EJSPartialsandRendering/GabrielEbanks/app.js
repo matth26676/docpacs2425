@@ -7,14 +7,16 @@ const fs = require('fs');
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', {viewport: 'online'});
 });
 
 app.get('/print', (req, res) => {
     res.send('File created succesfully');
 });
 
-ejs.renderFile('./views/index.ejs', {viewport: online},(err, renderedTemplate) => {
+viewport = 'online';
+console.log(viewport);  
+ejs.renderFile('./views/index.ejs', {viewport},(err, renderedTemplate) => {
     // console.log(renderedTemplate);
     fs.writeFile('index.html', renderedTemplate, (err) => {
         if (err) {
