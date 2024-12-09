@@ -59,4 +59,3 @@ wss.on('connection', (ws) => {
         broadcast(ws, userList(wss))
     })
 })
-
