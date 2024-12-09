@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #test {
+            position: absolute;
+            background-color: aqua;
+            width: 10%;
+            height: 10%;
+            left: 10%;
+        }
+
+        #printbutton {
+            position: absolute;
+            background-color: aquamarine;
+            width: 10%;
+            height: 10%;
+            left: 10%;
+            top: 10%;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="test">test</div>
+
+    <script>
+        if (`offline` == 'online') {
+            var printButton = document.createElement('button');
+            printButton.id = 'printbutton';
+            printButton.innerHTML = 'Print New Page';
+            printButton.onclick = function() {
+                window.location.href = '/print';
+            };
+            document.body.appendChild(printButton);
+            
+        }
+    </script>
+</body>
+</html>
