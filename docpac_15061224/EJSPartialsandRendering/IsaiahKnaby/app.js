@@ -16,13 +16,13 @@ app.get('/print', (req, res) => {
     app.render('pages/index', { viewport: "offline" }, (err, html) => {
         if (err) {
             console.error(err);
-            return res.send('An error occurred');
+            return err;
         }
 
         fs.writeFile('index.html', html, (err) => {
             if (err) {
                 console.error(err);
-                return res.send('An error occurred');
+                return err
             }
 
             return res.status(200).send('File Written');
