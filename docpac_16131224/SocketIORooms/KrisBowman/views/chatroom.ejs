@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+</head>
+
+<body>
+    <h1>General</h1>
+    <ul id="messages"></ul>
+    <form id="chat-form">
+        <input id="message-input" autocomplete="off" placeholder="Type a message..." />
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("message-input");
+        const messages = document.getElementById("messages");
+
+        //listen for form submit
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let message = input.value.trim();
+            if (message) {
+                socket.emit("chat message", message);
+                input.value = "";
+            };
+        });
+
+        //listen for login
+        socket.on("loginSuccess", (data) => {
+            socket.username = data.username;
+            console.log("Logged in as: " + socket.username);
+        });
+
+        //listen for incoming messages
+        socket.on("chat message", (msg) => {
+            const li = document.createElement("li");
+            const timestamp = "(" + new Date().toLocaleTimeString() + "): ";
+            li.textContent = `${socket.username}, ${timestamp}` + msg;
+            messages.appendChild(li);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+</body>
+
+</html>
