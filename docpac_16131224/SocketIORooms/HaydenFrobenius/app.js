@@ -7,11 +7,13 @@ const { addParamsToURL } = require('./util');
 
 const app = express();
 const PORT = 3000;
-const THIS_URL = 'http://localhost:' + PORT;
+const THIS_URL = 'http://172.16.3.136:' + PORT;
 //const FB_URL = 'http://172.16.3.100:420';
 const FB_URL = 'https://formbar.yorktechapps.com';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
+
+const DEFAULT_ROOM = 'general';
 
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -50,9 +52,21 @@ io.on('connection', (socket) => {
     console.log('User Connected');
     socket.user = socket.request.session.user;
 
-    socket.join('general');
+    socket.join(DEFAULT_ROOM);
+    let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
+    socket.emit('update rooms list',{newList: roomsList});
 
-    console.log(socket.rooms);
+    socket.on('goto room', (data) => {
+        const roomName = data.roomName;
+        socket.leave(socket.currentRoom);
+        socket.join(roomName);
+        socket.emit('Welcome to Secret General. You have been chosen.', { message: output, timestamp: new Date().toISOString(), sender: { username: 'Server' } });
+    });
+
+    socket.on('get rooms', () => {
+        const rooms = Array.from(socket.rooms).filter(room => room !== socket.id);
+        socket.emit('update rooms list', {newList: rooms});
+    });
 
     socket.on('chat message', (data) => {
         const message = data.text;
@@ -69,19 +83,10 @@ io.on('connection', (socket) => {
             if(commands.has(command)){
 
                 const commandFunction = commands.get(command);
-                let result;
+                let result = commandFunction(args, io, socket);
 
-                try {
-
-                    result = commandFunction(args, io, socket);
-
-                    if(result){
-                        output = result;
-                    }
-               
-                } catch (err) {
-                    output = "An error occurred";
-                    console.log(err);
+                if(result){
+                    output = result;
                 }
 
             } else {
@@ -89,11 +94,12 @@ io.on('connection', (socket) => {
             }
 
             console.log(output);
-            socket.emit('chat message', { message, sender });
-            if(output) socket.emit('chat message', { message: output, sender: { username: 'Server' } });
+            socket.emit('chat message', { message, sender, timestamp: new Date().toISOString()});
+            if(output) socket.emit('chat message', { message: output, timestamp: new Date().toISOString(), sender: { username: 'Server' } });
 
         } else {
-            io.emit('chat message', { message, sender });
+            let lastRoom = Array.from(socket.rooms).pop();
+            io.to(lastRoom).emit('chat message', { message, sender, timestamp: new Date().toISOString()});
         }
 
     });

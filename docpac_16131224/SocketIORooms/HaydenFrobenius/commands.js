@@ -16,12 +16,17 @@ function listUsers(args, io, socket){
 
 function joinRoom(args, io, socket){
 
-    if(args.length === 0){
-        return "Please provide a room name";
-    }
+    if(args.length === 0) return "Please provide a room name";
 
     const roomName = args[0];
+
+    if(roomName.trim() === '') return "Please provide a room name";
+
     socket.join(roomName);
+
+    let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
+    socket.emit('update rooms list',{newList: roomsList});
+
     return `Joined Room: ${roomName}`;
 }
 
@@ -32,7 +37,14 @@ function leaveRoom(args, io, socket){
     }
 
     const roomName = args[0];
+
+    if(!socket.rooms.has(roomName)) return `You are not in room: ${roomName}`;
+
     socket.leave(roomName);
+
+    let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
+    socket.emit('update rooms list',{newList: roomsList});
+
     return `Left Room: ${roomName}`;
 }
 
