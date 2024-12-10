@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const sqlite3 = require('sqlite3');
 const PORT = 3000;
-const AUTH_URL = 'http://172.16.3.212:420/oauth';
+const AUTH_URL = 'http://172.16.3.100:420/oauth';
 const THIS_URL = 'http://localhost:3000/login';
 
 // Sets up the view engine, url encoded, and session
@@ -19,7 +19,7 @@ app.use(session({
 }))
 
 // Sets up the database that will hold the users
-const db = new sqlite3.Database('data/database.db', (err) => {
+const db = new sqlite3.Database('data/database.db', (err) => { 
     if (err) {
         console.log(err);
     } else {
@@ -36,7 +36,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // Renders the index page with the user variable assigned to the session user
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
     try {
         // Tries to render the home page with the user variable assigned to the session user
         res.render('index', {user: req.session.user});
@@ -56,13 +56,32 @@ app.get('/login', (req, res) => {
         req.session.token = tokenData;
         req.session.user = tokenData.username;
         // Redirects home
+        db.get('SELECT * FROM users WHERE fb_name=?;', req.session.user, (err, row) => {
+            if (err) {
+                console.error(err);     
+            } else if (!row) {
+                db.run('INSERT INTO users (fb_name, fb_id, profile_checked) VALUES (?, ?, ?)', [req.session.user, tokenData.id, 0]);
+            };
+        });
         res.redirect('/');
     // If the user does not have a token
     } else {
         // Redirects to the formbar oauth page with the redirectURL being the login page
-        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`)
+        res.redirect(`${AUTH_URL}?redirectURL=${THIS_URL}`);
+    };
+});
+
+app.get('/profile', isAuthenticated, (req, res) => {
+    res.render('home', {user: req.session.user});
+});
+
+app.post('/profile', (req, res) => {
+    if (!req.body.checkbox) {
+        req.body.checkbox = 0;
     }
-})
+    console.log(req.body.checkbox)
+    db.get('UPDATE users SET profile_checked=? WHERE fb_name=?', req.body.checkbox, req.session.user);
+});
 
 // Listen to the port
 app.listen(PORT, console.log(`Connected to port ${PORT}`));
