@@ -16,7 +16,7 @@ const SECRET = "guh";
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const commands = require('./commands');
+const commands = require('./commands').commandMap;
 
 let sessionMiddleware = session({
     secret: SECRET,
@@ -50,29 +50,50 @@ io.on('connection', (socket) => {
     console.log('User Connected');
     socket.user = socket.request.session.user;
 
-    socket.on('chat message', (data) => {
-        let message = data.message;
-        let user = data.user;
+    socket.join('general');
 
-        if(message[0] === '/'){
-            const tokens = message.split(' ');
+    console.log(socket.rooms);
+
+    socket.on('chat message', (data) => {
+        const message = data.text;
+        const sender = data.sender;
+
+        if(message[0] == '/'){
+
+            const tokens = message.replace('/', '').split(' ');
             const command = tokens[0];
             const args = tokens.slice(1);
 
-            if(commands.commandMap.has(command)){
-                const commandFunction = commands.commandMap.get(command);
-                const result = commandFunction(args, io, socket);
-                
-                if(result){
-                    socket.emit('chat message', { message: result, user: { name: 'Server' } });
+            let output = "";
+
+            if(commands.has(command)){
+
+                const commandFunction = commands.get(command);
+                let result;
+
+                try {
+
+                    result = commandFunction(args, io, socket);
+
+                    if(result){
+                        output = result;
+                    }
+               
+                } catch (err) {
+                    output = "An error occurred";
+                    console.log(err);
                 }
 
             } else {
-                socket.emit('chat message', { message: 'Invalid Command', user: { name: 'Server' } });
+                output = "Invalid Command";
             }
 
+            console.log(output);
+            socket.emit('chat message', { message, sender });
+            if(output) socket.emit('chat message', { message: output, sender: { username: 'Server' } });
+
         } else {
-            io.emit('chat message', { message, user });
+            io.emit('chat message', { message, sender });
         }
 
     });

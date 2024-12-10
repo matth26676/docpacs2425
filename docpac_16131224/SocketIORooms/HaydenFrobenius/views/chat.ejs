@@ -89,6 +89,8 @@
     <button id="sendBtn">Send</button>
     <script>
 
+        const messageTemplate = `<%- include('message'); %>`;
+
         const socket = io();
 
         const messageBox = document.getElementById('messageBox');
@@ -98,14 +100,23 @@
 
         sendBtn.addEventListener('click', () => {
             const message = {
-                message: messageBox.value,
-                userID: socket.id
+                text: messageBox.value,
+                sender: JSON.parse(`<%- JSON.stringify(user) %>`)
             }
             
-            if (message.trim() !== '') {
+            if (message.text.trim() !== '') {
                 socket.emit('chat message', message);
                 messageBox.value = '';
             }
+        });
+
+        socket.on('chat message', (data) => {
+            const sender = data.sender;
+            const content = data.message;
+
+            messagesContainer.innerHTML += messageTemplate
+                .replace('NAME', sender.username)
+                .replace('CONTENT', content);
         });
 
     </script>
