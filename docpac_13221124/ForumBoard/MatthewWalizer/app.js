@@ -20,8 +20,8 @@ var THIS_URL = ''
 function isAuthenticated(req, res, next) {
     if (req.query.name) next()
     else {
-    THIS_URL = 'http://'+req.headers.host+req.url+'login'
-    res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
+        THIS_URL = 'http://' + req.headers.host + req.url + 'login'
+        res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`)
     }
 }
 
@@ -54,7 +54,7 @@ app.post('/', (req, res) => {
             console.log(err);
         } else {
             console.log('Success');
-            res.render('conversation', {name: req.query.name})
+            res.render('conversation', { name: req.query.name })
         }
     });
 });
@@ -103,7 +103,7 @@ app.get('/userpage', (req, res) => {
                         console.log(err);
                     } else {
                         console.log(post);
-                        
+
                         res.render('userpage', { user: user, posts: JSON.stringify(post) });
                     }
                 });

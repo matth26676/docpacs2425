@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lab 7-8</title>
+</head>
+
+<body onload="quotes()">
+
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+
+    <script type="text/javascript">
+        function quotes() {
+            var randomnumber = Math.floor(Math.random() * 6);
+            let quotes = new Array();
+            quotes[0] = "The only way to do great work is to love what you do.";
+            quotes[1] = "The best time to plant a tree was 20 years ago. The second best time is now.";
+            quotes[2] = "Your limitation—it’s only your imagination.";
+            quotes[3] = "Push yourself, because no one else is going to do it for you.";
+            quotes[4] = "Great things never come from comfort zones.";
+            quotes[5] = "Dream it. Wish it. Do it.";
+            quotes[6] = "Success doesn’t just find you. You have to go out and get it.";
+
+            document.write("CIW JavaScript Specialist");
+            document.write("<br>");
+            document.write(quotes[randomnumber]);
+
+        }
+        <!---->
+        // Add function and quotes in Step 4
+        
+        // -->
+    </script>
+</body>
+
+</html>
