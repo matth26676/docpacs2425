@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Canvas Mover</title>
+</head>
+<body>
+	<canvas width="800px" height="600px" id="canvas"></canvas>
+</body>
+<script>
+	// Make the player enter a username and ensure it's not empty or just spaces
+	let name = "";
+	while (!name || !name.trim()) {
+		name = prompt("Please enter your username:")
+	}
+
+	// Setup websocket connection to the server 
+	const ws = new WebSocket("ws://localhost:3000");
+	const players = {};
+	let coinPosition = {};
+	let timer = 60;
+	let winner = "";
+
+	ws.onopen = () => {
+		// Connect the user to the server
+		ws.send(JSON.stringify({
+			type: "connection",
+			name
+		}));
+
+		ws.onmessage = (message) => {
+			message = JSON.parse(message.data);
+
+			switch (message.type) {
+				case "playerJoin": {
+					players[message.ws.name] = message.ws;
+					break;
+				}
+
+				case "playerLeave": {
+					delete players[message.ws.name];
+					break;
+				}
+
+				case "currentPlayers": {
+					for (const playerName in message.players) {
+						// If the player is the local player, skip as playerJoin will handle that
+						if (playerName == message.ws.name) {
+							continue;
+						}
+
+						const player = message.players[playerName];
+						players[playerName] = player;
+					}
+					break;
+				}
+
+				case "playerPositionUpdate": {
+					players[message.ws.name].position = message.ws.position;
+					break;
+				}
+
+				case "coinPositionUpdate": {
+					coinPosition = message.coinPosition;
+					break;
+				}
+
+				case "coinCollected": {
+					if (message.name == name) {
+						players[message.name].coins++;
+					}
+					break;
+				}
+
+				case "timerUpdate": {
+					timer = message.timer;
+					break;
+				}
+
+				case "gameOver": {
+					winner = message.winner;
+					break;
+				}
+			}
+		}
+
+		const canvas = document.getElementById("canvas");
+		const scene = canvas.getContext("2d");
+		const controlButtonHeight = 150;
+
+		// Handles the WASD 
+		const keyControls = {
+			w: () => {scene.fillRect(90, scene.canvas.height - controlButtonHeight, 64, 64)},
+			a: () => {scene.fillRect(26, scene.canvas.height - controlButtonHeight + 64, 64, 64)},
+			s: () => {scene.fillRect(90, scene.canvas.height - controlButtonHeight + 64, 64, 64)},
+			d: () => {scene.fillRect(154, scene.canvas.height - controlButtonHeight + 64, 64, 64)}
+		}
+
+		// Hold the keys currently pressed
+		const keysPressed = {
+			"w": false,
+			"a": false,
+			"s": false,
+			"d": false
+		};
+
+		// Create the coin image
+		const coinImage = new Image();
+		coinImage.src = 'http://localhost:3000/coin.png';
+
+		// When a player presses a key, relay that information to the server
+		window.addEventListener("keydown", (event) => {
+			const key = event.key.toLowerCase();
+			if (!keysPressed[key]) {
+				ws.send(JSON.stringify({
+					type: "keyPressed",
+					key
+				}));
+
+				keysPressed[key] = true;
+			}
+		});
+
+		// When a player releases a key, relay that information to the server
+		window.addEventListener("keyup", (event) => {
+			const key = event.key.toLowerCase();
+			if (keysPressed[key]) {
+				ws.send(JSON.stringify({
+					type: "keyReleased",
+					key
+				}));
+
+				keysPressed[key] = false;
+			}
+		});
+		
+		function update() {
+			// If the player hasn't been created by the server, then skip the frame update
+			if (!players[name]) {
+				return requestAnimationFrame(update);
+			}
+			
+			// Clear canvas
+			scene.fillStyle = "black";
+			scene.fillRect(0, 0, canvas.width, canvas.height);
+
+			// Draw all players
+			for (const playerName in players) {
+				const player = players[playerName];
+				scene.fillStyle = `rgb(${player.color.r}, ${player.color.g}, ${player.color.b})`;
+				scene.fillRect(player.position.x, player.position.y, player.size.w, player.size.h);
+			}
+
+			// Draw the coin
+			scene.drawImage(coinImage, coinPosition.x, coinPosition.y, 32, 32);
+			
+			// Display positions
+			scene.font = "30px Arial";
+			scene.textBaseline = "top";
+			scene.textAlign = "left"
+			scene.fillStyle = "white";
+			scene.fillText("X: " + Math.round(players[name].position.x) + " Y: " + Math.round(players[name].position.y), 20, 30);
+			scene.fillText("Coins: " + players[name].coins, 20, 70);
+			scene.fillText("Timer: " + timer, 20, 110);
+
+			if (winner) {
+				scene.fillText("Winner: " + winner, 20, 150);
+			}
+			
+			// Control keys
+			scene.fillStyle = "white";
+			scene.font = "30px Arial";
+			scene.textBaseline = "middle";
+			scene.textAlign = "center";
+
+			for (const control in keyControls) {
+				if (keysPressed[control]) {
+					scene.fillStyle = "white";
+				} else {
+					scene.fillStyle = "grey";
+				}
+				
+				scene.globalAlpha = 0.15;
+				keyControls[control]();
+				scene.globalAlpha = 1;
+			}
+			
+			scene.fillStyle = "white";
+			scene.fillText("W", 90 + 32, scene.canvas.height - controlButtonHeight + 32);
+			scene.fillText("A", 26 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+			scene.fillText("S", 90 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+			scene.fillText("D", 154 + 32, scene.canvas.height - controlButtonHeight + 64 + 32);
+
+			// Call next frame
+			requestAnimationFrame(update);
+		}
+
+		// Start calling the update function
+		requestAnimationFrame(update);
+	}
+</script>
+</html>

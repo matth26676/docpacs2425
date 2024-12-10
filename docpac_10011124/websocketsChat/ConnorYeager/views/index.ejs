@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winter is coming</title>
+    <script>
+        function newDoc() {
+            window.location.assign("http://localhost:3000/chat")
+        };
+    </script>
 </head>
 <body>
-    
+    <form>
+        <input name="user" type="text"> 
+        <input type="button" value="Load new document" onclick="newDoc()">
+    </form>
 </body>
 </html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login </title>
+</head>
+<body>
+    <input id="user" type="text" placeholder="Username">
+    <button onclick="login()">Login</button>
+</body>
+<script>
+    function login() {
+        var userName = document.getElementById("user");
+        userName = userName.value
+        if (!userName) {
+            alert("enter username");
+        } else {
+            window.location.href = "/chat?name=" + userName;
+        }
+    }
+</script>
+</html>
