@@ -1,15 +1,12 @@
 function listUsers(args, io, socket){
 
-    const users = Array.from(io.sockets.sockets.values()).map(socket => socket.user);
-    const roomName = Array.from(socket.rooms).pop();
+    const sockets = io.sockets.sockets
+    const roomName = socket.currentRoom
+    const roomSockets = Array.from(sockets.values()).filter(socket => socket.rooms.has(roomName));
+    console.log(roomSockets);
 
-    const roomUsers = users.filter(user => {
-        const userSocket = io.sockets.sockets[user.id];
-        return userSocket && userSocket.rooms && userSocket.rooms.has(roomName);
-    });
-
-    let output = "Users:\n";
-    output += roomUsers.map(user => user.fb_name).join('\n');
+    let output = "Users: \n";
+    output += roomSockets.map(socket => socket.user.username).join('\n');
 
     return output;
 }
@@ -21,11 +18,14 @@ function joinRoom(args, io, socket){
     const roomName = args[0];
 
     if(roomName.trim() === '') return "Please provide a room name";
+    if(socket.rooms.has(roomName)) return `You are already in that room.`;
 
     socket.join(roomName);
 
     let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
+    socket.currentRoom = roomName;
     socket.emit('update rooms list',{newList: roomsList});
+    socket.emit('update current room', {currentRoom: socket.currentRoom});
 
     return `Joined Room: ${roomName}`;
 }
@@ -39,11 +39,14 @@ function leaveRoom(args, io, socket){
     const roomName = args[0];
 
     if(!socket.rooms.has(roomName)) return `You are not in room: ${roomName}`;
+    if(roomName === 'general') return `You cannot leave general`;
 
     socket.leave(roomName);
 
     let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
+    socket.currentRoom = roomsList[roomsList.length - 1];
     socket.emit('update rooms list',{newList: roomsList});
+    socket.emit('update current room', {currentRoom: socket.currentRoom});
 
     return `Left Room: ${roomName}`;
 }

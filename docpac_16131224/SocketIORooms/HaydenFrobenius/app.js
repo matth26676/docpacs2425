@@ -7,13 +7,12 @@ const { addParamsToURL } = require('./util');
 
 const app = express();
 const PORT = 3000;
-const THIS_URL = 'http://172.16.3.136:' + PORT;
+//const THIS_URL = 'http://172.16.3.136:' + PORT;
+const THIS_URL = 'http://localhost:' + PORT;
 //const FB_URL = 'http://172.16.3.100:420';
 const FB_URL = 'https://formbar.yorktechapps.com';
 const AUTH_URL = FB_URL + '/oauth';
 const SECRET = "guh";
-
-const DEFAULT_ROOM = 'general';
 
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -52,15 +51,17 @@ io.on('connection', (socket) => {
     console.log('User Connected');
     socket.user = socket.request.session.user;
 
-    socket.join(DEFAULT_ROOM);
+    socket.join('general');
+    socket.currentRoom = 'general';
+
     let roomsList = Array.from(socket.rooms).filter(room => room !== socket.id);
     socket.emit('update rooms list',{newList: roomsList});
+    socket.emit('update current room', {currentRoom: socket.currentRoom});
 
     socket.on('goto room', (data) => {
         const roomName = data.roomName;
-        socket.leave(socket.currentRoom);
-        socket.join(roomName);
-        socket.emit('Welcome to Secret General. You have been chosen.', { message: output, timestamp: new Date().toISOString(), sender: { username: 'Server' } });
+        socket.currentRoom = roomName;
+        socket.emit('update current room', {currentRoom: socket.currentRoom});
     });
 
     socket.on('get rooms', () => {
@@ -93,13 +94,12 @@ io.on('connection', (socket) => {
                 output = "Invalid Command";
             }
 
-            console.log(output);
-            socket.emit('chat message', { message, sender, timestamp: new Date().toISOString()});
-            if(output) socket.emit('chat message', { message: output, timestamp: new Date().toISOString(), sender: { username: 'Server' } });
+
+            socket.emit('chat message', { message, sender, timestamp: new Date().toISOString(), room: socket.currentRoom});
+            if(output) socket.emit('chat message', { message: output, timestamp: new Date().toISOString(), sender: { username: 'Server' }, room: socket.currentRoom });
 
         } else {
-            let lastRoom = Array.from(socket.rooms).pop();
-            io.to(lastRoom).emit('chat message', { message, sender, timestamp: new Date().toISOString()});
+            io.to(socket.currentRoom).emit('chat message', { message, sender, timestamp: new Date().toISOString(), room: socket.currentRoom});
         }
 
     });

@@ -101,6 +101,9 @@
         const roomsList = document.getElementById('userList');
 
         let rooms = [];
+        let currentRoom = "";
+
+
 
         //this weird but it worky for some reason
         function sanitizeText(text) {
@@ -122,31 +125,59 @@
         });
 
         socket.on('chat message', (data) => {
+
+            if(data.room !== currentRoom) return;
+
+            data.message.replaceAll('\n', '<br>');
+
             const sender = data.sender;
             const content = sanitizeText(data.message);
             const timestamp = data.timestamp;
+            const roomName = data.room;
 
-            addMessage(content, sender.username, timestamp);
+            addMessage(content, sender.username, timestamp, roomName);
         });
 
         socket.on('update rooms list', (data) => {
-            updateRoomsList(data.newList);
+            const newList = data.newList;
+            updateRoomsList(newList);
+        });
+
+        socket.on('update current room', (data) => {
+
+            messagesContainer.innerHTML = "";
+
+            currentRoom = data.currentRoom;
+            let messageText = "<b>Rooms:</b> <br>";
+            messageText += rooms.map(room => sanitizeText(room)).join('<br>');
+            messageText += "<br><br>";
+
+            messagesContainer.innerHTML += messageText;
+            
         });
     
         function updateRoomsList(newList) {
             roomsList.innerHTML = '';
-            newList.forEach(room => {
+            newList.forEach(roomName => {
                 roomsList.innerHTML += roomTemplate
-                    .replace('NAME', room);
+                    .replaceAll('ROOMNAME', roomName);
             });
+            rooms = newList;
         }
 
-        function addMessage(text, senderUsername, timestamp) {
-            console.log('should work');
+        function addMessage(text, senderUsername, timestamp, roomName) {
+
+            text = text.replaceAll('\n', '<br>')
+
             messagesContainer.innerHTML += messageTemplate
-                .replace('NAME', senderUsername)
-                .replace('CONTENT', text)
-                .replace('TIMESTAMP', new Date(timestamp).toLocaleString());
+                .replaceAll('NAME', senderUsername)
+                .replaceAll('CONTENT', text)
+                .replaceAll('ROOM', roomName)
+                .replaceAll('TIMESTAMP', new Date(timestamp).toLocaleString());
+        }
+
+        function gotoRoom(roomName){
+            socket.emit('goto room', {roomName});
         }
 
     </script>
