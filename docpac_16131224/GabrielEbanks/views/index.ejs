@@ -3,10 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Room</title>
+    <script>
+        var localName = "<%= user %>";
+        var roomName = "<%= roomName %>";
+    </script>
+    <style>
+        #roomList {
+            width: 10%;
+            height: 150px;
+            overflow-y: auto;
+            float: left;
+            border-style: solid;
+        }
+        #messages {
+            width: 70%;
+            height: 300px;
+            border-style: solid;
+            overflow-y: auto;
+        }
+    </style>
+
 </head>
-<body>
-    <h1>Welcome to the general room!</h1>
-   
-</body>
+    <body>
+        <h1>Welcome to the <%= roomName %> room!</h1>
+        
+        <div id="messages"></div>
+        
+        <form id="input-form">
+            <label for="message">Enter Message:</label>
+            <input type="text" id="message" name="message"><br><br>
+            <input type="submit" value="Send">
+        </form>
+        
+        <div>
+            <h2>Rooms</h2>
+            <ul id="roomList"></ul>
+        </div>
+    
+        <form id="create-room-form">
+            <label for="roomName">Create Room:</label>
+            <input type="text" id="roomName" name="roomName"><br><br>
+            <input type="submit" value="Create">
+        </form>
+        <script src="/socket.io/socket.io.js">
+        </script>
+
+<script>
+            const socket = io();
+            
+            socket.on("connect", () => {
+                console.log('Connected to server');
+            });
+            
+            socket.on("disconnect", () => {
+                console.log('Disconnected from server');
+            });
+            
+            document.getElementById("input-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const message = document.getElementById("message").value;
+                socket.emit("message", { message, user: localName, room: roomName });
+                document.getElementById("message").value = "";
+                console.log("Message sent");
+            });
+            
+            socket.on("message", (data) => {
+                const message = document.createElement("p");
+                message.innerHTML =` ${window.dateTime} ${data.user} ${data.message}`;
+                document.getElementById("messages").appendChild(message);
+            });
+
+            socket.on("createRoom", (data) => {
+                // if () {
+                    const room = document.createElement("li");
+                    room.innerHTML =` ${data.room}`;
+                    document.getElementById("roomList").appendChild(room);
+                // }
+            });
+
+            setInterval(() => {
+                socket.emit("getUsers", { room: roomName });
+                const now = new Date();
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                const hours = now.getHours();
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const currentDate = `${year}-${month}-${day}`;
+                const militaryTime = `${hours}:${minutes}`;
+                const dateTime = `${currentDate} ${militaryTime}:${seconds}`;
+                window.dateTime = dateTime;
+            }, 1000);
+
+            
+        </script>
+    </body>
 </html>

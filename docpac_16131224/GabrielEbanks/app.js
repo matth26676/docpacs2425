@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const sqlite3 = require('sqlite3');
+const socketIo = require('socket.io');
+const PORT = 3000;
+
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -17,63 +20,53 @@ app.use(session({
     saveUninitialized: false
 }));
 
-const db = new sqlite3.Database('data/database.db', (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('we good bruh');
-    }
-});
-
 function isAuthenticated(req, res, next) {
     if (req.session.user) next();
     else res.redirect(`/login?redirectURL=${THIS_URL}`);
 }
 
-app.get('/', (req, res) => {
-    res.render('index');
+app.get('/', isAuthenticated, (req, res) => {
+    res.render('index', { user: req.session.user, roomName: 'general' });
 });
 
 app.get('/login', (req, res) => {
-    console.log(req.query.token);
     if (req.query.token) {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
         req.session.user = tokenData.username;
-        res.redirect('/profile');
+        console.log(req.session.user);
+        res.redirect('/');
     } else {
         res.redirect(`${FBJS_URL}/oauth?redirectURL=${THIS_URL}`);
     }
 });
 
-app.get('/profile', isAuthenticated, (req, res) =>
-    db.get('SELECT * from users WHERE fb_name=?;', req.session.user, (error, row) => {
-        if (error) {
-            res.send(error);
-        } else if (row) {
-            res.render('profile', { user: req.session.user });
-        } else {
-            db.run('INSERT into users (fb_name, fb_id) VALUES(?,?);', [req.session.user, req.session.token.id], (error) => {
-                if (error) {
-                    res.send(error);
-                } else {
-                    res.render('profile', { user: req.session.user });
-                }
-            });
-        }
-    })
+app.get('index', isAuthenticated, (req, res) =>
+    res.render('index', { user: req.session.user })
 );
 
-app.post('/profile', (req, res) => {
-    db.run('UPDATE users SET profile_checked = ? WHERE fb_id=?', [req.body.check, req.session.token.id], (error) => {
-        if (error) {
-            res.send(error);
-        } else {
-            res.redirect('/profile');
-        }
+app.post('/index', (req, res) => {
+    
+});
+
+const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+
+const io = socketIo(server);
+io.on('connection', (socket) => {
+    console.log('New client connected');
+    
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+
+    socket.join('general');
+    socket.on('message', (message) => {
+        console.log('message: ', message);
+        io.emit('message', message);
     });
 });
 
-app.listen(3000, () => {
-    console.log(`Server started on port 3000`);
-});
