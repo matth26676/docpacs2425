@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lesson 7 Application Project A</title>
+
+    <script type=text/javascript> 
+    function search(sub, string)
+     { var where; string.includes(sub); 
+        y=string.indexOf(sub)
+        z="the word " 
+        b=" can be found " 
+        c=" letters in" 
+        d= "i'm sorry "
+        e= " is not in this sentence"
+        console.log(string.includes(sub)); 
+        if (sub == true) 
+        { alert(z +sub + b + y +c) }
+       else{
+            alert(d+z +sub +e)
+        }
+    
+    } 
+        </script> 
+        </head> 
+        <body>
+
+        <h3>CIW JavaScript Specialist</h3>
+<hr />
+
+<form name="myForm">
+<p>
+<strong>Look for:</strong>
+<input type="text" name="what" size="20" />
+</p>
+
+<p>
+<strong>in this string:</strong>
+<textarea name="toSearch" rows="4" cols="30" wrap="virtual">
+</textarea>
+</p>
+
+<p>
+<input type="button" value="Search"
+onclick="search(myForm.what.value, myForm.toSearch.value);" />
+</p>
+</form>
+
+</body>
+</html>
