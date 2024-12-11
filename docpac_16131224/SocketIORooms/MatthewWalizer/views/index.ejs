@@ -22,19 +22,60 @@
         </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io('http://localhost:3000');
+        const socket = io();
+
+        var selectedRoom = 'general';
 
         messageButton.addEventListener('click', () => {
             const message = messageBox.value;
-            socket.emit('message', message);
+            if (message === '') {
+                alert('Please enter a message');
+                return;
+            } else if (message.length > 512) {
+                alert('Please type a shorter message (max 512 characters)');
+                return;
+            }
+            let currentTime = new Date().toLocaleTimeString();
+            socket.emit('message', {currentTime: currentTime, receivingRoom: selectedRoom, content: message});
             messageBox.value = '';
         });
 
         socket.on('message', message => {
+            console.log(message);
             const messageElement = document.createElement('div');
-            messageElement.innerText = message;
-            conversationBox.appendChild(messageElement);
+            if (message.sender) {
+                messageElement.innerText = ' At ' + message.date + ' in the ' + message.roomName + ' room, ' + message.sender + ' said: ' + message.content;
+                messageElement.classList.add('normalReceivedMessages');
+            } else {
+                messageElement.innerText = message.content;
+                messageElement.classList.add('serverReceivedMessages');
+            }
+            chatBox.appendChild(messageElement);
+        });
+
+        socket.on('roomsList', (rooms) => {
+            while (conversationBox.firstChild) {
+                conversationBox.removeChild(conversationBox.firstChild);
+            }
+            console.log(rooms);
+            
+            for (room of rooms.roomsList) {
+                const roomElement = document.createElement('button');
+                roomElement.innerText = room;
+                if (room === selectedRoom) {
+                    roomElement.classList.add('selectedRoomButton');
+                } else {
+                    roomElement.classList.add('roomButton');
+                }
+                roomElement.onclick = () => {
+                    selectedRoom = roomElement.innerText;  
+                    socket.emit('message', {selectedRoom: selectedRoom});           
+                };
+
+                conversationBox.appendChild(roomElement);
+            }
         });
     </script>
 </body>
