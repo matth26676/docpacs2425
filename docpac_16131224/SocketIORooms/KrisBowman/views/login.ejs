@@ -1,20 +1,45 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
 </head>
+
 <body>
-    <form id="form" method="POST" action="/">
+    <form id="login-form" method="POST" action="/">
         <label for="user">Username: </label>
-        <input type="text" name="user">
+        <input type="text" name="user" id="user">
 
         <label for="pass">Password: </label>
-        <input type="password" name="pass">
-        
+        <input type="password" name="pass" id="pass">
+
         <input type="submit" value="Log in">
     </form>
     <a href="/">Back</a>
 </body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const loginForm = document.getElementById("login-form");
+    const userInput = document.getElementById("user");
+
+    //listen for chatForm submit
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault(); //prevent form from submitting the traditional way
+        const username = userInput.value.trim(); //get username value from input field
+
+        if (username) {
+            socket.emit("login", username);
+        };
+    });
+
+    socket.on("loginSuccess", (data) => {
+        loginForm.submit();
+    });
+
+</script>
+
 </html>

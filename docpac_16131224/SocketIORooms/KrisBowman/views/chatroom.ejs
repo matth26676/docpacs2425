@@ -8,34 +8,35 @@
 </head>
 
 <body>
-    <h1>General</h1>
-    <ul id="messages"></ul>
+    <form id="room-list">
+
+    </form>
     <form id="chat-form">
         <input id="message-input" autocomplete="off" placeholder="Type a message..." />
         <button type="submit">Send</button>
     </form>
+    <ul id="messages"></ul>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const form = document.getElementById("chat-form");
-        const input = document.getElementById("message-input");
+        const roomForm = document.getElementById("room-list");
+        const chatForm = document.getElementById("chat-form");
+        const messageInput = document.getElementById("message-input");
         const messages = document.getElementById("messages");
 
-        //listen for form submit
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            let message = input.value.trim();
-            if (message) {
-                socket.emit("chat message", message);
-                input.value = "";
-            };
+        socket.on("loginSuccess", (username) => {
+            socket.username = username
         });
 
-        //listen for login
-        socket.on("loginSuccess", (data) => {
-            socket.username = data.username;
-            console.log("Logged in as: " + socket.username);
+        //listen for chatForm submit
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let message = messageInput.value.trim();
+            if (message) {
+                socket.emit("chat message", message);
+                messageInput.value = "";
+            };
         });
 
         //listen for incoming messages
