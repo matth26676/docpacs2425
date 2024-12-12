@@ -37,7 +37,10 @@
     });
 
     socket.on("loginSuccess", (data) => {
-        loginForm.submit();
+        if (data.username) {
+            // Redirect the user after a successful login
+            window.location.href = "/chatroom"; // Redirect to the chatroom
+        };
     });
 
 </script>

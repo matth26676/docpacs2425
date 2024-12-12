@@ -19,14 +19,51 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+
+
+        const socket = io("http://localhost:3000");
         const roomForm = document.getElementById("room-list");
         const chatForm = document.getElementById("chat-form");
         const messageInput = document.getElementById("message-input");
         const messages = document.getElementById("messages");
 
-        socket.on("loginSuccess", (username) => {
-            socket.username = username
+
+        socket.on("loginSuccess", (data) => {
+            sessionStorage.setItem("username", data.username);
+            window.location.href = "/chatroom"; //redirects after successful login
+        });
+
+        //listen for connection submit
+        socket.on("connect", () => {
+            const storedUsername = sessionStorage.getItem("username");
+            if (storedUsername) {
+                console.log("Reconnecting as", storedUsername);
+                socket.emit("login", storedUsername);
+            };
+        });
+
+        //listen for incoming messages
+        socket.on("chat message", (msg) => {
+            const li = document.createElement("li");
+            const timestamp = "(" + new Date().toLocaleTimeString() + "): ";
+            li.textContent = `${socket.username}, ${timestamp}` + msg;
+            messages.appendChild(li);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        socket.on("rooms", (rooms) => {
+            rooms.forEach(room => {
+                const roomItem = document.createElement("button");
+                roomItem.textContent = room;
+                roomItem.addEventListener("click", () => {
+                    socket.emit("join", room); // Emit event to join the clicked room
+                });
+                roomForm.appendChild(roomItem);
+            });
+        });
+        
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected. Attempting to reconnect...");
         });
 
         //listen for chatForm submit
@@ -39,14 +76,6 @@
             };
         });
 
-        //listen for incoming messages
-        socket.on("chat message", (msg) => {
-            const li = document.createElement("li");
-            const timestamp = "(" + new Date().toLocaleTimeString() + "): ";
-            li.textContent = `${socket.username}, ${timestamp}` + msg;
-            messages.appendChild(li);
-            messages.scrollTop = messages.scrollHeight;
-        });
     </script>
 </body>
 
