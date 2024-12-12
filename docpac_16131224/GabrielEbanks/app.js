@@ -45,10 +45,6 @@ app.get('index', isAuthenticated, (req, res) =>
     res.render('index', { user: req.session.user })
 );
 
-app.post('/index', (req, res) => {
-    
-});
-
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
@@ -65,8 +61,12 @@ io.on('connection', (socket) => {
 
     socket.join('general');
     socket.on('message', (message) => {
-        console.log('message: ', message);
-        io.emit('message', message);
+        console.log('message: received');
+        io.to("general").emit('message', message);
+    });
+    socket.on('leave', (message) => {
+        console.log('socket.on just went off');
+        io.to("general").emit('message', message);
     });
 });
 

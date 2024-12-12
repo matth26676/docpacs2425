@@ -1,103 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room</title>
-    <script>
-        var localName = "<%= user %>";
-        var roomName = "<%= roomName %>";
-    </script>
-    <style>
-        #roomList {
-            width: 10%;
-            height: 150px;
-            overflow-y: auto;
-            float: left;
-            border-style: solid;
-        }
-        #messages {
-            width: 70%;
-            height: 300px;
-            border-style: solid;
-            overflow-y: auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room</title>
+  <script>
+    var localName = "<%= user %>";
+    var roomName = "<%= roomName %>";
+  </script>
+  <style>
+    #roomList {
+      width: 10%;
+      height: 150px;
+      overflow-y: auto;
+      float: left;
+      border-style: solid;
+    }
+
+    #messages {
+      width: 70%;
+      height: 300px;
+      border-style: solid;
+      overflow-y: auto;
+    }
+  </style>
 
 </head>
-    <body>
-        <h1>Welcome to the <%= roomName %> room!</h1>
-        
-        <div id="messages"></div>
-        
-        <form id="input-form">
-            <label for="message">Enter Message:</label>
-            <input type="text" id="message" name="message"><br><br>
-            <input type="submit" value="Send">
-        </form>
-        
-        <div>
-            <h2>Rooms</h2>
-            <ul id="roomList"></ul>
-        </div>
-    
-        <form id="create-room-form">
-            <label for="roomName">Create Room:</label>
-            <input type="text" id="roomName" name="roomName"><br><br>
-            <input type="submit" value="Create">
-        </form>
-        <script src="/socket.io/socket.io.js">
-        </script>
 
-<script>
-            const socket = io();
-            
-            socket.on("connect", () => {
-                console.log('Connected to server');
-            });
-            
-            socket.on("disconnect", () => {
-                console.log('Disconnected from server');
-            });
-            
-            document.getElementById("input-form").addEventListener("submit", (event) => {
-                event.preventDefault();
-                const message = document.getElementById("message").value;
-                socket.emit("message", { message, user: localName, room: roomName });
-                document.getElementById("message").value = "";
-                console.log("Message sent");
-            });
-            
-            socket.on("message", (data) => {
-                const message = document.createElement("p");
-                message.innerHTML =` ${window.dateTime} ${data.user} ${data.message}`;
-                document.getElementById("messages").appendChild(message);
-            });
+<body>
+  <h1>Welcome to the <%= roomName %> room!</h1>
 
-            socket.on("createRoom", (data) => {
-                // if () {
-                    const room = document.createElement("li");
-                    room.innerHTML =` ${data.room}`;
-                    document.getElementById("roomList").appendChild(room);
-                // }
-            });
+  <div id="messages"></div>
 
-            setInterval(() => {
-                socket.emit("getUsers", { room: roomName });
-                const now = new Date();
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                const year = now.getFullYear();
-                const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                const day = now.getDate().toString().padStart(2, '0');
-                const hours = now.getHours();
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const currentDate = `${year}-${month}-${day}`;
-                const militaryTime = `${hours}:${minutes}`;
-                const dateTime = `${currentDate} ${militaryTime}:${seconds}`;
-                window.dateTime = dateTime;
-            }, 1000);
+  <form id="input-form">
+    <label for="message">Enter Message:</label>
+    <input type="text" id="message" name="message"><br><br>
+    <input type="submit" value="Send">
+  </form>
 
-            
-        </script>
-    </body>
+  <script src="/socket.io/socket.io.js">
+  </script>
+
+  <script>
+    var arg;
+    const socket = io();
+
+    socket.on("connect", () => {
+      console.log('Connected to server');
+    });
+
+    socket.on("disconnect", () => {
+      console.log('Disconnected from server');
+    });
+
+    socket.on("message", (data) => {
+        const message = document.createElement("p");
+        message.innerHTML = ` ${new Date()} ${data.user} ${data.message}`;
+        document.getElementById("messages").appendChild(message);
+      });
+
+    document.getElementById("input-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const message = document.getElementById("message").value;
+      let slashCommand = null
+      let arg = null;
+      let dateTime = null;
+
+      if (message.length > 0 && message[0] === "/") {
+        // DETECTING SLASH COMMANDS IS WORKING
+        let messageText = document.getElementById("message").value;
+        const messageArray = messageText.split(" ");
+        let slashCommand = messageArray[0];
+        let arg = messageArray[1];
+        // console.log(slashCommand);
+        // console.log(arg);
+      }
+      // if message is long enough and not too long then send message
+      else if (message.length > 1 && message.length <= 256) {
+        if (slashCommand == "/join") {
+          socket.emit("join", {
+            user: localName,
+            arg: arg
+          });
+        }
+        if (slashCommand == "/leave") {
+          socket.emit("leave", {
+            user: localName,
+            arg: arg
+          });
+          console.log("user left room");
+        }
+
+        socket.emit("message", {
+          user: localName,
+          message: message,
+          dateTime: window.dateTime
+        });
+
+        document.getElementById("message").value = "";
+        console.log("Message sent");
+      }
+      // if message isnt long enough OR its too long then send eror message
+      else {
+        alert("Please enter a message");
+      }
+      
+
+    //   socket.on("join", (data) => {
+    //       const message = document.createElement("p");
+    //       message.innerHTML = ` ${data.dateTime} ${data.user} has joined ${data.room}`;
+    //       console.log(`user joined ${data.room}`);
+    //       document.getElementById("messages").appendChild(message);
+    //   });
+
+    });
+  </script>
+</body>
+
 </html>
