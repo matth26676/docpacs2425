@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log In</title>
+    <title>Chatroom Login</title>
 </head>
 
 <body>
@@ -15,34 +15,17 @@
         <label for="pass">Password: </label>
         <input type="password" name="pass" id="pass">
 
-        <input type="submit" value="Log in">
+        <button type="submit">Submit</button>
     </form>
-    <a href="/">Back</a>
 </body>
-
-<script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io();
-    const loginForm = document.getElementById("login-form");
-    const userInput = document.getElementById("user");
-
-    //listen for chatForm submit
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault(); //prevent form from submitting the traditional way
-        const username = userInput.value.trim(); //get username value from input field
-
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+        const username = document.getElementById("user").value.trim();
         if (username) {
-            socket.emit("login", username);
+            sessionStorage.setItem("username", username);  //save username to sessionStorage
+            window.location.href = "/chatroom";  //redirect to the chatroom page
         };
     });
-
-    socket.on("loginSuccess", (data) => {
-        if (data.username) {
-            // Redirect the user after a successful login
-            window.location.href = "/chatroom"; // Redirect to the chatroom
-        };
-    });
-
 </script>
 
 </html>

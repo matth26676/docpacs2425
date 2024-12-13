@@ -7,7 +7,6 @@ const crypto = require("crypto"); //import crypto
 const session = require("express-session"); //import session
 const http = require("http"); //import http
 const socketIO = require("socket.io"); //import socket.io
-const sharedsession = require("express-socket.io-session"); //import express-socket.io-session
 
 const app = express(); //initialize express as the "app" object
 const SERVER = http.createServer(app); //create HTTP server
@@ -22,20 +21,21 @@ app.use(express.urlencoded({ extended: true })); //encode url
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "secretString",
     resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
-    }
+    saveUninitialized: false
 });
-app.use(sessionMiddleware);
-io.use(sharedsession(sessionMiddleware, { autoSave: true }));
 
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+app.use(sessionMiddleware);
+io.use(wrap(sessionMiddleware));
 
 function isAuthenticated(req, res, next) {
-    if (req.session.user) next()
-    else res.redirect("/")
+    if (req.session && req.session.user) {
+        next();
+    } else {
+        console.log("unauthorized.")
+        res.redirect("/"); // redirect to login if not authenticated
+    };
 };
 
 function getUsersInRoom(room) {
@@ -46,6 +46,44 @@ function getUsersInRoom(room) {
         if (clientSocket && clientSocket.username) users.push(clientSocket.username);
     });
     return users;
+};
+
+function handleCommand(socket, msg) {
+    const [command, arg] = msg.slice(1).split(" ");
+    switch (command) {
+        case "join":
+            if (arg) {
+                socket.join(arg);
+                socket.room = arg;
+                io.to(arg).emit("chat message", `${socket.username} joined room: ${arg}`);
+            } else {
+                socket.emit("chat message", "Usage: /join [room]");
+            };
+            break;
+
+        case "leave":
+            if (arg) {
+                socket.leave(arg);
+                socket.emit("chat message", `You have left the room: ${arg}`);
+            } else {
+                socket.emit("chat message", "Usage: /leave [room]");
+            };
+            break;
+
+        case "users":
+            const usersInRoom = getUsersInRoom(socket.room);
+            socket.emit("chat message", `Users in room: ${usersInRoom.join(", ")}`);
+            break;
+
+        default:
+            socket.emit("chat message", `Unknown command: /${command}`);
+            break;
+    };
+};
+
+function errorHandle() {
+    console.error(err);
+    return res.send("login", { error: "Something went wrong." }); //display the error to the user
 };
 
 const db = new sqlite3.Database("data/database.db", (err) => {
@@ -65,25 +103,17 @@ Socket.io Config
 
 //handle Socket.io Connection
 io.on("connection", (socket) => {
-    // Get session from socket request
-    const session = socket.request.session;
-
-    const defaultRoom = "general"; //default room name
-    socket.room = defaultRoom; //set default room for new users
-    socket.join(defaultRoom); //user automatically joins the default room
-
-    var rooms = [defaultRoom]; //create rooms list
-
-    console.log("A new user connected");
 
     //listen for client login
-    socket.on("login", (username) => {
-        if (!username) {
+    socket.on("login", (data) => {
+        console.log(data.username);
+
+        if (!data.username) {
             console.log("Username is required.");
             return;
         };
 
-        db.get(`SELECT * FROM users WHERE username = ?`, [username], (err, user) => {
+        db.get(`SELECT * FROM users WHERE username=?`, [data.username], (err, user) => {
             if (err) {
                 console.error(err);
                 socket.emit("chat message", "Database error.");
@@ -93,15 +123,26 @@ io.on("connection", (socket) => {
                 socket.emit("chat message", "User not found.");
                 return
             };
+            socket.request.session.user = data.username;  //update session with the username
+            socket.request.session.save(() => {
+                console.log(`Session saved for ${data.username}`);
+            });
 
-            socket.username = username; //set the username in the client connection
-            session.user = username; //store the username in session
-
-            socket.join(defaultRoom); //user automatically joins the default room
-            socket.emit("loginSuccess", { username }); //emit username tp client
-            socket.emit("chat message", `You have joined the default room: ${defaultRoom}`);
-            console.log(`${socket.username} has connected, and joined ${defaultRoom}`);
+            socket.emit("loginSuccess", { username: data.username }); //emit username to client
+            console.log(`New user assigned to username: "${data.username}"`)
         });
+    });
+
+    const rooms = new Set(["general"]); // Use a Set to avoid duplicates
+
+    socket.on("join", (room) => {
+        if (!room) return socket.emit("chat message", "Room name required.");
+        rooms.add(room);
+        socket.leave(socket.room);
+        socket.join(room);
+        socket.room = room;
+        io.to(room).emit("chat message", `${socket.username} joined room: ${room}`);
+        socket.emit("rooms", Array.from(rooms)); // Send updated room list
     });
 
     socket.emit("rooms", rooms); //emit initial rooms list to client
@@ -119,41 +160,9 @@ io.on("connection", (socket) => {
         };
     });
 
-    function handleCommand(socket, msg) {
-        const [command, arg] = msg.slice(1).split(" ");
-        switch (command) {
-            case "join":
-                if (arg) {
-                    socket.join(arg);
-                    socket.room = arg;
-                    io.to(arg).emit("chat message", `${socket.username} joined room: ${arg}`);
-                } else {
-                    socket.emit("chat message", "Usage: /join [room]");
-                };
-                break;
-
-            case "leave":
-                if (arg) {
-                    socket.leave(arg);
-                    socket.emit("chat message", `You have left the room: ${arg}`);
-                } else {
-                    socket.emit("chat message", "Usage: /leave [room]");
-                };
-                break;
-
-            case "users":
-                const usersInRoom = getUsersInRoom(socket.room);
-                socket.emit("chat message", `Users in room: ${usersInRoom.join(", ")}`);
-                break;
-
-            default:
-                socket.emit("chat message", `Unknown command: /${command}`);
-                break;
-        };
-    };
-
     //listen for client disconnect
     socket.on("disconnect", () => {
+        if (!socket.username) return;
         console.log(`${socket.username} disconnected`);
         for (let room of socket.rooms) {
             if (room !== socket.id) {
@@ -161,67 +170,66 @@ io.on("connection", (socket) => {
             };
         };
     });
+});
 
-    /*------------
-    Route Requests
-    ------------*/
+/*------------
+Route Requests
+------------*/
 
-    //handle login (GET)
-    app.get("/", (req, res) => {
-        res.render("login");
-    });
+//handle login (GET)
+app.get("/", (req, res) => {
+    res.render("login");
+});
 
-    //handle login (POST)
-    app.post("/", (req, res) => {
-        if (req.body.user && req.body.pass) {
-            db.get("SELECT * FROM users WHERE username=?;", [req.body.user], (err, row) => {
-                if (err) {
-                    console.error("Database error: ", err);
-                    res.send("Something went wrong.");
-                } else if (!row) {
-                    //Create a new salt for this user
-                    const salt = crypto.randomBytes(16).toString("hex");
+//handle login (POST)
+app.post("/", (req, res) => {
+    if (req.body.user && req.body.pass) {
+        db.get("SELECT * FROM users WHERE username=?;", [req.body.user], (err, row) => {
+            if (err) {
+                errorHandle();
+            } else if (!row) {
 
-                    //Use the salt to "hash" the password
-                    crypto.pbkdf2(req.body.pass, salt, 1000, 64, "sha512", (err, derivedKey) => {
+                //create a new salt for this user
+                const salt = crypto.randomBytes(16).toString("hex");
+
+                //hash the password using the salt
+                crypto.pbkdf2(req.body.pass, salt, 1000, 64, "sha512", (err, derivedKey) => {
+                    const hashedPassword = derivedKey.toString("hex");
+
+                    db.run("INSERT INTO users (username, password, salt) VALUES (?, ?, ?);", [req.body.user, hashedPassword, salt], (err) => {
                         if (err) {
-                            console.error("Error hashing password.");
+                            errorHandle();
                         } else {
-                            const hashedPassword = derivedKey.toString("hex");
-
-                            db.run("INSERT INTO users (username, password, salt) VALUES (?, ?, ?);", [req.body.user, hashedPassword, salt], (err) => {
-                                if (err) {
-                                    res.send("Database error.");
-                                } else {
-                                    req.session.user = req.body.user;
-                                };
-                            });
-                        };
+                            req.session.user = req.body.user;
+                            return res.redirect("/chatroom"); //server-side redirect to chatroom
+                        }
                     });
-                } else if (row) {
-                    //Compare stored password with provided password
-                    crypto.pbkdf2(req.body.pass, row.salt, 1000, 64, "sha512", (err, derivedKey) => {
-                        if (err) {
-                            console.error("Error hashing password.");
-                        } else {
-                            const hashedPassword = derivedKey.toString("hex");
+                });
+            } else {
 
-                            if (row.password === hashedPassword) {
-                                req.session.user = req.body.user;
-                            } else {
-                                res.send("Incorrect Password.")
-                            };
-                        };
-                    });
-                };
-            });
-        } else {
-            res.send("Please enter a username and password");
-        };
-    });
+                //compare stored password with provided password
+                crypto.pbkdf2(req.body.pass, row.salt, 1000, 64, "sha512", (err, derivedKey) => {
+                    if (err) {
+                        errorHandle();
+                    }
 
-    ///handle chatroom (GET)
-    app.get("/chatroom", isAuthenticated, (req, res) => {
-        res.render("chatroom", { username: req.session.user });
-    });
+                    const hashedPassword = derivedKey.toString("hex");
+
+                    if (row.password === hashedPassword) {
+                        req.session.user = req.body.user;
+                        return res.redirect("/chatroom");
+                    } else {
+                        return res.render("login", { error: "Incorrect username or password." });
+                    }
+                });
+            }
+        });
+    } else {
+        return res.send("Please enter a username and password");
+    }
+});
+
+///handle chatroom (GET)
+app.get("/chatroom", isAuthenticated, (req, res) => {
+    res.render("chatroom", { username: req.session.user });
 });
