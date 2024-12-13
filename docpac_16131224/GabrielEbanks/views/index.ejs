@@ -7,7 +7,6 @@
   <title>Room</title>
   <script>
     var localName = "<%= user %>";
-    var roomName = "<%= roomName %>";
   </script>
   <style>
     #roomList {
@@ -29,7 +28,7 @@
 </head>
 
 <body>
-  <h1>Welcome to the <%= roomName %> room!</h1>
+  <h1>Welcome to the  room!</h1>
 
   <div id="messages"></div>
 
@@ -43,8 +42,11 @@
   </script>
 
   <script>
-    var arg;
     const socket = io();
+    var arg;
+    var slashCommand;
+    var dateTime;
+    var room = socket.room
 
     socket.on("connect", () => {
       console.log('Connected to server');
@@ -63,27 +65,19 @@
     document.getElementById("input-form").addEventListener("submit", (event) => {
       event.preventDefault();
       const message = document.getElementById("message").value;
-      let slashCommand = null
-      let arg = null;
-      let dateTime = null;
+      var slashCommand;
+      var arg;
+      var dateTime;
 
-      if (message.length > 0 && message[0] === "/") {
+      if (message.length > 0) {
         // DETECTING SLASH COMMANDS IS WORKING
         let messageText = document.getElementById("message").value;
         const messageArray = messageText.split(" ");
         let slashCommand = messageArray[0];
         let arg = messageArray[1];
-        // console.log(slashCommand);
-        // console.log(arg);
-      }
-      // if message is long enough and not too long then send message
-      else if (message.length > 1 && message.length <= 256) {
-        if (slashCommand == "/join") {
-          socket.emit("join", {
-            user: localName,
-            arg: arg
-          });
-        }
+
+        console.log(slashCommand);
+        console.log(arg);
         if (slashCommand == "/leave") {
           socket.emit("leave", {
             user: localName,
@@ -91,30 +85,24 @@
           });
           console.log("user left room");
         }
-
-        socket.emit("message", {
-          user: localName,
-          message: message,
-          dateTime: window.dateTime
-        });
-
-        document.getElementById("message").value = "";
-        console.log("Message sent");
+        else if (slashCommand == "/join") {
+          socket.emit("joinRoom", {
+            user: localName,
+            arg: arg
+          });
+          console.log("user joined room");
+        }
+        else  {
+          socket.emit("message", {
+           user: localName,
+           message: message,
+           dateTime: window.dateTime
+         });
+         document.getElementById("message").value = "";
+         console.log("Message sent");
+        }      
       }
-      // if message isnt long enough OR its too long then send eror message
-      else {
-        alert("Please enter a message");
-      }
-      
-
-    //   socket.on("join", (data) => {
-    //       const message = document.createElement("p");
-    //       message.innerHTML = ` ${data.dateTime} ${data.user} has joined ${data.room}`;
-    //       console.log(`user joined ${data.room}`);
-    //       document.getElementById("messages").appendChild(message);
-    //   });
-
-    });
+      });
   </script>
 </body>
 

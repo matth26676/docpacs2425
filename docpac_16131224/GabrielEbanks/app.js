@@ -6,7 +6,6 @@ const sqlite3 = require('sqlite3');
 const socketIo = require('socket.io');
 const PORT = 3000;
 
-
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,7 +25,7 @@ function isAuthenticated(req, res, next) {
 }
 
 app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', { user: req.session.user, roomName: 'general' });
+    res.render('index', { user: req.session.user,});
 });
 
 app.get('/login', (req, res) => {
@@ -50,23 +49,38 @@ const server = app.listen(PORT, () => {
 });
 
 
+
 const io = socketIo(server);
 io.on('connection', (socket) => {
     console.log('New client connected');
-    
+    socket.join('general');
+    console.log('joined general');
+    var room = socket.rooms;
+    console.log(room);
+
+    socket.on('joinRoom', (user,arg) => {
+        socket.join(arg);
+        console.log(`username is: ${user},${arg}`);
+        console.log(`Rooms for socket ${socket.id}:`, Array.from(socket.rooms));
+    });
 
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 
-    socket.join('general');
+    socket.on('userList', () => {
+        console.log('Client requested user list');
+    });
+
     socket.on('message', (message) => {
         console.log('message: received');
         io.to("general").emit('message', message);
     });
-    socket.on('leave', (message) => {
-        console.log('socket.on just went off');
-        io.to("general").emit('message', message);
-    });
+
+    socket.on('leave', (arg) => {
+        socket.leave(arg);
+        console.log(`Rooms for socket ${socket.id}:`, Array.from(socket.rooms));
+
+});
 });
 
