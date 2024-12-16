@@ -16,6 +16,13 @@ socket.on('recievedata', function (message) {
             }
         }
 
+        if (message.clearboard) {
+            for (let i = 0; i <= 551; i++) {
+                let gameButtonNumber = 'gameButton' + i
+                let gameButton = document.getElementById(gameButtonNumber)
+                gameButton.style.backgroundColor = 'white'
+            }}
+
         if (message.time) {
             document.getElementById('timerBox').innerHTML = 'Time Left: ' + message.time
         } else if (message.cooldownTime) {
@@ -29,6 +36,7 @@ socket.on('recievedata', function (message) {
         }
 
         if (message.buttonValue) {
+            
             var gameButtonNumber = 'gameButton' + message.buttonNumber
             var gameButton = document.getElementById(gameButtonNumber);
             buttonList[message.buttonNumber] = message.buttonValue
@@ -77,7 +85,7 @@ socket.on('recievedata', function (message) {
 
 })
 
-for (let i = 0; i <= 63; i++) {
+for (let i = 0; i <= 551; i++) {
 
     let game = document.getElementById('buttonPage')
     let newButton = document.createElement('button');
@@ -85,7 +93,7 @@ for (let i = 0; i <= 63; i++) {
     newButton.id = "gameButton" + i;
     newButton.backgroundColor = 'white'
 
-    newButton.addEventListener('click', () => { socket.emit('senddata', { buttonNumber: i }) })
+    newButton.addEventListener('mouseover', () => { socket.emit('senddata', { buttonNumber: i }) })
     document.getElementById('buttonPage').appendChild(newButton)
 
 }
