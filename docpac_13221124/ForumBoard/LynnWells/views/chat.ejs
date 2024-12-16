@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            color: #e8e6e3;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            background-color: #181a1b;
+        }
+
+        .user-list {
+            float: left;
+            width: 150px;
+            padding: 10px;
+            margin-right: 20px;
+            background-color: rgb(54, 58, 61);
+        }
+
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: 1px solid rgb(62, 68, 70);
+            background-color: #181a1b;
+        }
+
+        button {
+            padding: 10px 20px;
+            color: #f4f4f4;
+            border: 1px solid #e8e6e3;
+            cursor: pointer;
+            background-color: #181a1b;
+
+        }
+
+        h3 {
+            margin: 5px;
+        }
+
+        h4 {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-box">
+        <form id="chatForm" action="/chat/<%- convo_id %>" method="post">
+            <input type="text" name="content" id="postInput" placeholder="Type a new post" required>
+            <button type="submit">Send</button>
+        </form>
+
+        <div class="postBox" action="/chat/<% convo_id %>" method="get">
+            <% if (posts.length > 0) { %>
+                <% posts.forEach((post)=> { %>
+                    <div class="post">
+                        <strong>
+                            <a href="/userPage/<%= post.poster %>">
+                                <%= post.poster %>
+                            </a>
+                        </strong>
+                        <p>
+                            <%= post.content %>
+                        </p>
+                        <small>
+                            <%= new Date(post.time).toLocaleString() %>
+                        </small>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <p>No posts yet.</p>
+                            <% } %>
+        </div>
+    </div>
+</body>
+
+</html>
