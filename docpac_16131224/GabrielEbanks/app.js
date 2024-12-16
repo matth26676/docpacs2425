@@ -53,9 +53,12 @@ const server = app.listen(PORT, () => {
 
 const io = socketIo(server);
 io.on('connection', (socket) => {
+
     console.log('New client connected');
     socket.join('general');
     console.log('joined general');
+
+
     var room = socket.rooms;
     users = new Set();
     console.log(room);
@@ -75,7 +78,7 @@ io.on('connection', (socket) => {
 
     socket.on('userList', (data) => {
         console.log('Client requested user list');
-        io.to('general').emit('userList', Array.from(users));
+        io.to(data.room).emit('userList', Array.from(users));
 
     });
 
@@ -86,7 +89,7 @@ io.on('connection', (socket) => {
         const user = data.user;
         console.log(room, message, user);
         console.log('message: received in room', room);
-        io.to(room).emit('message', user, message, room);
+        io.to(room).emit('message', user, message, );
     });
 
     socket.on('leave', (data) => {

@@ -65,10 +65,10 @@
       console.log('Disconnected from server');
     });
 
-    socket.on("message", (data) => {
-        const message = document.createElement("p");
-        message.innerHTML = ` ${new Date()} ${data.user} ${data.message}`;
-        document.getElementById("messages").appendChild(message);
+    socket.on("message", ( user, message, room) => {
+        const messagething = document.createElement("p");
+        messagething.innerHTML = ` ${new Date()} ${user} ${message}`;
+        document.getElementById("messages").appendChild(messagething);
       });
 
     document.getElementById("input-form").addEventListener("submit", (event) => {
@@ -79,7 +79,6 @@
       var dateTime;
 
       if (message.length > 0) {
-        // DETECTING SLASH COMMANDS IS WORKING
         let messageText = document.getElementById("message").value;
         const messageArray = messageText.split(" ");
         let slashCommand = messageArray[0];
@@ -90,6 +89,7 @@
 
         console.log(slashCommand);
         console.log(arg);
+
         if (slashCommand == "/leave") {
           socket.emit("leave", {
             user: localName,
@@ -101,6 +101,7 @@
           document.getElementById("messages").appendChild(message);
           console.log("user left room");
         }
+
         else if (slashCommand == "/join") {
           currentRoom = arg;
           socket.emit("joinRoom", {
@@ -108,16 +109,18 @@
             arg: arg,
             room: currentRoom
           });
-          document.getElementById("roomName").textContent = `Room: ${arg}`;
-          const message = document.createElement("p");
+
+    document.getElementById("roomName").textContent = `Room: ${arg}`;
+    const message = document.createElement("p");
     message.textContent = `You joined room ${arg}`;
     document.getElementById("messages").appendChild(message);
-          console.log("user joined room");
+    console.log("user joined room");
         }
+
         else if (slashCommand == "/users") {
           socket.emit("userList", {
             user: localName,
-            arg: arg
+            room: currentRoom
           });
         }
         
