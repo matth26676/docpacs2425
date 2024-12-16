@@ -23,12 +23,21 @@
       border-style: solid;
       overflow-y: auto;
     }
+
+    #roomName {
+    position: flex;
+    top: 10px;
+    left: 10px;
+
+  }
   </style>
 
 </head>
 
 <body>
-  <h1>Welcome to the  room!</h1>
+  <div id="roomName">
+   Room: General
+  </div>
 
   <div id="messages"></div>
 
@@ -46,7 +55,7 @@
     var arg;
     var slashCommand;
     var dateTime;
-    var room = socket.room
+    let currentRoom = "general";
 
     socket.on("connect", () => {
       console.log('Connected to server');
@@ -75,6 +84,9 @@
         const messageArray = messageText.split(" ");
         let slashCommand = messageArray[0];
         let arg = messageArray[1];
+        if (arg == undefined) {
+          arg = "";
+        }
 
         console.log(slashCommand);
         console.log(arg);
@@ -83,17 +95,35 @@
             user: localName,
             arg: arg
           });
+          document.getElementById("roomName").textContent =`Room: ${arg}`;
+          const message = document.createElement("p");
+          message.textContent = `You left room ${arg}!`;
+          document.getElementById("messages").appendChild(message);
           console.log("user left room");
         }
         else if (slashCommand == "/join") {
+          currentRoom = arg;
           socket.emit("joinRoom", {
+            user: localName,
+            arg: arg,
+            room: currentRoom
+          });
+          document.getElementById("roomName").textContent = `Room: ${arg}`;
+          const message = document.createElement("p");
+    message.textContent = `You joined room ${arg}`;
+    document.getElementById("messages").appendChild(message);
+          console.log("user joined room");
+        }
+        else if (slashCommand == "/users") {
+          socket.emit("userList", {
             user: localName,
             arg: arg
           });
-          console.log("user joined room");
         }
+        
         else  {
           socket.emit("message", {
+          room: currentRoom,
            user: localName,
            message: message,
            dateTime: window.dateTime

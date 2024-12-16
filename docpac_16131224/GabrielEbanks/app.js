@@ -40,9 +40,10 @@ app.get('/login', (req, res) => {
     }
 });
 
-app.get('index', isAuthenticated, (req, res) =>
-    res.render('index', { user: req.session.user })
-);
+app.get('/', isAuthenticated, (req, res) => {
+    console.log('Session user:', req.session.user); 
+    res.render('index', { user: req.session.user });
+});
 
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -56,11 +57,15 @@ io.on('connection', (socket) => {
     socket.join('general');
     console.log('joined general');
     var room = socket.rooms;
+    users = new Set();
     console.log(room);
 
-    socket.on('joinRoom', (user,arg) => {
+    socket.on('joinRoom', (data) => {
+        const user = data.user;
+        const arg = data.arg;
         socket.join(arg);
-        console.log(`username is: ${user},${arg}`);
+        currentRoom = arg;
+        console.log(`username is: ${user}, and they are joining ${arg}`);
         console.log(`Rooms for socket ${socket.id}:`, Array.from(socket.rooms));
     });
 
@@ -68,16 +73,24 @@ io.on('connection', (socket) => {
         console.log('Client disconnected');
     });
 
-    socket.on('userList', () => {
+    socket.on('userList', (data) => {
         console.log('Client requested user list');
+        io.to('general').emit('userList', Array.from(users));
+
     });
 
-    socket.on('message', (message) => {
-        console.log('message: received');
-        io.to("general").emit('message', message);
+    socket.on('message', (data) => {
+        console.log (data);
+        const room = data.room;
+        const message = data.message
+        const user = data.user;
+        console.log(room, message, user);
+        console.log('message: received in room', room);
+        io.to(room).emit('message', user, message, room);
     });
 
-    socket.on('leave', (arg) => {
+    socket.on('leave', (data) => {
+        const arg = data.arg;
         socket.leave(arg);
         console.log(`Rooms for socket ${socket.id}:`, Array.from(socket.rooms));
 
