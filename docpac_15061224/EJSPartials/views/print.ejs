@@ -1,0 +1,26 @@
+<%- include('header') %>
+<body>
+    <div class="container">
+        <div id="box3">
+            <h1>File written successfully</h1>
+            <br>
+        </div>
+     
+        <div id="box2">
+            <% console.log('Viewport in print.ejs:', viewport); %>
+            <p>Viewport: <%= viewport %></p>
+        </div>
+
+        <div id="box4">
+            <button onclick="window.open('/index.html', '_blank')">Open index.html</button>
+            <button onclick="location.reload()">Reload Page</button>
+        </div>
+    </div>
+    <script>
+        if (performance.navigation.type === 1) {
+            // Page was reloaded
+            window.location.href = '/';
+        }
+    </script>
+</body>
+<%- include('footer') %>
