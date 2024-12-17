@@ -1,0 +1,16 @@
+
+<%- include('partials/header') %>
+
+
+    <body>
+        
+        Welcome to the homepage!
+        <% if (viewport=='online' ) { %>
+            <button onclick="window.location.href='/print'">Print this page</button>
+            <% } %>
+    </body>
+
+
+    <%- include('partials/footer') %>
+
+
