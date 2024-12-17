@@ -9,7 +9,7 @@
     var localName = "<%= user %>";
   </script>
   <style>
-    #roomList {
+    #roomButtons {
       width: 10%;
       height: 150px;
       overflow-y: auto;
@@ -25,19 +25,21 @@
     }
 
     #roomName {
-    position: flex;
-    top: 10px;
-    left: 10px;
+      position: flex;
+      top: 10px;
+      left: 10px;
 
-  }
+    }
   </style>
 
 </head>
 
 <body>
   <div id="roomName">
-   Room: General
+    Current Room: General
   </div>
+  <div id="roomButtons"></div>
+  <div id="userList"></div>
 
   <div id="messages"></div>
 
@@ -65,11 +67,49 @@
       console.log('Disconnected from server');
     });
 
-    socket.on("message", ( user, message, room) => {
-        const messagething = document.createElement("p");
-        messagething.innerHTML = ` ${new Date()} ${user} ${message}`;
-        document.getElementById("messages").appendChild(messagething);
-      });
+    socket.on("roomsList", (data) => {
+
+    });
+
+    socket.on('roomListUpdate', (data) => {
+    const roomButtons = document.getElementById('roomButtons');
+    roomButtons.innerHTML = ''; 
+
+    data.rooms.forEach((room) => {
+        const button = document.createElement('button');
+        button.textContent = `Join ${room}`;
+        button.onclick = () => {
+            currentRoom = room;
+            socket.emit('joinRoom', {
+                user: localName,
+                arg: room,
+                room: currentRoom
+            });
+            document.getElementById("roomName").textContent = `Room: ${room}`;
+            const message = document.createElement("p");
+            message.textContent = `You joined room ${room}`;
+            document.getElementById("messages").appendChild(message);
+        };
+        roomButtons.appendChild(button);
+    });
+});
+
+    socket.on("userList", (users) => {
+    const userList = document.getElementById("userList");
+    userList.innerHTML = "";
+
+    users.forEach((user) => {
+        const userElement = document.createElement("p");
+        userElement.textContent = user;
+        document.getElementById('messages').appendChild(userElement);
+    });
+});
+
+    socket.on("message", (user, message, room) => {
+      const messagething = document.createElement("p");
+      messagething.innerHTML = ` ${new Date()} ${user} ${message}`;
+      document.getElementById("messages").appendChild(messagething);
+    });
 
     document.getElementById("input-form").addEventListener("submit", (event) => {
       event.preventDefault();
@@ -95,14 +135,12 @@
             user: localName,
             arg: arg
           });
-          document.getElementById("roomName").textContent =`Room: ${arg}`;
+          document.getElementById("roomName").textContent = `Room: ${arg}`;
           const message = document.createElement("p");
           message.textContent = `You left room ${arg}!`;
           document.getElementById("messages").appendChild(message);
           console.log("user left room");
-        }
-
-        else if (slashCommand == "/join") {
+        } else if (slashCommand == "/join") {
           currentRoom = arg;
           socket.emit("joinRoom", {
             user: localName,
@@ -110,32 +148,31 @@
             room: currentRoom
           });
 
-    document.getElementById("roomName").textContent = `Room: ${arg}`;
-    const message = document.createElement("p");
-    message.textContent = `You joined room ${arg}`;
-    document.getElementById("messages").appendChild(message);
-    console.log("user joined room");
-        }
+          document.getElementById("roomName").textContent = `Room: ${arg}`;
+          const message = document.createElement("p");
+          message.textContent = `You joined room ${arg}`;
+          document.getElementById("messages").appendChild(message);
+          console.log("user joined room");
 
-        else if (slashCommand == "/users") {
+        } else if (slashCommand == "/users") {
           socket.emit("userList", {
             user: localName,
             room: currentRoom
           });
         }
-        
-        else  {
+
+        else {
           socket.emit("message", {
-          room: currentRoom,
-           user: localName,
-           message: message,
-           dateTime: window.dateTime
-         });
-         document.getElementById("message").value = "";
-         console.log("Message sent");
-        }      
+            room: currentRoom,
+            user: localName,
+            message: message,
+            dateTime: window.dateTime
+          });
+          document.getElementById("message").value = "";
+          console.log("Message sent");
+        }
       }
-      });
+    });
   </script>
 </body>
 
