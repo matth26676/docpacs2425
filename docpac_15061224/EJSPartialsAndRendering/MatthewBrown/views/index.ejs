@@ -1,0 +1,17 @@
+<%- include('partials/header', { viewpoint: viewpoint }) %>
+
+    <% if (styleVar==='1' ) { %>
+        <%- include('partials/style1') %>
+            <% } else if (styleVar==='2' ) { %>
+                <%- include('partials/style2') %>
+                    <% } %>
+
+                        <body>
+                            Welcome to the home page!
+
+                            <% if (viewpoint==='online' ) { %>
+                                <button onclick="window.location.href='/print'">Print</button>
+                                <% } %>
+                        </body>
+
+                        <%- include('partials/footer') %>
