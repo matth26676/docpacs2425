@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 7-6</title>
+
+  <script type="text/javascript">
+    function fn() {
+      let num = [1, 2, 3, 4, 5];
+      let sq = num.map(function (n) {
+        return n * n;
+      });
+      return sq;
+    }
+
+    function alertN() {
+      let squaredNumbers = fn();
+      alert("Squared Numbers: " + squaredNumbers.join(", "));
+    }
+  </script>
+</head>
+
+<body>
+  <h3>CIW JavaScript Specialist</h3>
+  <hr />
+  <button onclick="alertN()">Click Me</button>
+</body>
+
+</html>
