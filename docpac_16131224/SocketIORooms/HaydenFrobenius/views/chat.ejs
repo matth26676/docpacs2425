@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            display: flexbox;
+        }
+
+        #messagesContainer {
+            width: calc(100vw - 217px);
+            height: 90vh;
+            background-color: #fff;
+            padding: 1rem;
+            overflow-y: auto;
+            box-shadow: -10px 0 15px rgba(40, 40, 40, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            float: right;
+        }
+
+        #usersContainer {
+            width: 200px;
+            background-color: #eee;
+            padding: 3rem;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            height: 100vh;
+            float: left;
+        }
+
+        #messageBox {
+            font-size: 2em;
+            width: 60%;
+        }
+
+        #sendBtn {
+            background: #3498db;
+            background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+            background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+            background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+            background-image: -o-linear-gradient(top, #3498db, #2980b9);
+            background-image: linear-gradient(to bottom, #3498db, #2980b9);
+            font-family: Arial;
+            color: #ffffff;
+            font-size: 20px;
+            padding: 10px 20px 10px 20px;
+            text-decoration: none;
+            width: 100px;
+            height: 50px;
+        }
+
+        #sendBtn:hover {
+            cursor: pointer;
+            background: #3cb0fd;
+            background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+            background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+            text-decoration: none;
+        }
+
+        #userList {
+            list-style: none;
+        }
+    </style>
+
+    <script src="/public/js/socket.io.js" ></script>
+</head>
+
+<body>
+    <div id="usersContainer">
+        <ul id="userList">
+            eee
+        </ul>
+    </div>
+    <div id="messagesContainer">
+    </div>
+    <input type="text" id="messageBox">
+    <button id="sendBtn">Send</button>
+    <script>
+
+        const messageTemplate = `<%- include('partials/message'); %>`;
+        const roomTemplate = `<%- include('partials/room'); %>`;
+
+        const socket = io();
+
+        const messageBox = document.getElementById('messageBox');
+        const sendBtn = document.getElementById('sendBtn');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const roomsList = document.getElementById('userList');
+
+        let rooms = [];
+        let currentRoom = "";
+
+
+
+        //this weird but it worky for some reason
+        function sanitizeText(text) {
+            const element = document.createElement('div');
+            element.textContent = text; // This will escape special characters
+            return element.innerHTML;    // Get the HTML-escaped string
+        }
+
+        sendBtn.addEventListener('click', () => {
+            const message = {
+                text: messageBox.value,
+                sender: JSON.parse(`<%- JSON.stringify(user) %>`)
+            }
+            
+            if (message.text.trim() !== '') {
+                socket.emit('chat message', message);
+                messageBox.value = '';
+            }
+        });
+
+        socket.on('chat message', (data) => {
+
+            if(data.room !== currentRoom) return;
+
+            data.message.replaceAll('\n', '<br>');
+
+            const sender = data.sender;
+            const content = sanitizeText(data.message);
+            const timestamp = data.timestamp;
+            const roomName = data.room;
+
+            addMessage(content, sender.username, timestamp, roomName);
+        });
+
+        socket.on('update rooms list', (data) => {
+            const newList = data.newList;
+            updateRoomsList(newList);
+        });
+
+        socket.on('update current room', (data) => {
+
+            messagesContainer.innerHTML = "";
+
+            currentRoom = data.currentRoom;
+            let messageText = "<b>Rooms:</b> <br>";
+            messageText += rooms.map(room => sanitizeText(room)).join('<br>');
+            messageText += "<br><br>";
+
+            messagesContainer.innerHTML += messageText;
+            
+        });
+    
+        function updateRoomsList(newList) {
+            roomsList.innerHTML = '';
+            newList.forEach(roomName => {
+                roomsList.innerHTML += roomTemplate
+                    .replaceAll('ROOMNAME', roomName);
+            });
+            rooms = newList;
+        }
+
+        function addMessage(text, senderUsername, timestamp, roomName) {
+
+            text = text.replaceAll('\n', '<br>')
+
+            messagesContainer.innerHTML += messageTemplate
+                .replaceAll('NAME', senderUsername)
+                .replaceAll('CONTENT', text)
+                .replaceAll('ROOM', roomName)
+                .replaceAll('TIMESTAMP', new Date(timestamp).toLocaleString());
+        }
+
+        function gotoRoom(roomName){
+            socket.emit('goto room', {roomName});
+        }
+
+    </script>
+</body>
+
+</html>
