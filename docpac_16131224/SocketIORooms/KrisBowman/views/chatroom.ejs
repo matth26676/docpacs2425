@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+</head>
+
+<body>
+    <h1>Welcome, <span id="username-display"></span></h1>
+    <div>
+        <h2>Available Rooms</h2>
+        <form id="room-list"></form>
+        <p id="room-status"></p>
+    </div>
+
+    <div>
+        <h2>Chat</h2>
+        <form id="chat-form">
+            <input id="message-input" autocomplete="off" placeholder="Type a message..." />
+            <button type="submit">Send</button>
+        </form>
+        <ul id="messages"></ul>
+    </div>
+
+    <a href="/">Back</a>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io("http://localhost:3000");
+        const roomForm = document.getElementById("room-list");
+        const chatForm = document.getElementById("chat-form");
+        const messageInput = document.getElementById("message-input");
+        const messages = document.getElementById("messages");
+        const roomStatus = document.getElementById("room-status");
+        const usernameDisplay = document.getElementById("username-display");
+
+        //listen for connection submit
+        socket.on("connect", () => {
+            const storedUsername = sessionStorage.getItem("username");
+            console.log(storedUsername);  //log the value to check
+            if (storedUsername) {
+                usernameDisplay.textContent = storedUsername;
+            } else {
+                usernameDisplay.textContent = "Guest";  //fallback if no username
+            }
+        });
+
+        //listen for incoming messages
+        socket.on("chat message", (username, msg) => {
+            const li = document.createElement("li");
+            const timestamp = "(" + new Date().toLocaleTimeString() + "): ";
+            li.textContent = `${username} ${timestamp}` + msg;
+            messages.appendChild(li);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        socket.on("rooms", (rooms) => {
+            roomForm.innerHTML = ""; // Clear the existing room list
+            rooms.forEach(room => {
+                const roomItem = document.createElement("button");
+                roomItem.textContent = room;
+                roomItem.addEventListener("click", () => {
+                    socket.emit("join", room); // Emit event to join the clicked room
+                    roomStatus.textContent = `Joined room: ${room}`;
+                });
+                roomForm.appendChild(roomItem);
+            });
+        });
+
+        //listen for chatForm submit
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let message = messageInput.value.trim();
+            if (message) {
+                socket.emit("chat message", message);
+                messageInput.value = "";
+            };
+        });
+    </script>
+</body>
+
+</html>
