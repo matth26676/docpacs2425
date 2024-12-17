@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #mainpage {
+            overflow-y: scroll;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <div id="mainpage">
+    </div>
+
+
+    <script>
+        posts = JSON.parse(`<%- posts %>`)
+        for (post in posts) {
+            newPostBox = document.createElement('div')
+            newPost = document.createElement('button')
+            newPost.innerHTML = 'Said '+posts[post].content+' on '+posts[post].date
+            newPost.addEventListener('click', function(){
+                window.location.href = `/chat?conversationNumber=${posts[post].convo_id}&name=${new URLSearchParams(window.location.search).get('name')}`
+            })
+            newPostBox.appendChild(newPost)
+            document.getElementById('mainpage').appendChild(newPostBox)
+            
+            
+        }
+    </script>
+</body>
+
+</html>
