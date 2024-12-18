@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="public/chat.js"></script>
+</head>
+<body>
+    <textarea id="chatArea" cols="30" rows="10" readonly></textarea>
+    <input type="text" id="chatInput">
+    <button id="sendBtn">Send</button>
+
+    <script>
+        let socket = io();
+
+        const chatArea = document.getElementById('chatArea');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function addMessage(text, sender, timestamp) {
+            chatArea.value += `${sender} (${timestamp}):\n ${text}\n`;
+        }
+
+        sendBtn.addEventListener('click', () => {
+            const message = chatInput.value;
+            socket.emit('chat message', { text: message });
+        });
+
+        socket.on('chat message', (data) => {
+            let text = data.text;
+            let sender = data.sender;
+            let timestamp = new Date(data.timestamp).toLocaleTimeString();
+
+            addMessage(text, sender, timestamp);
+        });
+
+    </script>
+</body>
+</html>
