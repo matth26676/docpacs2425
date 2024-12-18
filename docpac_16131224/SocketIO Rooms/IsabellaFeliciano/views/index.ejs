@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room :)</title>
+    <title>Chat Room</title>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -21,7 +21,7 @@
 
         #messageList {
             margin-left: 30px;
-            border: 1px solid #ccc;
+            border: 1px solid #d483c7;
             padding: 20px;
             height: 400px;
             overflow-y: scroll;
@@ -63,7 +63,9 @@
         <button id="sendbutton" onclick="Send()">Send</button>
     </div>
 </body>
+
 <script src="socket.io/socket.io.js"></script>
+
 <script>
     // This is the chat room
     var username = '<%= user %>';
@@ -81,7 +83,12 @@
 
             // Defines the commands
             const commands = {
-                join: () => args[0] && socket.emit('joinRoom', { user: username, room: args[0] }),
+                join: () => {
+                    if (args[0]); {
+                        socket.emit('joinRoom', { user: username, room: roomName });
+                    }
+                    window.location.href = '/login';
+                },
                 leave: () => {
                     if (args[0]) {
                         socket.emit('leaveRoom', { user: username, room: args[0] });
@@ -102,12 +109,11 @@
 
     // Receives messages from the server
     socket.on("send message", (message) => {
-        console.log(message)
+        console.log(message);
         const messageElement = document.createElement('div');
         messageElement.innerText = message.user + ": " + message.message;
         messageList.appendChild(messageElement);
-    })
-
+    });
 </script>
 
 </html>
