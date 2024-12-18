@@ -23,6 +23,22 @@ io.use((socket, next) => { sessionMiddleware(socket.socketHandler, {}, next); })
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+function loggedOut(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.send('you are already logged out');
+    }
+}
+
 app.set('view engine', 'ejs');
 
 app.get('/', routes.index);
@@ -33,4 +49,4 @@ app.post('/login', routes.loginPost);
 
 app.get('/logout', routes.logout);
 
-app.get('/chat', routes.chat);
+app.get('/chat', isAuthenticated, routes.chat);
