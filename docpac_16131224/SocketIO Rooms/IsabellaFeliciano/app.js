@@ -30,15 +30,24 @@ const users = {};
 io.on('connection', (socket) => {
     console.log('User connected');
     console.log(socket.rooms)
+    socket.join('general');
+    socket.currentRoom = 'general';
+
     socket.on('message', (message) => {
         console.log(message);
-
-        io.emit('send message', message);
+        io.to(socket.currentRoom).emit('send message', socket.currentRoom + ": " + message);
     });
 
     socket.on('joinRoom', (data) => {
-        socket.join(data.room);
         users[socket.id] = data.user;
-        io.to(socket.id).emit('roomList', roomList);
+        socket.join(data.room);
+        socket.currentRoom = data.room;
+        io.to(socket.id).emit('roomList', [...socket.rooms]);
+    })
+
+    socket.on('leaveRoom', (data) => {
+        socket.leave(data.room);
+        users[socket.id] = data.user;
+        io.to(socket.id).emit('roomList', [...socket.rooms]);
     })
 });

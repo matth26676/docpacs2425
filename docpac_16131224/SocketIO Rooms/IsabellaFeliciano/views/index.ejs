@@ -10,7 +10,7 @@
 
     <style>
         /* CSS for the chat room */
-        #userList {
+        #roomList {
             margin-left: 30px;
             border: 1px solid #d483c7;
             padding: 20px;
@@ -30,7 +30,6 @@
 
         #textBox {
             width: calc(100% - 240px);
-            margin-left: 220px;
         }
 
         #infoBox {
@@ -50,7 +49,7 @@
 
 <body>
     <div id="infoBox">
-        <div id="userList">
+        <div id="roomList">
             <h3>Rooms</h3>
         </div>
         <div id="messageList">
@@ -69,6 +68,7 @@
 <script>
     // This is the chat room
     var username = '<%= user %>';
+    var roomList = document.getElementById('roomList')
     var messageBox = document.getElementById('messageBox')
     var messageList = document.getElementById('messageList')
     var sendButton = document.getElementById('sendbutton')
@@ -81,29 +81,25 @@
         if (message.startsWith('/')) {
             const [command, ...args] = message.slice(1).split(' ');
 
-            // Defines the commands
-            const commands = {
-                join: () => {
-                    if (args[0]); {
-                        socket.emit('joinRoom', { user: username, room: roomName });
-                    }
-                    window.location.href = '/login';
-                },
-                leave: () => {
-                    if (args[0]) {
-                        socket.emit('leaveRoom', { user: username, room: args[0] });
-                        window.location.href = '/login';
-                    }
-                },
-                users: () => socket.emit('listUsers', { user: username }),
-            };
+            // Check if the command is join or leave 
+            switch (command) {
+                case "join":
+                    console.log("Joining room", args[0]);
+                    socket.emit('joinRoom', { user: username, room: args[0] });
+                    break;
+                case "leave":
+                    console.log("Leaving room", args[0]);
+                    socket.emit('leaveRoom', { user: username, room: args[0] });
+                default:
+                    break;
+            }
 
-            // Executes the command
-            (commands[command] || (() => console.log('Unknown command:', command)))();
+            // Check if the command is a private message
         } else {
             socket.emit('message', { user: username, message });
         }
 
+        // Clear the message box
         messageBox.value = '';
     }
 
@@ -113,6 +109,20 @@
         const messageElement = document.createElement('div');
         messageElement.innerText = message.user + ": " + message.message;
         messageList.appendChild(messageElement);
+    });
+
+    socket.on("roomList", (message) => {
+        console.log(message);
+
+        // Clear the room list
+        roomList.innerHTML = '';
+
+        // Add the rooms to the room list
+        for (let i = 0; i < message.length; i++) {
+            const roomElement = document.createElement('div');
+            roomElement.innerText = message[i];
+            roomList.appendChild(roomElement);
+        }
     });
 </script>
 
