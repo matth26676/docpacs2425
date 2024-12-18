@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room</title>
+  <script>
+    var localName = "<%= user %>";
+  </script>
+  <style>
+    #roomButtons {
+      width: 10%;
+      height: 150px;
+      overflow-y: auto;
+      float: left;
+      border-style: solid;
+    }
+
+    #messages {
+      width: 70%;
+      height: 300px;
+      border-style: solid;
+      overflow-y: auto;
+    }
+
+    #roomName {
+      position: flex;
+      top: 10px;
+      left: 10px;
+
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="roomName">
+    Current Room: General
+  </div>
+  <div id="roomButtons"></div>
+  <div id="userList"></div>
+
+  <div id="messages"></div>
+
+  <form id="input-form">
+    <label for="message">Enter Message:</label>
+    <input type="text" id="message" name="message"><br><br>
+    <input type="submit" value="Send">
+  </form>
+
+  <script src="/socket.io/socket.io.js">
+  </script>
+
+  <script>
+    const socket = io();
+    let currentRoom = "general";
+
+    socket.on("connect", () => {
+      console.log('Connected to server');
+    });
+
+    socket.on("disconnect", () => {
+      console.log('Disconnected from server');
+    });
+
+    socket.on("message", (user, message, room) => {
+      const messagething = document.createElement("p");
+      messagething.innerHTML = ` ${new Date()} ${user} ${message}`;
+      document.getElementById("messages").appendChild(messagething);
+    });
+
+    document.getElementById("input-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const message = document.getElementById("message").value;
+      var slashCommand;
+      var arg;
+      var dateTime;
+
+      if (message.length > 0) {
+        let messageText = document.getElementById("message").value;
+          socket.emit("message", {
+            room: currentRoom,
+            user: localName,
+            message: message,
+            dateTime: window.dateTime
+          });
+          document.getElementById("message").value = "";
+          console.log("Message sent");
+        
+      }
+    });
+  </script>
+</body>
+
+</html>

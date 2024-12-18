@@ -6,6 +6,7 @@ const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const socketIo = require('socket.io');
 PORT = 3000;
+const sqlite3 = require('sqlite3');
 path = require('path');
 
 const sessionMiddleware = session({
@@ -20,6 +21,7 @@ const server = app.listen(PORT, () => {console.log(`Server running on port ${POR
 const io = socketIo(server);
 io.use((socket, next) => { sessionMiddleware(socket.socketHandler, {}, next); });
 
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -31,14 +33,6 @@ function isAuthenticated(req, res, next) {
     }
 }
 
-function loggedOut(req, res, next) {
-    if (req.session.user) {
-        next();
-    } else {
-        res.send('you are already logged out');
-    }
-}
-
 app.set('view engine', 'ejs');
 
 app.get('/', routes.index);
@@ -47,6 +41,6 @@ app.get('/login', routes.login);
 
 app.post('/login', routes.loginPost);
 
-app.get('/logout', routes.logout);
+app.get('/logout', isAuthenticated, routes.logout);
 
 app.get('/chat', isAuthenticated, routes.chat);
