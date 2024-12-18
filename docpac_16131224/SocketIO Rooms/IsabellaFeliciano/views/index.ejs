@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room :)</title>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <style>
+        /* CSS for the chat room */
+        #userList {
+            margin-left: 30px;
+            border: 1px solid #d483c7;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+            flex: 1;
+        }
+
+        #messageList {
+            margin-left: 30px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+            flex: 5;
+        }
+
+        #textBox {
+            width: calc(100% - 240px);
+            margin-left: 220px;
+        }
+
+        #infoBox {
+            display: flex;
+        }
+
+        #messageText input[type="text"] {
+            width: 1000px;
+            padding: 20px;
+        }
+
+        #messageText button {
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="infoBox">
+        <div id="userList">
+            <h3>Rooms</h3>
+        </div>
+        <div id="messageList">
+            <h3>Messages</h3>
+        </div>
+    </div>
+
+    <div id="messageText">
+        <input id="messageBox" type="text" placeholder="type your message here">
+        <button id="sendbutton" onclick="Send()">Send</button>
+    </div>
+</body>
+<script src="socket.io/socket.io.js"></script>
+<script>
+    // This is the chat room
+    var username = '<%= user %>';
+    var messageBox = document.getElementById('messageBox')
+    var messageList = document.getElementById('messageList')
+    var sendButton = document.getElementById('sendbutton')
+    const socket = io();
+
+    // Sends messages to the server
+    function Send() {
+        const message = messageBox.value.trim();
+
+        if (message.startsWith('/')) {
+            const [command, ...args] = message.slice(1).split(' ');
+
+            // Defines the commands
+            const commands = {
+                join: () => args[0] && socket.emit('joinRoom', { user: username, room: args[0] }),
+                leave: () => {
+                    if (args[0]) {
+                        socket.emit('leaveRoom', { user: username, room: args[0] });
+                        window.location.href = '/login';
+                    }
+                },
+                users: () => socket.emit('listUsers', { user: username }),
+            };
+
+            // Executes the command
+            (commands[command] || (() => console.log('Unknown command:', command)))();
+        } else {
+            socket.emit('message', { user: username, message });
+        }
+
+        messageBox.value = '';
+    }
+
+    // Receives messages from the server
+    socket.on("send message", (message) => {
+        console.log(message)
+        const messageElement = document.createElement('div');
+        messageElement.innerText = message.user + ": " + message.message;
+        messageList.appendChild(messageElement);
+    })
+
+</script>
+
+</html>
