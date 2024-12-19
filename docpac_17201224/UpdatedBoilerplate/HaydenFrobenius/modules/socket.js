@@ -6,7 +6,7 @@ function connection(io, socket) {
     });
 
     socket.on('disconnect', () => {
-        disconnect(io, socket);
+        disconnection(io, socket);
     });
 }
 
@@ -17,8 +17,9 @@ function disconnection(io, socket) {
 function chatMessage(io, socket, data) {
 
     const payload = {
-        message: data.message,
-        sender: socket.request.session.user
+        text: data.text,
+        sender: socket.request.session.user.username,
+        timestamp: new Date().toISOString()
     }
 
     io.emit('chat message', payload);

@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="public/chat.js"></script>
+    <script src="/public/js/socket.io.js"></script>
 </head>
 <body>
-    <textarea id="chatArea" cols="30" rows="10" readonly></textarea>
+    <textarea id="chatArea" cols="60" rows="30" readonly></textarea>
+    <br>
     <input type="text" id="chatInput">
     <button id="sendBtn">Send</button>
 
@@ -19,18 +20,19 @@
         const sendBtn = document.getElementById('sendBtn');
 
         function addMessage(text, sender, timestamp) {
-            chatArea.value += `${sender} (${timestamp}):\n ${text}\n`;
+            chatArea.value += `${sender} (${timestamp}):\n ${text}\n\n`;
         }
 
         sendBtn.addEventListener('click', () => {
             const message = chatInput.value;
             socket.emit('chat message', { text: message });
+            chatInput.value = '';
         });
 
         socket.on('chat message', (data) => {
             let text = data.text;
             let sender = data.sender;
-            let timestamp = new Date(data.timestamp).toLocaleTimeString();
+            let timestamp = new Date(data.timestamp).toLocaleString();
 
             addMessage(text, sender, timestamp);
         });

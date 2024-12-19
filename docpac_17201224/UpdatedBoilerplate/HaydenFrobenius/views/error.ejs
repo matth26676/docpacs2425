@@ -6,6 +6,10 @@
     <title>Document</title>
 </head>
 <body>
-    error: <%= error %>
+    <% if(typeof error !== 'undefined') { %>
+        error: <%= error %>
+    <% } else { %>
+        an error occurred
+    <% } %>
 </body>
 </html>

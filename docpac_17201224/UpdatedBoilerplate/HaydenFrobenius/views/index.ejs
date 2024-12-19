@@ -1,4 +1,5 @@
-<% let loggedIn = typeof user !== 'undefined'; %>
+<% let loggedIn = (typeof locals.user !== 'undefined'); %>
+<% let user = locals.user; %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,8 @@
 </head>
 <body>
     <% if(loggedIn) { %>
-        <h1>Hello, <%= user.username %></h1>
+        <h1>Hello, <%= user.username %>.</h1>
+        <a href="/logout">Logout</a>
     <% } else { %>
         <h1>not logged in buh</h1>
         <a href="/login">Login</a>
