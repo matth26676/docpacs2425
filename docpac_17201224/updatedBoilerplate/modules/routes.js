@@ -7,6 +7,15 @@ PORT = 3000;
 const sqlite3 = require('sqlite3');
 path = require('path');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+const sessionMiddleware = session({
+    store: new SQLiteStore,
+    secret: 'skibidiragatheoppstoppa',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+});
 
 const db = new sqlite3.Database('data/database.db', (err) => {
     if (err) {
@@ -17,11 +26,20 @@ const db = new sqlite3.Database('data/database.db', (err) => {
 });
 
 function index(req, res) {
-    res.render('index.ejs');
+    res.render('index', {user: req.session.user});
 }
 
 function login(req, res) {
-    res.render('login.ejs');
+    console.log(req.session.user);
+    if (req.query.token) {
+        let tokenData = jwt.decode(req.query.token);
+        req.session.token = tokenData;
+        req.session.user = tokenData.username;
+        res.redirect('/');
+   } else {
+    res.render('login', {user: req.session.user});
+    console.log('req.session.user:', req.session.user);
+   };
 }
 
 function loginPost(req, res) {
@@ -81,11 +99,13 @@ function loginPost(req, res) {
 }
 
 function logout(req, res) {
-    res.send('Hello World!');
+    res.send('You have been logged out click <a href="/">here</a> to go to the home page');
+    req.session.destroy
+        
 }
 
 function chat(req, res) {
-    res.send('Hello World!');
+    res.render('chat', {user: req.session.user});
 }
 
 

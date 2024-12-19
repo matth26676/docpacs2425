@@ -14,8 +14,16 @@
     </form>
 
     <div> 
-        <a href="/formbarLogin">Log in with Formbar instead</a>
+        <a href="https://formbar.yorktechapps.com/oauth?redirectURL=http://localhost:3000/login">Log in with Formbar instead</a>
     </div>
+    <script>
+    <% if (user) { %>
+            console.log('User is logged in');
+            window.location.replace("/");
+       <% } else { %>
+            console.log('User is not logged in');
+    <%   }   %>
+    </script>
 </body>
 </html>
 

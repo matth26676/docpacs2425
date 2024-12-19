@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express(); 
+const sharedsession = require('express-socket.io-session');
 const routes = require('./modules/routes.js');
 const socket = require('./modules/socket.js');
 const session = require('express-session');
@@ -16,13 +17,16 @@ const sessionMiddleware = session({
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS
 });
+
 app.use(sessionMiddleware);
 const server = app.listen(PORT, () => {console.log(`Server running on port ${PORT}`);});
 const io = socketIo(server);
-io.use((socket, next) => { sessionMiddleware(socket.socketHandler, {}, next); });
+
+io.use(sharedsession(sessionMiddleware, {
+    autoSave: true
+}));
 
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 function isAuthenticated(req, res, next) {
@@ -44,3 +48,5 @@ app.post('/login', routes.loginPost);
 app.get('/logout', isAuthenticated, routes.logout);
 
 app.get('/chat', isAuthenticated, routes.chat);
+
+io.on('connection', socket.socketH);
