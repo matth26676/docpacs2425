@@ -107,7 +107,8 @@
     socket.on("send message", (message) => {
         console.log(message);
         const messageElement = document.createElement('div');
-        messageElement.innerText = message.user + ": " + message.message;
+        var d = new Date()
+        messageElement.innerText = d + message;
         messageList.appendChild(messageElement);
     });
 

@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
 
     socket.on('message', (message) => {
         console.log(message);
-        io.to(socket.currentRoom).emit('send message', socket.currentRoom + ": " + message);
+        io.to(socket.currentRoom).emit('send message', "(" + socket.currentRoom + ") " + message.user + ": " + message.message);
     });
 
     socket.on('joinRoom', (data) => {
