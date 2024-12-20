@@ -8,7 +8,7 @@ function connection(io, socket) {
         const user = socket.request.session.user;
         const timestamp = new Date().toLocaleTimeString();
         const messageData = {
-            user: user.username,
+            user: user,
             message: msg,
             time: timestamp
         };

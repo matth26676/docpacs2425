@@ -10,7 +10,7 @@ function isAuthenticated(req, res, next) {
 
 const root = (req, res) => {
     if (req.session && req.session.user) {
-        res.render('index', { username: req.session.user.username });
+        res.render('index', { username: req.session.user });
     } else {
         res.render('index', { username: null });
     }
