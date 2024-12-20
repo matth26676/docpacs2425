@@ -1,12 +1,13 @@
-const express = require("express");
 const jwt = require("jsonwebtoken");
 const sqlite3 = require("sqlite3");
 const crypto = require("crypto");
-const router = express.Router();
 
 //set URLs
 const AUTH_URL = "https://formbar.yorktechapps.com/oauth";
 const THIS_URL = "http://localhost:3000/login";
+
+//set secret key
+const JWT_SECRET = "key_secret";
 
 //create a new database, set as the "db" object
 const db = new sqlite3.Database("data/database.db", (err) => {
@@ -33,7 +34,17 @@ const index = (req, res) => {
 
 //handle login
 const loginGET = (req, res) => {
-    res.render("login", { AUTH_URL: AUTH_URL, THIS_URL: THIS_URL });
+    //extract token from the Authorization header
+    const token = req.query.token;
+
+    if (!token) {
+        res.render("login", { AUTH_URL: AUTH_URL, THIS_URL: THIS_URL });
+    } else if (token) {
+        let tokenData = jwt.decode(req.query.token);
+        req.session.token = tokenData;
+        req.session.user = tokenData.username;
+        res.redirect("/");
+    }
 };
 
 //handle logout
@@ -62,9 +73,13 @@ POST Requests
 -----------*/
 
 const loginPOST = (req, res) => {
+    //extract token from the Authorization header
+    const token = req.query.token;
+    const { user, pass } = req.body;
+
     //login with database
-    if (req.body.user && req.body.pass) {
-        db.get("SELECT * FROM users WHERE username=?;", req.body.user, (err, row) => {
+    if (user && pass) {
+        db.get("SELECT * FROM users WHERE username=?;", [user], (err, row) => {
             if (err) {
                 console.log(err);
                 res.send("There was an error:\n" + err);
@@ -73,13 +88,13 @@ const loginPOST = (req, res) => {
                 const salt = crypto.randomBytes(16).toString("hex");
 
                 //use the salt to "hash" the password
-                crypto.pbkdf2(req.body.pass, salt, 1000, 64, "sha512", (err, derivedKey) => {
+                crypto.pbkdf2(pass, salt, 1000, 64, "sha512", (err, derivedKey) => {
                     if (err) {
                         res.send("Error hashing password: " + err);
                     } else {
                         const hashedPassword = derivedKey.toString("hex");
 
-                        db.run("INSERT INTO users (username, password, salt) VALUES (?, ?, ?);", [req.body.user, hashedPassword, salt], (err) => {
+                        db.run("INSERT INTO users (username, password, salt) VALUES (?, ?, ?);", [user, hashedPassword, salt], (err) => {
                             if (err) {
                                 res.send("Database error: \n" + err);
                             } else {
@@ -90,37 +105,41 @@ const loginPOST = (req, res) => {
                 });
             } else if (row) {
                 //compare stored password with provided password
-                crypto.pbkdf2(req.body.pass, row.salt, 1000, 64, "sha512", (err, derivedKey) => {
+                crypto.pbkdf2(pass, row.salt, 1000, 64, "sha512", (err, derivedKey) => {
                     if (err) {
                         res.send("Error hashing password: " + err);
                     } else {
                         const hashedPassword = derivedKey.toString("hex");
 
                         if (row.password === hashedPassword) {
-                            req.session.user = req.body.user;
+                            req.session.user = user;
                             res.redirect("/");
                         } else {
-                            res.send("Incorrect Password.")
+                            res.status(401).send("Invalid username or password.");
                         };
                     };
                 });
             };
         });
-    } else if (req.query.token) {
+    } else if (token) {
         //login with formbar
-        jwt.verify(req.query.token, "key_secret", (err, decoded) => {
+        jwt.verify(token, JWT_SECRET, (err, decoded) => {
             if (err) {
-                console.log("JWT Error:", err);
-                res.status(400).send("Invalid token.");
-            } else {
-                req.session.token = decoded;
-                req.session.user = decoded.username;
-                console.log("Session User:", req.session.user); //verify session user is set
-                res.redirect("/");
+                if (err.name === "TokenExpiredError") {
+                    return res.status(401).send("Token has expired. Please log in again.");
+                } else if (err.name === "JsonWebTokenError") {
+                    return res.status(400).send("Invalid token.");
+                } else {
+                    return res.status(500).send("An unknown error occurred.");
+                };
             };
+            //store username in the session
+            req.session.user = decoded.username;
+            console.log("Session User:", req.session.user);
+            res.redirect("/");
         });
     } else {
-        res.send("Please enter both a username and password");
+        res.send("Please enter both a username and password.");
     };
 };
 

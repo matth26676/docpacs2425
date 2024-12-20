@@ -3,8 +3,6 @@
 //import external modules
 const express = require("express");
 const session = require("express-session");
-const ejs = require("ejs")
-const jwt = require('jsonwebtoken')
 const SQLiteStore = require("connect-sqlite3")(session); //create the "SQLiteStore" object from session
 const socketIO = require("socket.io");
 const path = require("path");
@@ -22,7 +20,7 @@ const port = process.env.PORT || 3000; //set the port number
 
 //initialize the server, set as the "server" object
 const server = app.listen(port, () => {
-    console.log(`Server started at http://localhost: ${port}`)
+    console.log(`Server started at http://localhost:${port}`)
 });
 
 const io = socketIO(server); //create the "io" object from the server
@@ -45,12 +43,6 @@ function isAuthenticated(req, res, next) {
 app.set("view engine", "ejs"); //set ejs as the view engine
 app.use(session_MIDDLEWARE); //configure the server to use middleware
 app.use(express.urlencoded({ extended: true })); //encode url
-
-//error handling
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
 
 //configure the server to use routes from routes.js
 app.get("/", routesMod.index);
