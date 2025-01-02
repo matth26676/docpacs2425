@@ -1,0 +1,299 @@
+<!-- 
+BEHOLD
+THE ABSOLUTE WORST SPAGHETTI CODE YOU'LL EVER SEE
+EVEN THE SIMPSONS: HIT AND RUN DID BETTER THAN THIS
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+
+        #messages {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 8px;
+            background-color: #1e1e1e;
+            margin: 5px 0;
+            color: #e0e0e0;
+        }
+
+        #form {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        #input {
+            flex: 1;
+            padding: 8px;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border: 1px solid #3700b3;
+        }
+
+        #submitButton {
+            padding: 8px;
+            background-color: #3700b3;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+        }
+
+        #submitButton:hover {
+            background-color: #290088;
+        }
+
+        #roomList {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #roomList button {
+            padding: 8px;
+            background-color: #3700b3;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            padding: 8px;
+        }
+    </style>
+
+</head>
+    <!-- 
+    I really hate horses
+    I hate their popularity
+    I hate their stupid, long faces
+    I hate those who associate with them
+    Until my death, I shall never hold horses in a high regard
+    I wish a painful death for them and their kin
+    -->
+<script>
+    //I'm aware this is weird to put here, but I couldn't care less. 
+    //If anybody has an issue with this, then fix it your damn self.
+    let currentRoom = 'general' 
+</script>
+
+<body>
+
+    <div id="roomButtons"><button>general</button></div>
+    <div>
+        <h3>Current Room:</h3>
+        <div id="roomList">currentRoom</div>
+    </div>
+
+    <h2>Chat Messages:</h2>
+    <ul id="messages"></ul>
+
+    <div id="form">
+        <input id="input" type="text" placeholder="Type messages here">
+        <button id="submitButton">Submit</button>
+    </div>
+    <div id="roomList"></div>
+    <input type="hidden" id="userName" value="<%= user %>">
+</body>
+<!-- 
+Why do I hate horses so?
+It's really simple.
+I don't have a reason to hate them.
+No greater good, no just cause.
+One night, I decided I was going to hate them.
+I'm a laid back person, and I admit that many see it as an issue.
+However, despite that, I have some principles that I will not compromise.
+They may be nonsensical, but I will not take half-measures on what I believe in.
+So, I hate horses.
+I will continue to hate horses.
+I will hate them with fervor.
+-->
+<script src="https://cdn.socket.io/4.0.1/socket.io.js"></script>
+<script>
+    // Get elements
+    const userName = document.getElementById('userName').value;
+    const input = document.getElementById('input');
+    const submitButton = document.getElementById('submitButton');
+    const messages = document.getElementById('messages');
+    const roomList = document.getElementById('roomList');
+
+    // Connect to server
+    const socket = io.connect('http://localhost:3000', { query: `userName=${userName}` });
+
+    // Shows the current room
+    document.getElementById('roomList').textContent = currentRoom;
+
+    // Listen for available rooms from the server
+    socket.on('available rooms', function (rooms) {
+        roomList.innerHTML = '';  // Clear current room list
+        rooms.forEach(room => {
+            const roomButton = document.createElement('button');
+            roomButton.textContent = room;
+            roomButton.addEventListener('click', function () {
+                joinRoom(room);
+            });
+            roomList.appendChild(roomButton);
+        });
+    });
+
+    submitButton.addEventListener('click', function () {
+        const message = input.value.trim();
+
+        // Handle slash commands
+        if (message.startsWith('/')) {
+            const parts = message.slice(1).split(' '); // separate "/" and the command
+            const command = parts[0];
+            const args = parts.slice(1);
+
+            if (command === 'join') {
+                const roomName = args[0];
+                socket.emit('join room', roomName, userName);
+                joinRoom(roomName);
+            } else if (command === 'leave') {
+                socket.emit('leave room', currentRoom, userName);
+                currentRoom = null;
+                input.value = '';  // Clear input after sending
+                input.placeholder = 'You must join a room to send messages';
+                document.getElementById('roomList').textContent = currentRoom;
+            } else if (command === 'users') {
+                if (currentRoom) {
+                    socket.emit('get users', currentRoom);
+                    input.value = '';  // Clear input after sending
+                }
+            }
+        } else {
+            // Handle normal messages
+            if (currentRoom) {
+                socket.emit('chat message', message, currentRoom);
+                input.value = '';  // Clear input after sending
+            } else {
+                alert("You must join a room first!");
+            }
+        }
+    });
+
+    // Listen for the list of users from the server
+    socket.on('users list', function (users) {
+        const userListMessage = 'Users in room: ' + users.join(', ');
+        // Display the list of users in the chat
+        const messageElement = document.createElement('li');
+        messageElement.textContent = userListMessage;
+        messages.appendChild(messageElement);
+    });
+    socket.on('chat message', function (data) {
+        const messageElement = document.createElement('li');
+        messageElement.textContent = `[${data.time}] ${data.user} (${data.room}): ${data.message}`;
+        messages.appendChild(messageElement);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    // Function to join a room
+    function joinRoom(roomName) {
+        console.log('Joining room:', roomName);
+        socket.emit('join room', roomName);
+        input.placeholder = `Type messages here`;
+    }
+
+    function updateRoomButtons(rooms) {
+        const roomButtonsContainer = document.getElementById('roomButtons');
+        roomButtonsContainer.innerHTML = '';
+        rooms.forEach(room => {
+            const button = document.createElement('button');
+            button.textContent = room;
+            button.addEventListener('click', () => {
+                currentRoom = room;
+                document.getElementById('roomList').textContent = currentRoom;
+            });
+            roomButtonsContainer.appendChild(button);
+        });
+    }
+
+    // Send message when clicking submit button
+    submitButton.addEventListener('click', function () {
+        const message = input.value.trim();
+
+        //Handle slash commands
+        if (message.startsWith('/')) {
+            const parts = message.slice(1).split(' '); // seperate "/" and the command
+            const command = parts[0];
+            const args = parts.slice(1);
+
+            if (command === 'join') {
+                const roomName = args[0];
+                joinRoom(roomName);
+            }
+
+            else if (command === 'leave') {
+                socket.emit('leave room', currentRoom);
+                currentRoom = null;
+                input.value = '';  // Clear input after sending
+                input.placeholder = 'You must join a room to send messages';
+                document.getElementById('roomList').textContent = currentRoom;
+            }
+            else if (command === 'users') {
+                if (currentRoom) {
+                    socket.emit('get users', currentRoom);
+                    input.value = '';  // Clear input after sending
+                }
+            }
+        } else {
+            //handle normal messages
+            if (currentRoom) {
+                input.value = '';  // Clear input after sending
+            } else {
+                alert("You must join a room first!");
+            }
+        }
+    }
+    );
+
+    // Send message when pressing enter
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitButton.click();
+        }
+    });
+
+    socket.on('roomsList', function (rooms) {
+        updateRoomButtons(rooms);
+    });
+
+
+    socket.on('users list', function (users) {
+        const userListMessage = 'Users in room: ' + users.join(', ');
+        const messageElement = document.createElement('li');
+        messageElement.textContent = userListMessage;
+        document.getElementById('messages').appendChild(messageElement);
+    });
+</script>
+<!-- 
+What if I ever falter in my hate for horses?
+What if I forget my hate for them?
+What if I decide it's dumb to hate horses for no proper reason?
+
+It's simple.
+These are my principles.
+My values, my beliefs.
+I couldn't care less what anybody thinks.
+I will hate horses.
+If I stop hating horses, then it will be so.
+I will not hold a grudge nor resentment.
+However, until that day comes, I will hate horses.
+The feelings I hold now are how I feel.
+If I feel differently later, then so be it.
+But for now, these are my genuine feelings.
+-->
+
+</html>
