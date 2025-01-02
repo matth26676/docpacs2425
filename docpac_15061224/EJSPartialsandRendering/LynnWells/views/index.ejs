@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+
+    <body>
+        Welcome to home page
+    </body>
+
+    <script>
+        if ("<%= viewport %>" === "online") {
+            const printButton = document.createElement('button');
+            const printLink = document.createElement('a');
+            printLink.href = "/print";
+            printLink.textContent = "Print";
+            printButton.appendChild(printLink);
+            document.body.appendChild(printButton);
+        }
+    </script>
+
+    <%- include('partials/footer') %>

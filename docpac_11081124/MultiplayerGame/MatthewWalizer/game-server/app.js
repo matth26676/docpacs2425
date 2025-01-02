@@ -7,22 +7,16 @@ const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
 const minPlayerCount = 2
 const maxPlayerCount = 4
-const buttonCount = 64
+const buttonCount = 551
 var gameRunning = false
 var gameOver = true
 var initRunning = false
 var time = 0
 var scoreList = []
-var buttonList = [
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0
-]
+var buttonList = []
+for (i = 0; i < buttonCount; i++) {
+  buttonList[i] = 0
+}
 userList = []
 playerNumberList = []
 
@@ -39,16 +33,15 @@ io.on('connection', (socket) => {
     initGame()
   }
   socket.on('senddata', function (message) {
-
+    
     for (user in playerNumberList) {
       if (playerNumberList[user] == socket.client.id) {
         message.buttonValue = parseInt(user) + 1
+        
       }
     }
     buttonList[message.buttonNumber] = message.buttonValue
-    for (buttonNumber in buttonList) {
-      io.emit("recievedata", { buttonNumber: buttonNumber, buttonValue: buttonList[buttonNumber] })
-    }
+    io.emit("recievedata", { buttonNumber: message.buttonNumber, buttonValue: buttonList[message.buttonNumber] })
   })
 
   socket.on('disconnect', function () {
@@ -80,7 +73,7 @@ function initGame() {
         playerNumberList.splice(user, 1, userList[user])
         io.emit("recievedata", { playerNumber: user} )
       }
-      
+
       var gameId = setInterval(() => { runGame(io, gameId) }, 1000);
     } else {
           gameOver = false
@@ -115,11 +108,13 @@ function runGame(io, gameId) {
       playerNumberList.splice(user, 1)
     }
     io.emit("recievedata", { scoreList: scoreList, userList: userList})
+    io.emit("recievedata", { clearboard: true})
+    for (button in buttonList) {
+      buttonList[button] = 0
+      io.emit("recievedata", { buttonNumber: button, buttonValue: buttonList[button] })
+    }
   
     clearInterval(gameId)
-    for (buttonNumber in buttonList) {
-      io.emit("recievedata", { buttonNumber: buttonNumber, buttonValue: 0 })
-    }
     initGame()
   }
 }
