@@ -1,0 +1,20 @@
+<% let loggedIn = (typeof locals.user !== 'undefined'); %>
+<% let user = locals.user; %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% if(loggedIn) { %>
+        <h1>Hello, <%= user.username %>.</h1>
+        <a href="/logout">Logout</a>
+    <% } else { %>
+        <h1>not logged in buh</h1>
+        <a href="/login">Login</a>
+    <% } %>
+    <a href="/chat">Chat</a>
+</body>
+</html>
