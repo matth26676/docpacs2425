@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <style>
+        /* CSS for the chat room */
+        #roomList {
+            margin-left: 30px;
+            border: 1px solid #d483c7;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+            flex: 1;
+        }
+
+        #messageList {
+            margin-left: 30px;
+            border: 1px solid #d483c7;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+            flex: 5;
+        }
+
+        #textBox {
+            width: calc(100% - 240px);
+        }
+
+        #infoBox {
+            display: flex;
+        }
+
+        #messageText input[type="text"] {
+            width: 1000px;
+            padding: 20px;
+        }
+
+        #messageText button {
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="infoBox">
+        <div id="roomList">
+            <h3>Rooms</h3>
+        </div>
+        <div id="messageList">
+            <h3>Messages</h3>
+        </div>
+    </div>
+
+    <div id="messageText">
+        <input id="messageBox" type="text" placeholder="type your message here">
+        <button id="sendbutton" onclick="Send()">Send</button>
+    </div>
+</body>
+
+<script src="socket.io/socket.io.js"></script>
+
+<script>
+    // This is the chat room
+    var username = '<%= user %>';
+    var roomList = document.getElementById('roomList')
+    var messageBox = document.getElementById('messageBox')
+    var messageList = document.getElementById('messageList')
+    var sendButton = document.getElementById('sendbutton')
+    const socket = io();
+
+    // Sends messages to the server
+    function Send() {
+        const message = messageBox.value.trim();
+
+        if (message.startsWith('/')) {
+            const [command, ...args] = message.slice(1).split(' ');
+
+            // Check if the command is join or leave 
+            switch (command) {
+                case "join":
+                    console.log("Joining room", args[0]);
+                    socket.emit('joinRoom', { user: username, room: args[0] });
+                    break;
+                case "leave":
+                    console.log("Leaving room", args[0]);
+                    socket.emit('leaveRoom', { user: username, room: args[0] });
+                default:
+                    break;
+            }
+
+            // Check if the command is a private message
+        } else {
+            socket.emit('message', { user: username, message });
+        }
+
+        // Clear the message box
+        messageBox.value = '';
+    }
+
+    // Receives messages from the server
+    socket.on("send message", (message) => {
+        console.log(message);
+        const messageElement = document.createElement('div');
+        var d = new Date()
+        messageElement.innerText = d + message;
+        messageList.appendChild(messageElement);
+    });
+
+    socket.on("roomList", (message) => {
+        console.log(message);
+
+        // Clear the room list
+        roomList.innerHTML = '';
+
+        // Add the rooms to the room list
+        for (let i = 0; i < message.length; i++) {
+            const roomElement = document.createElement('div');
+            roomElement.innerText = message[i];
+            roomList.appendChild(roomElement);
+        }
+    });
+</script>
+
+</html>
