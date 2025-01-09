@@ -100,7 +100,7 @@ function loginPost(req, res) {
 
 function logout(req, res) {
     res.send('You have been logged out click <a href="/">here</a> to go to the home page');
-    req.session.destroy
+    req.session.destroy();
         
 }
 
