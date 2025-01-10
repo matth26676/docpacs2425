@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom Login</title>
+</head>
+
+<body>
+    <form id="login-form" method="POST" action="/">
+        <label for="user">Username: </label>
+        <input type="text" name="user" id="user">
+
+        <label for="pass">Password: </label>
+        <input type="password" name="pass" id="pass">
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+<script>
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+        const username = document.getElementById("user").value.trim();
+        if (username) {
+            sessionStorage.setItem("username", username);  //save username to sessionStorage
+            window.location.href = "/chatroom";  //redirect to the chatroom page
+        };
+    });
+</script>
+
+</html>

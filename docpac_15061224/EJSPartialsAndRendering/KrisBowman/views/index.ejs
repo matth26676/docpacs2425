@@ -1,0 +1,11 @@
+<%- include("partials/head") %>
+
+<body>
+    <% if (viewport === "online") { %>
+        <form action="/print" method="get">
+            <button type="submit">Print</button>
+        </form>
+    <% } %>
+</body>
+
+<%- include("partials/foot") %>
