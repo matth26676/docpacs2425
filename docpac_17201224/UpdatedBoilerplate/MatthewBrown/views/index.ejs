@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <% if (username) { %>
+        <p>Welcome, <%= username %>!</p>
+        <a href="/chat">Chat</a>
+        <a href="/logout">Logout</a>
+    <% } else { %>
+        <a href="/login">Login</a>
+    <% } %>
+</body>
+</html>
