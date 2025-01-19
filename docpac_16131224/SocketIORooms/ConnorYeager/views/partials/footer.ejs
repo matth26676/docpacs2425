@@ -1,0 +1,112 @@
+<footer>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        const socket = io();
+        const chat = document.getElementById("chat-messages");
+        const mess = document.getElementById("mess");
+        const roomList = document.getElementById("roomList").querySelector("ul");
+        let currentRoom = 'general';
+        const user = "<%= typeof user !== 'undefined' ? user : 'Guest' %>";
+
+        socket.emit('user_connected', user);
+
+        socket.on("connect", () => {
+            joinRoom("general");
+        });
+
+        socket.on("message", (data) => {
+            displayMessage(`<strong>${data.user}</strong> [${data.time}] (${data.room}): ${data.message}`);
+        });
+
+        socket.on("users", (data) => {
+            displayMessage(`Users in room ${data.room}: ${data.users.join(", ")}`);
+        });
+
+        function displayMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.innerHTML = message;
+            chat.appendChild(messageElement);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function addMessage() {
+            const message = mess.value;
+            const time = new Date().toLocaleTimeString();
+
+            if (message.startsWith("/join")) {
+                const newRoom = message.split(" ")[1];
+                joinRoom(newRoom);
+            } else if (message.startsWith("/leave")) {
+                if (currentRoom !== "general") {
+                    leaveRoom(currentRoom);
+                    joinRoom("general");
+                } else {
+                    alert("You can't leave, EVER"); 
+                }
+            } else if (message.startsWith("/users")) {
+                socket.emit("get_room_users", { room: currentRoom });
+            } else {
+                socket.emit("message", { user, message, time, room: currentRoom });
+            }
+            mess.value = "";
+        }
+
+        function joinRoom(room) {
+            socket.emit("joinRoom", { user, room });
+            currentRoom = room;
+            chat.innerHTML = "";
+            updateRoomList(room);
+        }
+
+        function leaveRoom(room) {
+            socket.emit("leaveRoom", { user, room });
+            removeRoomButton(room);
+        }
+
+        function updateRoomList(room) {
+            const buttons = document.querySelectorAll("#roomList button");
+            let roomExists = false;
+
+            buttons.forEach(button => {
+                if (button.textContent.toLowerCase() === room.toLowerCase()) {
+                    button.classList.add("active");
+                    roomExists = true;
+                } else {
+                    button.classList.remove("active");
+                }
+            });
+
+            if (!roomExists) {
+                const list = document.createElement("li");
+                const button = document.createElement("button");
+                button.textContent = room.charAt(0).toUpperCase() + room.slice(1);
+                button.onclick = () => joinRoom(room);
+                list.appendChild(button);
+                roomList.appendChild(list);
+                button.classList.add("active");
+                socket.emit("create_room", { room });
+            }
+        }
+
+        function removeRoomButton(room) {
+            const buttons = document.querySelectorAll("#roomList button");
+
+            buttons.forEach(button => {
+                if (button.textContent.toLowerCase() === room.toLowerCase()) {
+                    button.parentElement.remove();
+                }
+            });
+        }
+
+        mess.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                addMessage();
+            }
+        });
+
+        document.getElementById("send").addEventListener("click", addMessage);
+    </script>
+</footer>
+</body>
+</html>
