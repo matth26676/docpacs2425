@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster</title>
+<style>
+   
+        #eachPost {
+            border-style: solid;
+            border-color: rgb(11, 71, 8);
+            width: 450px;
+            overflow-y: auto;
+            overflow-x: scroll;
+            padding: 30px;
+        }
+
+        #individualPost {
+            border-style: solid;
+            border-color: rgb(115, 146, 133);
+            width: 450px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    
+</style>
+  </head>
+<body>
+    <div>
+      <div id="eachPost">
+        <% post.forEach((con)=> { %>
+
+            <div id="individualPost">
+                <a href="/eachposter/<%=con.poster%>"><%= con.fb_name %></a>
+                <p> <%= con.content %></p>
+                <p><%= con.time %></p>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>
