@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lab 8-2</title>
+
+    <script type="text/javascript">
+            class device {
+                constructor(name, brand) {
+                    this.name = name;
+                    this.brand = brand;
+                }
+                display() {
+                    document.write('The name of this device is ' +  this.name + ' and its brand is ' +  this
+                        .brand);
+                }
+            }
+        var mydevice = new device("Vostro", "Dell")
+        console.log( mydevice.name)
+    </script>
+</head>
+
+<body onload="mydevice.display()">
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+
+</body>
+
+</html>
