@@ -26,9 +26,9 @@
   
     function showEmployee() {
       var info = "";
-    info += "Employee: " + this.name + "\n";
+      info += "Employee: " + this.name + "\n";
       info += "Department: " + this.department +  "\n";
-    info += "Extension: " + this.extension + "\n";
+      info += "Extension: " + this.extension + "\n";
 	    info += "Employed: " + this.employed;
       alert(info);
     }
@@ -38,7 +38,7 @@
     for (var i = 1; i < len; i++) {
         info += "Employee: " + employees[i].name + "\n";
         info += "Department: " + employees[i].department +  "\n";
-      info += "Extension: " + employees[i].extension + "\n";
+        info += "Extension: " + employees[i].extension + "\n";
 	      info += "Employed: " + employees[i].employed + "\n\n";
       }
     
@@ -59,7 +59,7 @@
 
   for (var i = 0; i < len; i++) {
     if(i == 0)
-    document.write("<option>" + employees[i]) + "</option>";
+      document.write("<option>" + employees[i]) + "</option>";
     else
       document.write("<option>" + employees[i].name) + "</option>";
   }
