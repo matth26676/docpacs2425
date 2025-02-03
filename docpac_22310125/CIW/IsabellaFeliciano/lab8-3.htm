@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lab 8-3</title>
+
+    <script type="text/javascript">
+
+        function* integer() {
+            var num = 1;
+            while (true) {
+                yield num++;
+            }
+        }
+
+        var get = integer();
+        for (let i = 0; i < 5; i++) {
+            const num = get.next().value;
+            document.write(num);
+        }
+
+    </script>
+</head>
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+
+</body>
+
+</html>
