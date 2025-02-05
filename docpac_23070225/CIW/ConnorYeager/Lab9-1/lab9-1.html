@@ -20,6 +20,24 @@ function changeButton()
 	var header = document.getElementById('radiobuttonWebdev').value.innerHTML = "Uncle Sam!";
 	alert("Hello " + header);
   }
+  if(document.getElementById('a').checked === true)
+  {
+	radioButton = document.getElementById('a').value;
+	var header = document.getElementById('a').value.innerHTML = ", Connor Guy!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('b').checked === true)
+  {
+	radioButton = document.getElementById('b').value;
+	var header = document.getElementById('b').value.innerHTML = ", Fight the demons!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('c').checked === true)
+  {
+	radioButton = document.getElementById('c').value;
+	var header = document.getElementById('c').value.innerHTML = ", learn code!";
+	alert("Hello " + header);
+  }
   getTest();
 }
 -->
@@ -53,6 +71,18 @@ function getTest()
   if(radioButton == "Government")
   {
 	document.write("<p>Here's a great site if you're interested in U.S. government:</p><a href=http://www.whitehouse.gov/>The White House</a>");
+  }
+  if(radioButton == "A")
+  {
+	document.write("<p>Here's a great site if you're interested in things about me:</p><a href=https://conno26678.github.io/portfolioLive/> Connor </a>");
+  }
+  if(radioButton == "B")
+  {
+	document.write("<p>Here's a great site if you're interested in DOOM:</p><a href=https://store.steampowered.com/app/3017860/DOOM_The_Dark_Ages/> Doom The Dark Ages </a>");
+  }
+  if(radioButton == "C")
+  {
+	document.write("<p>Here's a great site if you're interested in things about coding:</p><a href=https://www.w3schools.com/> W3schools </a>");
   }
 }
 -->
