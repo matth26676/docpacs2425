@@ -9,7 +9,49 @@
 
 
     function validate(form) {
+        var cardNumber = form.elements["number"];
+        var cardType = form.elements["ccard"];
 
+        switch (cardNumber.value.length) {
+            case 16:
+                if (cardType.value == 'visa') {
+                    if (cardNumber.value.charAt(0) != '4') {
+                        alert("Visa card numbers must start with a 4.");
+                        cardNumber.focus();
+                    } else {
+                        alert("Card number is valid.");
+                    }
+                } else if (cardType.value == 'mc') {
+                    if (cardNumber.value.charAt(0) != '5') {
+                        alert("MasterCard numbers must start with a 5.");
+                        cardNumber.focus();
+                    } else {
+                        alert("Card number is valid.");
+                    }
+                } else {
+                    alert("We can not identify the card you have entered. Please check to confirm that you have entered the correct card number and selected the right type of card.");
+                }
+                break;
+            case 15:
+                if (cardType.value == 'amex') {
+                    if (cardNumber.value.charAt(0) != '3') {
+                        alert("American Express card numbers must start with 3.");
+                        cardNumber.focus();
+                    } else {
+                        alert("Card number is valid.");
+                    }
+                } else {
+                    alert("We can not identify the card you have entered. Please check to confirm that you have entered the correct card number and selected the right type of card.");
+                }
+                break;
+            default:
+                alert("We can not identify the card you have entered. Please check to confirm that you have entered the correct card number and selected the right type of card.");
+                break;
+        }
+        
+        
+        
+        
 
 
 
