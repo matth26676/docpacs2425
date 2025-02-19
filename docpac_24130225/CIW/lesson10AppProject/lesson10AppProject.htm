@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lesson 10 Application Project</title>
+
+<script language="javascript">
+<!--
+
+
+    function validate(form) {
+    if (form.ccard[0].checked === false && form.ccard[1].checked === false && form.ccard[2].checked === false) {
+        alert("Please select a credit card type.");
+        return false;
+    }
+
+    if (form.number.value.trim() === "") {
+        alert("Please enter a credit card number.");
+        return false;
+    }
+
+
+    if (form.expMo.selectedIndex === 0) {
+        alert("Please select a month.");
+        return false;
+    }
+
+    if (form.expYr.selectedIndex === 0) {
+        alert("Please select a year.");
+        return false;
+    }
+
+    alert("Form is valid!");
+    return true;
+
+    }
+
+  
+
+//-->
+</script>
+
+</head>
+
+<body>
+
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+<form name="ccForm">
+<p>
+<input type="radio" name="ccard" value="visa" />
+Visa
+</p>
+<p>
+<input type="radio" name="ccard" value="mc" />
+MasterCard
+</p>
+<p>
+<input type="radio" name="ccard" value="amex" />
+American Express
+</p>
+<p>
+Card # 
+<input type="text" name="number" />
+</p>
+<p>
+Exp Date: 
+<select name="expMo">
+<option value=0>
+<option value=1>Jan
+<option value=2>Feb
+<option value=3>Mar
+<option value=4>Apr
+<option value=5>May
+<option value=6>Jun
+<option value=7>Jul
+<option value=8>Aug
+<option value=9>Sep
+<option value=10>Oct
+<option value=11>Nov
+<option value=12>Dec
+</select> 
+<select name="expYr">
+<option value=0>
+<option value=2011>2011
+<option value=2012>2012
+<option value=2013>2013
+<option value=2014>2014
+<option value=2015>2015
+<option value=2016>2016
+<option value=2017>2017
+<option value=2018>2018
+</select>
+</p>
+
+<input type="button" value="Check Form" onClick="validate(this.form);" />
+<input type="reset" value="Reset Form" />
+</form>
+
+</body>
+</html>
