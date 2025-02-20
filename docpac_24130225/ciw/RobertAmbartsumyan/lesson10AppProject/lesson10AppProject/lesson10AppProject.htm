@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lesson 10 Application Project</title>
+
+    <script language="javascript">
+        
+        function validate(form) {
+            var cardType = form.ccard.value;
+            var cardNumber = form.number.value;
+            var expMonth = form.expMo.value;
+            var expYear = form.expYr.value;
+            var errorMessage = "";
+
+            switch (true) {
+            case !cardType:
+                errorMessage += "Please select a card type.\n";
+                break;
+            case !cardNumber:
+                errorMessage += "Please enter a card number.\n";
+                break;
+            case !/^\d{16}$/.test(cardNumber):
+                errorMessage += "Card number must be 16 digits.\n";
+                break;
+            case expMonth == 0:
+                errorMessage += "Please select an expiration month.\n";
+                break;
+            case expYear == 0:
+                errorMessage += "Please select an expiration year.\n";
+                break;
+            }
+
+            if (errorMessage) {
+            alert(errorMessage);
+            return false;
+            }
+
+            alert("Form is valid!");
+            return true;
+        }
+        
+    </script>
+
+</head>
+
+<body>
+
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <form name="ccForm">
+        <p>
+            <input type="radio" name="ccard" value="visa" />
+            Visa
+        </p>
+        <p>
+            <input type="radio" name="ccard" value="mc" />
+            MasterCard
+        </p>
+        <p>
+            <input type="radio" name="ccard" value="amex" />
+            American Express
+        </p>
+        <p>
+            Card #
+            <input type="text" name="number" />
+        </p>
+        <p>
+            Exp Date:
+            <select name="expMo">
+                <option value=0>Jan
+                <option value=1>Feb
+                <option value=2>Mar
+                <option value=3>Apr
+                <option value=4>May
+                <option value=5>Jun
+                <option value=6>Jul
+                <option value=7>Aug
+                <option value=8>Sep
+                <option value=9>Oct
+                <option value=10>Nov
+                <option value=11>Dec
+            </select>
+            <select name="expYr">
+                <option value=2011>2011
+                <option value=2012>2012
+                <option value=2013>2013
+                <option value=2014>2014
+                <option value=2015>2015
+                <option value=2016>2016
+                <option value=2017>2017
+                <option value=2018>2018
+            </select>
+        </p>
+
+        <input type="button" value="Check Form" onClick="validate(this.form);" />
+        <input type="reset" value="Reset Form" />
+    </form>
+
+</body>
+
+</html>
