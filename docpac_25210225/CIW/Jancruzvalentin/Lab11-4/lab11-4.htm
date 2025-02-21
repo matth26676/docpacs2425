@@ -7,21 +7,22 @@
     <!--
      var myColor = prompt("Please enter a hexadecimal color code (must be 6 characters, including 0 thru 9 and A thru F):","FFFFFF");
     var myName = prompt("Please enter your name:","Cookie Monster");
+    console.log(myColor)
     if ((myColor == null) || (myColor == "") || (myColor.length < 6 || myColor.length > 6)) myColor = "#ffffff";
     var keepCookie = (confirm("A cookie will be set. Delete cookie?")) ? "delete" : "keep";
-    if (keepCookie == "delete") {
-    document.cookie="testCookie=" +"YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2015";
-    message= "Here is the cookie that was deleted: ";
+    
+if (keepCookie == "delete") {
+    document.cookie = "testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=21-February-2026";
+    message = "Here is the cookie that was deleted: ";
     message += document.cookie;
     alert(message);
-    }
-     else {
-    document.cookie="testCookie=" +"YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2017"; // the expiry date must be somewhere in the future, or the cookie will not be set in Firefox or Chrome
+} else {
+    document.cookie = "testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=21-February-2028 "; // the expiry date must be somewhere in the future, or the cookie will not be set in Firefox or Chrome
 
-    message= "Here is the cookie that was set on your system: ";
+    message = "Here is the cookie that was set on your system: ";
     message += document.cookie;
     alert(message);
-    }
+}
 
     var start = document.cookie.indexOf("YColor=");
     start=start + 7;
