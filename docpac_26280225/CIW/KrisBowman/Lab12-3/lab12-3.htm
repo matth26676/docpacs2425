@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <title>Lab 12-3</title>
+  <script src="jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="jquery.validate.js"></script>
   <style type="text/css">
     * {
       font-family: Verdana;
@@ -36,6 +38,11 @@
       vertical-align: top;
     }
   </style>
+      <script>
+        $(document).ready(function(){
+        $("#commentForm").validate();
+    });
+    </script>
 </head>
 
 <body>
@@ -47,39 +54,39 @@
         <em>*</em>
         <input id="cfname" name="fname" size="25" />
       </p>
-        <p>
-          <label for="clname">Last Name</label>
-          <em>*</em>
-          <input id="clname" name="lname" size="25" />
-        </p>
-        <p>
-          <label for="cemail">E-Mail</label>
-          <em>*</em>
-          <input id="cemail" name="email" size="25" />
-        </p>
-        <p>
-          <label for="curl">URL of Your Web Site</label>
-          <em> </em>
-          <input id="curl" name="url" size="25" />
-        </p>
-        <p>
-          <label for="cnumber">Years Your Site Has Been in Business</label>
-          <em> </em>
-          <input id="cnumber" name="url" size="25" />
-        </p>
-        <p>
-          <label for="ccomment">Your Comment</label>
-          <em>*</em>
-          <textarea id="ccomment" name="comment" cols="22"></textarea>
-        </p>
-        <p>
-          <label for="ccheckbox">Please check this box to agree to our terms</label>
-          <em>*</em>
-          <input id="ccheckbox" type="checkbox" name="ccheckbox" />
-        </p>
-        <p>
-          <input class="submit" type="submit" value="Submit" />
-        </p>
+      <p>
+        <label for="clname">Last Name</label>
+        <em>*</em>
+        <input id="clname" name="lname" size="25" />
+      </p>
+      <p>
+        <label for="cemail">E-Mail</label>
+        <em>*</em>
+        <input id="cemail" name="email" size="25" />
+      </p>
+      <p>
+        <label for="curl">URL of Your Web Site</label>
+        <em> </em>
+        <input id="curl" name="url" size="25" />
+      </p>
+      <p>
+        <label for="cnumber">Years Your Site Has Been in Business</label>
+        <em> </em>
+        <input id="cnumber" name="url" size="25" />
+      </p>
+      <p>
+        <label for="ccomment">Your Comment</label>
+        <em>*</em>
+        <textarea id="ccomment" name="comment" cols="22"></textarea>
+      </p>
+      <p>
+        <label for="ccheckbox">Please check this box to agree to our terms</label>
+        <em>*</em>
+        <input id="ccheckbox" type="checkbox" name="ccheckbox" />
+      </p>
+      <p>
+        <input class="submit" type="submit" value="Submit" />
+      </p>
     </fieldset>
   </form>
 </body>
