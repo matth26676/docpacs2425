@@ -13,13 +13,13 @@
      var keepCookie = (confirm("A cookie will be set. Delete cookie?")) ? "delete" : "keep";
 
     if (keepCookie == "delete") {
-        document.cookie="testCookie=" +"YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2018";
+        document.cookie="testCookie=" +"YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2050";
         message= "Here is the cookie that was deleted:  ";
         message += document.cookie;
         alert(message);
     } 
     else {
-		document.cookie="testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2018"; // the expiry date must be somewhere in the future, or the cookie will not be set in Firefox or Chrome
+		document.cookie="testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2050"; // the expiry date must be somewhere in the future, or the cookie will not be set in Firefox or Chrome
         message= "Here is the cookie that was set on your system:  ";
         message += document.cookie;
         alert(message);

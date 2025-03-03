@@ -12,12 +12,18 @@
   var theSelections = "Selected values:\n";
   
 // Create for loop
-  
+
+for (var i = 0; i < len; i++) {
+        if (form.mySelect.options[i].selected) {
+          theSelections += form.mySelect.options[i].text + "\n";
+        }
+      }
   
   
   
   // Display selections
 
+  alert(theSelections);
   } 
 
 //-->

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>React Password Assignment</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/JSXTransformer.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    </head>
-    <body>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Password Assignment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0-alpha1/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+
+<body>
     <script type="text/jsx">
     class PasswordStrength extends React.Component {
         constructor() {
@@ -68,7 +70,7 @@
                 <div>
                     <div>&nbsp;</div>
                     <label htmlFor="myPassword" style={{fontSize: '18px'}}>Create Password: </label> <br />
-                    <input type="password" name="myPassword" placeholder="Enter Password" class="form-fields" id="myPassword" onKeyUp={this.onPasswordChange.bind(this)} style={{height: '35px', width: '550px', borderRadius: 3, paddingLeft: '5px'}} />
+                    <input type="text" name="myPassword" placeholder="Enter Password" class="form-fields" id="myPassword" onKeyUp={this.onPasswordChange.bind(this)} style={{height: '35px', width: '550px', borderRadius: 3, paddingLeft: '5px'}} />
                     <div style={{width: '550px', height: '18px', border: '1px solid', borderRadius: 3, margin: '10px auto'}}>
                         <div style={{backgroundColor:this.state.meterColor, width:this.state.meterStrength, height: '100%', transition: 'width 0.5s ease-in-out'}}></div>
                     </div>
@@ -99,9 +101,10 @@
         document.getElementById('root')
     )
         </script>
-        <div class="container">
-            <div class="col-sm-3"></div>
-            <div id="root" class=" row col-sm-6 col-offset-sm-3 text-center"></div>
-        </div>
-    </body>
+    <div class="container">
+        <div class="col-sm-3"></div>
+        <div id="root" class=" row col-sm-6 col-offset-sm-3 text-center"></div>
+    </div>
+</body>
+
 </html>
