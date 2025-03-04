@@ -19,6 +19,11 @@
       "username": "bob",
       "password": "$2b$10$T9IO2NQHRcPuC3WIzgK35e/ilZw/balkigNUYGSf4CKUGcaoHnUM2",
       "isAdmin": false
+    },
+    {
+      "username": "a",
+      "password": "$2b$10$meYWbcKfSy84bRWOrnfow.6e3yA38UP48D9wnNDuISljaxMTBBDU.",
+      "isAdmin": false
     }
   ],
   "tracks": [
