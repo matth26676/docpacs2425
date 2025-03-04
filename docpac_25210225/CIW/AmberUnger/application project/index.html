@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Set Cookie Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script type="text/javascript">
+        function setCookie() {
+            const name = document.getElementById('name').value;
+            if (name === '') {
+                alert('Name field is left blank.');
+                return false;
+            } else {
+                document.cookie = `username=${name}; path=/`;
+                document.body.innerHTML = `<h1>Welcome, ${name}! How are you today?</h1>`;
+                return false;
+            }
+        }
+
+        function getCookie(cname) {
+            const name = `${cname}=`;
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i].trim();
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    </script>
+</head>
+
+<body>
+    <form onsubmit="return setCookie()">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
