@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lab 9-1</title>
+
+<script type="text/javascript">
+<!--
+function changeButton()
+{
+  if(document.getElementById('radiobuttonWebdev').checked === true)
+  {
+	radioButton = document.getElementById('radiobuttonWebdev').value;
+	var header = document.getElementById('radiobuttonWebdev').value.innerHTML = "Web Developer!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('radiobuttonGovernment').checked === true)
+  {
+	radioButton = document.getElementById('radiobuttonGovernment').value;
+	var header = document.getElementById('radiobuttonWebdev').value.innerHTML = "Uncle Sam!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('a').checked === true)
+  {
+	radioButton = document.getElementById('a').value;
+	var header = document.getElementById('a').value.innerHTML = ", Connor Guy!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('b').checked === true)
+  {
+	radioButton = document.getElementById('b').value;
+	var header = document.getElementById('b').value.innerHTML = ", Fight the demons!";
+	alert("Hello " + header);
+  }
+  if(document.getElementById('c').checked === true)
+  {
+	radioButton = document.getElementById('c').value;
+	var header = document.getElementById('c').value.innerHTML = ", learn code!";
+	alert("Hello " + header);
+  }
+  getTest();
+}
+-->
+</script>
+</head>
+
+<body>
+<h3>CIW JavaScript Specialist</h3>
+<hr />
+<form>
+<p>Please select your favorite type of Web site:</p>
+<input id="radiobuttonWebdev" type="radio" name="group1" value="Web_Development" checked>Web Development</input><br />
+<input id="radiobuttonGovernment" type="radio" name="group1" value="Government">U.S. Government</input><br />
+<input id="a" type="radio" name="group1" value="A">A</input><br />
+<input id="b" type="radio" name="group1" value="B">B</input><br />
+<input id="c" type="radio" name="group1" value="C">C</input><br />
+
+
+<script type="text/javascript">
+<!--
+function getTest()
+{
+  document.write("<h3>CIW JavaScript Specialist</h3>");
+  document.write("<hr />");
+
+  if(radioButton == "Web_Development")
+  {
+	document.write("<p>Here's a great site for Web developers:</p><a href=http://www.CIWcertified.com/>CIW Certified</a>");
+  }
+	
+  if(radioButton == "Government")
+  {
+	document.write("<p>Here's a great site if you're interested in U.S. government:</p><a href=http://www.whitehouse.gov/>The White House</a>");
+  }
+  if(radioButton == "A")
+  {
+	document.write("<p>Here's a great site if you're interested in things about me:</p><a href=https://conno26678.github.io/portfolioLive/> Connor </a>");
+  }
+  if(radioButton == "B")
+  {
+	document.write("<p>Here's a great site if you're interested in DOOM:</p><a href=https://store.steampowered.com/app/3017860/DOOM_The_Dark_Ages/> Doom The Dark Ages </a>");
+  }
+  if(radioButton == "C")
+  {
+	document.write("<p>Here's a great site if you're interested in things about coding:</p><a href=https://www.w3schools.com/> W3schools </a>");
+  }
+}
+-->
+</script>
+
+<p>
+<input type="button" onclick="changeButton()" value="Click Here" />
+</p>
+</form>
+
+</body>
+</html>

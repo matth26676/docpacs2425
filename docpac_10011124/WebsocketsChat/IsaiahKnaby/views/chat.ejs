@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1f2442;
+            color: #FFFFFF;
+        }
+
+        #userlist {
+            float: right;
+            background-color: #9c9c9c;
+        }
+
+        #textBox {
+            top: 80%;
+        }
+
+        #messageList {
+            height: 80%;
+            width: 250px;
+            height: 500px;
+            overflow-y: scroll;
+            background-color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="messageList">
+
+    </div>
+    <div id="textBox">
+        <input type="text" id="message" placeholder="Type your message">
+    </div>
+    <div id="button">
+        <button id="send" onclick="send()">Send</button>
+    </div>
+    <div id="userList">
+        <h1>users:</h1>
+        <p></p>
+        <ul>
+            <li>User1</li>
+            <li>User2</li>
+            <li>User3</li>
+        </ul>
+    </div>
+</body>
+<script>
+    let name = '<%= username %>';
+    const ws = new WebSocket('ws://localhost:3000');
+
+    function send() {
+        let message = document.getElementById('message');
+        let text = message.value;
+        message.value = '';
+
+        let data = JSON.stringify({ name, message });
+        ws.send(data);
+    }
+
+    ws.onopen = () => {
+        ws.send(JSON.stringify({ name }))
+
+        ws.onmessage = (message) => {
+            const data = JSON.parse(message.data);
+            const names = data.names;
+            message = data.messages;
+
+            if (names) {
+                const userList = document.getElementById('userList');
+                userList.innerHTML = '<li><h3>users:</h3></li>';
+                for (let name of names) {
+                    const li = document.createElement('li');
+                    const h3 = document.createElement('h3');
+                    h3.textContent = name;
+                    li.appendChild(li);
+                    userList.appendChild(li);
+                }
+            }
+
+            if (message) {
+                const messageList = document.getElementById('messageList');
+                messageList.innerHTML = '<li></li>';
+
+                for (let message of message) {
+                    const li = document.createElement('li');
+                    const p = document.createElement('p');
+                    p.textContent = message;
+                    li.appendChild(p);
+                    messageList.appendChild(li);
+                }
+            }
+        }
+
+
+    }
+</script>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chat-box {
+            width: 80%;
+            max-width: 600px;
+            height: 60vh;
+            background: white;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        form {
+            width: 80%;
+            max-width: 600px;
+            display: flex;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #logout-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #f44336;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #logout-button:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-box"></div>
+    <form id="chat-form">
+        <input id="message" autocomplete="off" placeholder="Type a message..." />
+        <button>Send</button>
+    </form>
+    <button id="logout-button" onclick="window.location.href='/logout'">Logout</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const username = '<%= username %>'; // Pass the username from the server-side
+        const socket = io({ query: { username } });
+
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('message');
+        const chatBox = document.getElementById('chat-box');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+
+        socket.on('chat message', (msg) => {
+            const item = document.createElement('div');
+            item.textContent = `${msg.username}: ${msg.message}`;
+            chatBox.appendChild(item);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+
+</html>
