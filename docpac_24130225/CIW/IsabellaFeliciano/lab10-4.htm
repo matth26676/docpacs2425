@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8" />
+  <title>Lab 10-4</title>
+
+  <script type="text/javascript">
+
+    function isSelected(form) {
+      var len = form.mySelect.length;
+      var theSelections = "Selected values:\n";
+
+      for (var i = 0; i < len; i++) {
+        if (form.mySelect.options[i].selected) {
+          theSelections += form.mySelect.options[i].text + "\n";
+        }
+      }
+
+      alert(theSelections);
+    }
+  </script>
+</head>
+
+<body>
+  <h3>CIW JavaScript Specialist</h3>
+  <hr />
+  <form name="myForm" id="myForm">
+    Select items<br />
+    <select name="mySelect" multiple=multiple>
