@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <script>
+        function redirect() {
+            var username = document.getElementById('username').value;
+            window.location.href = '/chat?username=' + username;
+        }
+    </script>
+</head>
+<body>
+    <form action="/chat" method="get">
+        <input type="text" name="username"  id="username" placeholder="Username">
+        <input type="submit" onclick="redirect()">
+    </form>
+</body>
+<script>
+</script>
+</html>
