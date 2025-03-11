@@ -20,7 +20,6 @@ function main() {
 
     while (true) {
         console.log('1: Start Order  2: Edit Order  3: Show All Orders');
-        // REMEMBER TO DELETE EXIT FEATURE FOR POOKIE BEAR
         let selection = prompt('? ');
         switch (selection) {
             case '1':
@@ -73,7 +72,6 @@ function editOrder() {
                 order.tax = totals.tax;
                 order.total = totals.total;
                 return;
-                break;
             default:
                 console.log('Invalid Selection');
                 break;
