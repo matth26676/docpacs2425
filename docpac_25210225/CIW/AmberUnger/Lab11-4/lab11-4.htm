@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Lab 11-4</title>
+    <script>
+        var myColor = "#ffffff"; // Define myColor
+        var pos; // Declare pos as a global variable
+
+        if (keepCookie == "delete") {
+            document.cookie = "testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2030";
+            message = "Here is the cookie that was deleted:";
+            message += document.cookie;
+            alert(message);
+        } else {
+            document.cookie = "testCookie=" + "YColor=" + myColor + " " + "name=" + myName + ";expires=20-May-2030";
+            message = "Here is the cookie that was set on your system: ";
+            message += document.cookie;
+            alert(message);
+        }
+
+        var start = document.cookie.indexOf("YColor=");
+        start = start + 7;
+        pos = document.cookie.substr(start, 6);
+        alert("Your background color will be: " + pos);
+
+        var nameLengthS = document.cookie.indexOf("name=");
+        nameLengthS = nameLengthS + 5;
+        var PersonName = document.cookie.substr(nameLengthS, 25);
+        alert("Your name is: " + PersonName);
+    </script>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+
+    <script>
+        if ((myColor == null) || (myColor == "") || (myColor.length < 6 || myColor.length > 6)) myColor = "#ffffff";
+        document.bgColor = pos;
+        document.write("Your background color is: " + document.bgColor + "<br />");
+        document.write("Your name is: " + window.PersonName + "<br />");
+        document.write("Cookie contents: " + document.cookie);
+        document.write();
+    </script>
+</body>
+
+</html>
