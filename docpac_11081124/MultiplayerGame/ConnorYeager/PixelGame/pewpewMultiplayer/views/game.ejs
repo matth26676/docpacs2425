@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>game</title>
+    <style>
+        #canvas {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+
+<body>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+
+const screenW = 800;
+const screenH = window.innerHeight;
+
+const backgroundColor = '#222';
+
+
+
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+
+canvas.width = screenW;
+canvas.height = screenH;
+
+let keys = new Map();
+
+let bullets = [];
+
+window.onload = function(){
+    update();
+}
+
+class Actor {
+    constructor(x,y,w,h){
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+
+        this.spd = 1;
+
+        this.xv = 0;
+        this.yv = 0;
+    }
+
+    draw(){
+
+    }
+
+    move(){
+        this.x += this.xv * this.spd;
+        this.y += this.yv * this.spd;
+    }
+
+    update(){
+        
+    }
+}
+
+class Player extends Actor{
+    constructor(x,y,w,h){
+        super(x,y,w,h);
+        this.forDeletion = false;
+        this.color = 'blue';
+        this.spd = 10;
+        this.shootPower = 10;
+
+        this.shootHeld = false;
+    }
+
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    update(){
+
+        const X = 0;
+        const Y = 0;
+        let inputVector = this.getInputVector();
+        this.xv = inputVector[X];
+
+        if(isKeyDown(' ') && !this.shootHeld){
+            this.shoot();
+            this.shootHeld = true;
+        } else if(!isKeyDown(' ')){
+            this.shootHeld = false;              
+        }
+
+        this.move();
+        this.checkBounds();
+
+    }
+
+    checkBounds(){
+        if(this.x + this.width >= canvas.width) this.x = canvas.width - this.width;
+        if(this.x <= 0) this.x = 0;
+    }
+
+    getInputVector(){
+        let x = Number(isKeyDown('d')) - Number(isKeyDown('a'));
+        let y = Number(isKeyDown('s')) - Number(isKeyDown('w'));
+
+        return [x,y];
+    }
+
+    shoot(){
+        bullets.push(new Bullet(this.x + this.width/2 - 10, this.y, 0, -this.shootPower));
+    }
+}
+
+class Bullet extends Actor {
+    constructor(x,y, xv, yv){
+        super(x,y, 20, 20);
+        this.xv = xv;
+        this.yv = yv;
+        this.color = 'white';
+    }
+
+    update(){
+        this.move();
+    }
+
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+let adamSandler = new Player(canvas.width/2 ,canvas.height - 200,100,100);
+
+function update(){
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    adamSandler.draw();
+    adamSandler.update();
+
+    for(bullet of bullets){
+        bullet.draw();
+        bullet.update();
+    }
+
+    requestAnimationFrame(update);
+}
+
+document.addEventListener('keydown', function(event){
+    let key = event.key.toLowerCase();
+    keys.set(key, true);
+});
+
+document.addEventListener('keyup', function(event){
+    let key = event.key.toLowerCase();
+    keys.set(key, false);
+});
+
+function isKeyDown(key){
+    if(keys.has(key)){
+        return keys.get(key);
+    }
+
+    return false;
+}
+
+function isColliding(rect1, rect2) {
+            return (
+                rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.y + rect1.height > rect2.y
+            );
+}
+
+</script>
+</html>
