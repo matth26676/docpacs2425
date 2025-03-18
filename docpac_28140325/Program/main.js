@@ -7,102 +7,146 @@ const rl = readline.createInterface({
 
 let orders = [];
 
-const items = [
-    { name: 'Wireless Mouse', price: 15.00 },
-    { name: 'USB-C Cable', price: 8.00 },
-    { name: 'Notebook', price: 12.00 },
-    { name: 'Desk Lamp', price: 25.00 },
-    { name: 'Bluetooth Speaker', price: 40.00 },
-    { name: 'Phone Stand', price: 40.00 },
-    { name: 'Pen Set', price: 5.00 }
-];
-
-function buyItem() {
-    console.log(" 1. Wireless Mouse Unit Price: $15.00 \n 2. USB-C Cable Unit Price: $8.00 \n 3. Notebook Unit Price: $12.00 \n 4. Desk Lamp Unit Price: $25.00 \n 5. Bluetooth Speaker Unit Price: $40.00 \n 6. Phone Stand Unit Price: $40.00 \n 7. Pen Set Unit Price: $5.00 \n");
-    rl.question('What item would you like to add? ', (answer) => {
-        let itemIndex = (answer) - 1;
-        let item = items[itemIndex];
-        if (!item) {
-            console.log("Invalid item number.\n");
-            buyItem();
-            return;
-        }
-
-        rl.question('How many would you like to buy? ', (quantity) => {
-            let order = orders[orders.length - 1];
-            if (!order.items) {
-                order.items = [];
-            }
-
-            order.items.push({ ...item, quantity: parseInt(quantity) });
-            console.log("Item added successfully!\n");
-            buyItem();
+function newOrder() {
+    rl.question('What is your name? ', (name) => {
+        let order = { name, address: '', items: [], subtotal: 0, salesTax: 0, shipping: 0, total: 0 };
+        rl.question('What is your address? ', (address) => {
+            order.address = address;
+            orders.push(order);
+            console.log("Order added successfully!\n");
+            mainMenu();
         });
     });
 }
 
+ordermath = (order) => {
+    let subtotal = 0;
+    for (let i = 0; i < order.items.length; i++) {
+        subtotal += order.items[i].price * order.items[i].quantity;
+    }
+
+    let shipping = 0;
+
+    if (subtotal < 50) {
+        shipping = 5;
+    } else {
+        shipping = 0;
+    }
+
+    let salesTax = subtotal * 0.06;
+    let total = subtotal + salesTax + shipping;
+
+    order.subtotal = subtotal;
+    order.salesTax = salesTax;
+    order.shipping = shipping;
+    order.total = total;
+
+    rl.write(`\nSubtotal: $${subtotal.toFixed(2)}\nSales Tax: $${salesTax.toFixed(2)}\nShipping: $${shipping.toFixed(2)}\nTotal: $${total.toFixed(2)}\n`);
+}
+
+function showOrders() {
+    if (orders.length === 0) {
+        console.log("\nNo orders available.");
+    } else {
+        console.log("\nAll Orders:");
+        orders.forEach((order, index) => {
+            console.log(`\nOrder ${index + 1} - Name: ${order.name}, Address: ${order.address}`);
+            if (order.items.length > 0) {
+                console.log("Items:");
+                order.items.forEach((item, i) => {
+                    console.log(`  ${i + 1}. ${item.name} - Quantity: ${item.quantity}, Price: $${item.price.toFixed(2)}`);
+                });
+               rl.write(`\nSubtotal: $${order.subtotal.toFixed(2)}\nSales Tax: $${order.salesTax.toFixed(2)}\nShipping: $${order.shipping.toFixed(2)}\nTotal: $${order.total.toFixed(2)}\n`);
+            } else {
+                console.log("  No items in this order.");
+            }
+        });
+    }
+    mainMenu();
+}
+
+function editOrder() {
+    if (orders.length === 0) {
+        console.log("\n No orders to edit.");
+        mainMenu();
+    }
+
+    orders.forEach((order, index) => {
+        console.log(`${index + 1}. ${order.name}`);
+    });
+
+    rl.question('Which order would you like to edit? ', (orderNumber) => {
+        let orderIndex = orderNumber - 1;
+
+        if (isNaN(orderIndex) || orderIndex < 0 || orderIndex >= orders.length) {
+            console.log("Invalid order number.\n");
+            mainMenu();
+            return;
+        }
+
+        editOrderMenu(orders[orderIndex]);
+    });
+}
+
 function mainMenu() {
-    rl.write(" \n 1. Start A New Order \n 2. Edit Existing Order \n 3. Show All Orders. \n")
+    rl.write("\n 1. Start A New Order \n 2. Edit Existing Order \n 3. Show All Orders. \n");
 
     rl.question('\n What would you like to do? ', (answer) => {
-        switch (answer.trim()) {  
+        switch (answer.trim()) {
             case '1':
-                rl.question('What is your name? ', (name) => {
-                    let order = { name };
-                    rl.question('What is your address? ', (address) => {
-                        order.address = address;
-                        orders.push(order);
-                        console.log("Order added successfully!\n");
-                        mainMenu();
-                    });
-                });
+                newOrder();
                 break;
 
             case '2':
-                if (orders.length === 0) {
-                    console.log(" \n No orders to edit.");
-                    mainMenu();
-                    break;
-                }
-
-                orders.forEach((order, index) => {
-                    console.log(`${index + 1}. ${order.name}`);
-                });
-
-                rl.question('Which order would you like to edit? ', (orderNumber) => {
-                    let orderIndex = (orderNumber) - 1;
-                    let order = orders[orderIndex];
-
-                    if (!order) {
-                        console.log("Invalid order number.\n");
-                        mainMenu();
-                        return;
-                    }
-
-                    rl.question('Would you like to \n 1. Add an Item \n 2. Finish Editing \n ', (answer) => {
-                        switch (answer.trim()) {
-                            case '1':
-                                buyItem();
-                                break;
-                            case '2':
-                                console.log("Finished editing");
-
-                                break;
-                            default:
-                                console.log('Please enter a valid option (1 or 2).\n');
-                                mainMenu();
-                        }
-                    });
-                });
+                editOrder();
                 break;
 
             case '3':
-              
+                if (orders.length === 0) {
+                    console.log("No orders available.");
+                } else {
+                    showOrders();
+                }
                 break;
 
             default:
                 console.log('Please enter a valid option (1, 2, or 3).\n');
                 mainMenu();
+        }
+    });
+}
+
+function buyItem(order) {
+    rl.question('What item would you like to add? ', (itemName) => {
+        rl.question('How many would you like to add? ', (quantity) => {
+            rl.question('What is the price of the item? ', (price) => {
+                const newItem = {
+                    name: itemName,
+                    quantity: parseFloat(quantity),
+                    price: parseFloat(price)
+                };
+                order.items.push(newItem);
+                console.log("Item added successfully!\n");
+                editOrderMenu(order);
+            });
+        });
+    });
+}
+
+function editOrderMenu(order) {
+    rl.question('Would you like to \n 1. Add an Item \n 2. Finish Editing \n ', (answer) => {
+        switch (answer.trim()) {
+            case '1':
+                buyItem(order);
+                break;
+            case '2':
+                ordermath(order);
+                console.log("Finished editing");
+                mainMenu();
+                break;
+            default:
+                console.log('Please enter a valid option (1 or 2).\n');
+                editOrderMenu(order);
         }
     });
 }
