@@ -4,15 +4,21 @@
 <meta charset=utf-8" />
 <title>Lab 10-5</title>
 <script type="text/javascript">
-    function checkForm()
-    {
-        var str = '';
-        var elem = document.getElementById('myForm').elements;
+  function checkForm(form)
+  {
+      var len = form.elements.length;
 
-       //Insert for statement here//
+      // Insert for statement here
+      for (var i = 0; i < len; i++) {
+          if (form.elements[i].value.length < 1) {
+              alert("Enter something for the field: " + form.elements[i].name);
+              form.elements[i].focus();
+              return false;
+          }
+      }
 
-
-     }
+      return true;
+  }
 </script>
 </head>
 
