@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocti Bool</title>
+    <style>
+        body {
+            text-align: center;
+            font-size: 2vi;
+        }
+        h1 {
+            font-size: 5vi;
+        }
+        button {
+            width:  5vi;
+            height: 4vi;
+            font-size: 1cqi;
+            text-align: center;
+            background-color: greenyellow;
+            border-radius: 100%;
+            font-weight: bold;
+            border-color: gray;
+            transition: all 200ms;
+        }
+        #submit {
+            position: fixed;
+            bottom: 5%;
+        }
+        button:hover {
+            transform: translateY(-5px);
+            border: outset gray;
+        }
+        button:active {
+            transform: translateY(0px);
+            border: inset;
+        }
+        input {
+            width: 1.5vi;
+            height: 1.5vi;
+        }
+        .question {
+            display: block;
+            text-align: left;
+        }
+        h3 {
+            margin-bottom: 0;
+        }
+        .right {
+            background-color: green !important;
+        }
+        .wrong {   
+            background-color: red;
+        }
+        .couldBeWrong {
+            background-color: yellow !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nocti Quiz 😊</h1>
+    <button onclick="start(event)">Start Quiz</button>
+    <div id="form" hidden>
+        <div id="questions"></div>
+        <button id="submit" onclick="submit()">Submit</button>
+    </div>
+</body>
+
+<script>
+    let questions = [{text:'Which of the following errors is caused by a calculation error?', selections:{A:'logical', B:'arithmetic', C:'truncation', D:'semantic'}, right:'B'},
+
+    {text:'Which of the following uses three basic control structures to form highly structured units of code?', 
+    selections:{A:'Structured Programming', B:'Circular Connector', C:'Modular Construction', D:'Loop Structure'}, right:'A'},
+
+    {text:'What type of principle is used for configuring preferences that allow the user to personalize an application?', 
+    selections:{A:'CLI', B:'GUI', C:'API', D:'DOS'}, right:'B'},
+
+    {text:'All computer instructions are based on four basic logical patterns. These patterns are simple sequence, selection, loop, and', 
+    selections:{A:'Trailer', B:'Modular', C:'Top-Down', D:'Branch'}, right:'D'},
+
+    {text:'If the memory speed of the bus is 750Mhz, and the CPU is operating at twice the speed of the bus, what is the processor speed?', 
+    selections:{A:'375 MHz', B:'750 MHz', C:' 1.5 GHz', D:' 2GHz'}, right:'C'},
+
+    {text:'Two types of programs that create machine codes are the interpreter and the', 
+    selections:{A:'Assembler', B:'Object', C:'Compiler', D:'Source'}, right:'C'},
+
+    {text:'In the order of calculations in a program', 
+    selections:{A:'Addition precedes Division', B:'Parentheses precede exponentiation', C:'Subtraction precedes addition', D:'Multiplication precedes exponentiation'}, right:'B'},
+
+    {text:'When the code below is executed, strAdd will be equal to', block:`strFirst = "123"<br>
+srtSecond = "456"<br>
+strAdd = strFirst + strSecond`,
+    selections:{A:'"579"', B:'"123 + 456"', C:'"123456"', D:' "strFirst + strSecond"'}, right:'C'},
+
+    {text:'If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called', 
+    selections:{A:'Piracy', B:'Larceny', C:'Felony', D:'Spyware'}, right:'A'},
+
+    {text:'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with compliance with SOX?', 
+    selections:{A:'Create system logs of the transactions taken in the session', 
+    B:'Require a user to click three times when they are sure they want to proceed', 
+    C:'Help a user to request assistance from the system administrators', 
+    D:'Utilize system credentials instead of pass-through credentials'}, right:'D'},
+
+    {text:'The following programming flowchart symbol is a/an ______ symbol.', 
+    selections:{A:'Processing', B:'input/Output', C:'Decision', D:'Connector'}, right:'C'},
+    
+    {text:'One of the main goals in analyzing user requirements is to', 
+    selections:{A:'Troubleshoot the problem', B:'Shutdown and maintain the system', C:'Keep the customer happy', D:'Elicit requirements from the users point of view.'}, right:'D'},
+
+    {text:'If a record has the following field lengths, what is the record length?', block:'Name=35,ZipCode=5,District=7',
+    selections:{A:'42', B:'47', C:'54', D:'56'}, right:'B'},
+
+    {text:'The following programming flowchart symbol is a/an ______ symbol.', block:'▱',
+    selections:{A:'Processing', B:'input/Output', C:'Decision', D:'Connector'}, right:'B'},
+
+    {text:'A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?', 
+    selections:{A:'Billing', B:'Documentation', C:'Implementation', D:'Test'}, right:'C'},
+
+    {text:'A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and set of data. What is the best data structure the programmer can use?', 
+    selections:{A:'Array', B:'Constant', C:'String', D:'Field'}, right:'A'},
+    
+    {text:'When a programmer is ready to create executable code, what process is used?', 
+    selections:{A:'Debugging', B:'Editing', C:'Compiling', D:'Disassembling'}, right:'C'},
+
+    {text:'The source document and _______ should follow the same order.', 
+    selections:{A:'Input screen design', B:'Output screen design', C:'Decision-type operator symbols', D:'Processing function symbols'}, right:'A'},
+
+    {text:'Which of the following is the correct name for a variable?', 
+    selections:{A:'State_Zipcode', B:'State+Zipcode', C:'State Zipcode', D:'State=Zipcode'}, right:'A'},
+
+    {text:'Why is the following expression invalid?', block:'A=10 + "New Data"',
+    selections:{A:'Variable 5 is not defined', B:'Data types are mixed', C:'"New Data" is not a string', D:'"New Data " equals zero'}, right:'B'},
+
+    {text:'An output field has "Los Angeles" moved to it and when examined contains "Los Angel." This indicates a/an ______ error.', 
+    selections:{A:'Logical', B:'Arithmetic', C:'Truncation', D:'Semantic'}, right:'C'},
+
+    {text:'A programmer needs to define the type of the value for a variable. What predefined set of characteristics for a variable can the programmer choose?', 
+    selections:{A:'Storage Location', B:'Return Value', C:'Method Modifier', D:'Data Type'}, right:'D'},
+
+    {text:'One example of scripting (text processing) language is', 
+    selections:{A:'Pearl', B:'C++', C:'Fortran', D:'Beta'}, right:'A'},
+
+    {text:'Which of the following enables the use of "Plane English" queries?', 
+    selections:{A:'BASIC', B:'FORTRAN', C:'SQL', D:'C++'}, right:'C'},
+
+    {text:'An example of loop structure is', 
+    selections:{A:'DO UNTIL', B:'SELECT IF', C:'EXECUTE', D:'NEXT'}, right:'A'},
+
+    {text:'Compile errors can be caused by', 
+    selections:{A:'Bad syntax', B:'Input data', C:'Insufficient test data', D:'Incorrect user specification'}, right:'A'},
+
+    {text:'Typically after successful interrogation testing, a ______ test preformed to complete a front-to-back execution of the entire application.', 
+    selections:{A:'System', B:'Unit', C:'Fuzz', D:'Beta'}, right:'A'},
+
+    {text:'The implementation phase consists of coding, testing, and', 
+    selections:{A:'Designing', B:'Building Prototype programs', C:'Establishing Requirements', D:'Integration'}, right:'D'},
+
+    {text:'When', block:`Sub Form_Click( )<br>
+IN = TEXT 1.VALUE<br>
+TEXT1_len = LEN$(IN)<br>
+TEMP = TEMP & mid (in, I, 1)<br>
+NEXT<br>
+OUT = TEMP & right (in, text_len -n)`,
+    selections:{A:'7', B:'8', C:'9', D:'10'}, right:'A'},
+
+    {text:'A data element is intended to contain a range from 15 to 30 and after testing it contains 32. What kind of error is this?', 
+    selections:{A:'Truncation', B:'Rounding', C:'Run Time', D:'Boundary'}, right:'D'},
+    
+    {text:'Which of the following consists of a sequence of events to follow so they can be repeated?', 
+    selections:{A:'Runtime', B:'Test Files', C:'Trace Route', D:'Script'}, right:'D'},
+
+    {text:'Maintenance refers to changes to a system in operating arising from error corrections, performance improvements, changes int the business environment and', 
+    selections:{A:'Enhancements and functions', B:'Application Requirements', C:'Referencing Software', D:'Material Requirements'}, right:'A'},
+
+    {text:'One method of ensuring that updates to documentation are efficiently distributed is to', 
+    selections:{A:'Send customers printed documents annually regardless of whether there have been changes', 
+    B:'Make changes in an online help system rather then printed sources', 
+    C:'Send fliers containing only the changes rather then a new printed volumes', 
+    D:'Make changes only on a pre-specified schedule'}, right:'B'},
+
+    {text:'A programmer has to make programmer changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as ______ documentation.', 
+    selections:{A:'External', B:'Internal', C:'Primary', D:'Secondary'}, right:'B'},
+
+    {text:'A programmer has decided to create a pop-up window that will display a brief description of a controls purpose when the mouse hovers over it. This pop-up window is known as a', 
+    selections:{A:'Hyper Clip', B:'Tool Tip', C:'Task Bar', D:'Help Bar'}, right:'B'},
+
+    {text: 'If the memory speed of the bus is 750MHz, and the CPU is operating at twice the speed of the bus, what is the processor speed?', 
+    selections: {A: '1500 MHz', B: '375 MHz', C: '2000 MHz', D: '1000 MHz'}, right: 'A'},
+
+    {text: 'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly set up a program that would cause problems with compliance with SOX?', 
+    selections: {A: 'Failing to document transaction logs', B: 'Using an inefficient database system', C: 'Creating large files for data storage', D: 'Designing a program without user authentication'}, right: 'A'},
+
+    {text: 'Which of the following is the correct name for a variable?', 
+    selections: {A: '1variable', B: '$varName', C: 'var-name', D: 'varName!'}, right: 'B'},
+
+    {text: 'Which of the following is a control structure used for decision making?', 
+    selections: {A: 'Loop', B: 'Function', C: 'Selection', D: 'Sequence'}, right: 'C'},
+
+    {text: 'What type of programming language is designed to allow for easy interaction with hardware?', 
+    selections: {A: 'High-level language', B: 'Assembly language', C: 'Object-oriented language', D: 'Declarative language'}, right: 'B'},
+
+    {text: 'Which of the following is an example of an iterative process in programming?', 
+    selections: {A: 'Conditional statement', B: 'Loop', C: 'Variable declaration', D: 'Function definition'}, right: 'B'},
+
+    {text: 'What is the primary purpose of an operating system?', 
+    selections: {A: 'To manage hardware resources', B: 'To perform calculations', C: 'To write code', D: 'To handle user input'}, right: 'A'},
+
+    {text: 'Which of the following would NOT be considered good practice for software security?', 
+    selections: {A: 'Input validation', B: 'Strong password policies', C: 'Storing passwords in plain text', D: 'Encryption of sensitive data'}, right: 'C'},
+
+    {text: 'What type of loop will execute at least once, regardless of the condition?', 
+    selections: {A: 'While loop', B: 'Do-while loop', C: 'For loop', D: 'Infinite loop'}, right: 'B'},
+
+    {text: 'What is the purpose of an API (Application Programming Interface)?', 
+    selections: {A: 'To allow communication between different software components', B: 'To store data for a web application', C: 'To encrypt sensitive information', D: 'To define the structure of a database'}, right: 'A'},
+
+    {text: 'What does the acronym "HTTP" stand for?', 
+    selections: {A: 'Hyper Transfer Text Protocol', B: 'Hyper Text Transfer Protocol', C: 'Hyper Transmission Transfer Protocol', D: 'Hyper Technical Transfer Protocol'}, right: 'B'},
+
+    {text: 'In a relational database, what is the purpose of a primary key?', 
+    selections: {A: 'To uniquely identify a record in a table', B: 'To link one table to another', C: 'To store user credentials', D: 'To define the data type of a column'}, right: 'A'},
+
+    {text: 'Which of the following is a characteristic of object-oriented programming (OOP)?', 
+    selections: {A: 'Linear programming structure', B: 'Use of variables and functions only', C: 'Encapsulation and inheritance', D: 'Focus on hardware interaction'}, right: 'C'},
+
+    {text: 'Which of the following is a non-volatile type of memory?', 
+    selections: {A: 'RAM', B: 'Cache', C: 'ROM', D: 'Register'}, right: 'C'},
+
+    {text: 'What does the term "debugging" refer to in programming?', 
+    selections: {A: 'Writing new features into a program', B: 'Removing unnecessary code', C: 'Identifying and fixing errors in code', D: 'Refactoring code for efficiency'}, right: 'C'},
+    ]
+    let form = document.querySelector('#form')
+    let quiz = document.getElementById('questions')
+    for (question of questions) {
+        let div = document.createElement('div')
+        div.className = 'question'
+
+        let header = document.createElement('h3')
+        header.textContent = question.text
+        div.appendChild(header)
+
+        let selectDiv = document.createElement('selection')
+        if (question.block) {
+            if (question.block.includes('<br>')) {
+                let arr = question.block.split('<br>')
+                for (text of arr) {
+                    let block = document.createElement('p')
+                    block.textContent = text
+                    div.appendChild(block)
+                }
+            } else {
+                let block = document.createElement('p')
+                block.textContent = question.block
+                div.appendChild(block)
+            }
+        }
+        
+        for (selection of Object.keys(question.selections)) {
+            let qDiv = document.createElement('div')
+            qDiv.className = 'question'
+            let text = question.selections[selection]
+            let radio = document.createElement('input')
+            radio.setAttribute('type', 'radio')
+            radio.setAttribute('name', question.text)
+            radio.className = selection
+
+            let label = document.createElement('label')
+            label.setAttribute('for', 'question')
+            label.textContent = text
+            qDiv.appendChild(radio)
+            qDiv.appendChild(label)
+            div.appendChild(qDiv)
+        }
+
+        quiz.appendChild(div)
+    }
+
+    function start(event) {
+        if (!event.target.hidden) {
+            event.target.hidden = true
+        } else return
+        form.hidden = false
+
+    }
+
+    function submit() {
+        let correct = questions.length * 4
+        let questionsDiv = document.querySelectorAll('input[type="radio"]')
+        for (question of questionsDiv) {
+            let found = questions.find((element) => element.text == question.name)
+            let parent = question.parentElement
+            if (question.checked && question.className == found.right) {
+                console.log('right')
+                parent.setAttribute('class', 'right')
+            } else {
+                correct--
+                console.log('wrong')
+                let right = false
+                for (child of parent.parentElement.querySelectorAll('input[type="radio"]:not(.right)')) {
+                    if (child.checked) parent.setAttribute('class', 'couldBeWrong'), right = true
+                }
+                if (!right) parent.setAttribute('class', 'wrong')
+            }
+        }
+        alert(`You got ${correct} / ${questions.length}`)
+    }
+</script>
+</html>
