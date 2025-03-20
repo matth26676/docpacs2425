@@ -267,7 +267,7 @@
             },
             {
                 "question": "One method of ensuring that updates to documentation are efficiently distrubuted is to",
-                "answers": ["send customers printed documentation annually regardless of whether there have been changes", "make changes in an online help system rather than printed sources", "send fliers containing only the changes rather than new printed volumes", ""],
+                "answers": ["send customers printed documentation annually regardless of whether there have been changes", "make changes in an online help system rather than printed sources", "send fliers containing only the changes rather than new printed volumes", "make changes only on a pre-specified schedule"],
                 "correctAnswer": "B"
             },
 
@@ -284,6 +284,7 @@
                 "correctAnswer": "B"
             }
         ];
+        let quizSubmitted = false;
 
         const questionsAnsweredText = document.createElement("p");
         questionsAnsweredText.textContent = `0/${questions.length} questions are answered`;
@@ -292,6 +293,7 @@
         for (const question of questions) {
             const label = document.createElement("p");
             label.textContent = `${questions.indexOf(question) + 1}. ${question.question}`;
+            label.className = "questionLabel";
             form.appendChild(label);
 
             // Create each answer
@@ -305,6 +307,7 @@
                 input.for = question.question;
                 input.name = question.question;
                 input.addEventListener("click", (event) => {
+                    if (quizSubmitted) return;
                     const questionIndex = questions.indexOf(question);
                     if (!Object.keys(questionAnswers).includes(questionIndex)) {
                         questionAnswers[questionIndex] = i;
@@ -328,22 +331,39 @@
         submit.type = "submit";
         submit.addEventListener("click", (event) => {
             event.preventDefault();
+            if (quizSubmitted) return;
 
             // Calculate the number of questions the user got correct 
-            let correctQuestions = 0;
+            let correctQuestions = [];
             for (const questionIndex in questionAnswers) {
                 const questionAnswer = questionAnswers[questionIndex];
                 const correctAnswer = characters.indexOf(questions[questionIndex].correctAnswer);
                 if (questionAnswer == correctAnswer) {
-                    correctQuestions++;
+                    correctQuestions.push(questionIndex);
                 }
             }
 
+            const questionLabels = document.getElementsByClassName("questionLabel");
+            for (const questionLabel of questionLabels) {
+                const questionIndex = Number(questionLabel.textContent.split(".")[0]) - 1;
+                const span = document.createElement('span')
+        
+                if (correctQuestions.includes(questionIndex.toString())) {
+                    span.textContent = " - CORRECT";
+                    span.style.color = "green";
+                } else {
+                    span.textContent = " - INCORRECT";
+                    span.style.color = "red";
+                }
+
+                questionLabel.appendChild(span);
+            }
+
             // Clear the form and output how many questions the user got correct
-            form.innerHTML = "";
-            const correctQuestionsText = document.createElement("p");
-            correctQuestionsText.textContent = `You got ${correctQuestions}/${questions.length} questions correct!`;
-            form.appendChild(correctQuestionsText);
+            questionsAnsweredText.textContent = `You got ${correctQuestions.length}/${questions.length} questions correct!`;
+  
+            // Set the quiz to submitted
+            quizSubmitted = true;
         });
 
         form.appendChild(submit);
