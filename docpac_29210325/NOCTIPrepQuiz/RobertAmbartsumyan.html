@@ -252,21 +252,66 @@
             question: "What do you use in flowchart world to show a jump from one place to another?",
             options: ["Arrow", "Circle", "Connector", "Parallelogram"],
             answer: "Connector"
+        },
+        {
+            question: "What is the output of '2' + 2 in JavaScript?",
+            options: ["22", "4", "NaN", "Error"],
+            answer: "22"
+        },
+        {
+            question: "Which method is used to convert a JSON string into a JavaScript object?",
+            options: ["JSON.stringify()", "JSON.parse()", "JSON.objectify()", "JSON.convert()"],
+            answer: "JSON.parse()"
+        },
+        {
+            question: "What does the '===' operator do in JavaScript?",
+            options: ["Assigns a value", "Compares values only", "Compares values and types", "None of the above"],
+            answer: "Compares values and types"
+        },
+        {
+            question: "Which keyword is used to declare a variable that can be reassigned in JavaScript?",
+            options: ["const", "let", "var", "reassign"],
+            answer: "let"
+        },
+        {
+            question: "What is the purpose of the 'break' statement in JavaScript?",
+            options: ["To exit a loop or switch", "To pause execution", "To declare a variable", "To create a function"],
+            answer: "To exit a loop or switch"
+        },
+        {
+            question: "Which method is used to add elements to the beginning of an array?",
+            options: ["push()", "pop()", "shift()", "unshift()"],
+            answer: "unshift()"
+        },
+        {
+            question: "What is the result of 'typeof null' in JavaScript?",
+            options: ["'null'", "'undefined'", "'object'", "'string'"],
+            answer: "'object'"
         }
     ];
 
+    let previusQuestions = [
+        
+    ];
 
-    loadquestions();
+    randomQuestion();
 
-    // Main functions
-    function loadquestions() {
-        questionText.innerHTML = questions[questionNumber].question;
-        optionBox.innerHTML = "";
-        answer = questions[questionNumber].answer;
-        for (let i = 0; i < questions[questionNumber].options.length; i++) {
-            optionBox.innerHTML += "<option value='"+ questions[questionNumber].options[i] +"'>" + questions[questionNumber].options[i] + "</option>";
+    function randomQuestion() {
+        let random = Math.floor(Math.random() * questions.length);
+        if (previusQuestions.length == questions.length) {
+            alert("Quiz is over! Your score is " + score + ", your final grade precentage is " + Math.round(score/questions.length*100) + "%. PAGE WILL REFRESH AFTER CLICKING 'OK'");
+            location.reload();
+        } else if (previusQuestions.includes(random)) {
+            randomQuestion();
+        } else {
+            previusQuestions.push(random);
+            questionText.innerHTML = questions[random].question;
+            optionBox.innerHTML = "";
+            answer = questions[random].answer;
+            for (let i = 0; i < questions[random].options.length; i++) {
+                optionBox.innerHTML += "<option value='"+ questions[random].options[i] +"'>" + questions[random].options[i] + "</option>";
+            }
         }
-        questionNumber++;
     }
 
     function checkAnswer() {
@@ -274,18 +319,11 @@
 
         if (selectedOption == answer) {
             score++;
-            correct.innerHTML = "";
-        }
-        else {
-            correct.style.color = "red";
-            correct.style.backgroundColor = "black";
-            correct.style.padding = "10px";
-            correct.innerHTML = `Correct answer for previus qustion "${questions[questionNumber-1].question} was: ${answer}`;
         }
 
         if (questionNumber < questions.length) {
-            console.log("Score: " + score);
-            loadquestions();
+            questionNumber++;
+            randomQuestion();
             scoretext.innerHTML = "Score: " + score;
         } else {
             alert(`Quiz is over! Your score is ${score}, your final grade precentage is ${Math.round(score/questions.length*100)}%. PAGE WILL REFRESH AFTER CLICKING 'OK'`);
