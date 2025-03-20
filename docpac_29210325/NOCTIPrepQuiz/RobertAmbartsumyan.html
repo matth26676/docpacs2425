@@ -21,6 +21,8 @@
         </div>
         <br>
         <button onClick=checkAnswer()>Submit / Next question</button>
+        <br>
+        <p id="correct"></p>
     </center>
 </body>
 <script>
@@ -32,6 +34,7 @@
     let selectedoption = document.getElementById("optionBox").value;
     let scoretext = document.getElementById("liveScore");
     let answer = "";
+    let correct = document.getElementById("correct");
 
     // All 50 questions
     let questions = [
@@ -271,6 +274,13 @@
 
         if (selectedOption == answer) {
             score++;
+            correct.innerHTML = "";
+        }
+        else {
+            correct.style.color = "red";
+            correct.style.backgroundColor = "black";
+            correct.style.padding = "10px";
+            correct.innerHTML = `Correct answer for previus qustion "${questions[questionNumber-1].question} was: ${answer}`;
         }
 
         if (questionNumber < questions.length) {
