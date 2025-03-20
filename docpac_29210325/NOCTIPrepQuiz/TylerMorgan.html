@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <p id="questionArea"></p>
+        <div>
+            <input type="radio" id="question1" name="answer" value="0">
+            <label for="question1"></label><br>
+            <input type="radio" id="question2" name="answer" value="1">
+            <label for="question2"></label><br>
+            <input type="radio" id="question3" name="answer" value="2">
+            <label for="question3"></label><br>
+            <input type="radio" id="question4" name="answer" value="3">
+            <label for="question4"></label><br>
+        </div>
+        <button type="submit">confirm answer</button>
+        <button onclick="changeQuestion()">Next</button>
+    </div>
+</body>
+<script>
+    var score = 0
+    var currentIndex
+    var answeredQuestions = 0
+
+    questions = [
+    Q1 = {
+        question: "Which of the following is caused by a calculation error?",
+        answers: [
+            "logical",
+            "arithmetic",
+            "truncation",
+            "sematic"
+        ],
+        correctAnswer: 1
+    },
+    Q2 = {
+        question: "Which of which of the following uses three basic contol structures to form highly structured units of code?",
+        answers: [
+            "structured programming",
+            "circular connector",
+            "modular construction",
+            "loop structure"
+        ],
+        correctAnswer: 3
+    },
+    Q3 = {
+        question: "what type of principle is used for configuring prefences that allow the user to personalize an application?",
+        answers: [
+            "CLI",
+            "GUI",
+            "API",
+            "DOS"
+        ],
+        correctAnswer: 1
+    },
+    Q4 = {
+        question: "if a programmer downloads a copy of microsoft SQL server from a file-sharing website without paying for it, the programmer has commited an offense called?",
+        answers: [
+            "piracy",
+            "larceny",
+            "felony",
+            "spyware"
+        ],
+        correctAnswer: 0
+    },
+    Q5 = {
+        question: "what symbol in flowcharts is used for decision making?",
+        answers: [
+            "circle",
+            "parallelogram",
+            "diamond",
+            "rectangle"
+        ],
+        correctAnswer: 2
+    },
+    Q6 = {
+        question: "when a programmer is ready to create executable code, what process is used?",
+        answers: [
+            "debugging",
+            "editing",
+            "compiling",
+            "disassembling"
+        ],
+        correctAnswer: 2
+    },
+    ]
+    function checkAnswer(index) {
+        var selectedAnswer = document.querySelector('input[name="answer"]:checked').value;
+        console.log(selectedAnswer);
+        
+        if (selectedAnswer == questions[index].correctAnswer) {
+            score += 1;
+        } 
+    }
+    function assignQuestion(index) {
+        document.getElementById("questionArea").innerHTML = questions[index].question;
+    }
+    function assignAnswers(index) {
+        document.getElementById("question1").nextElementSibling.innerHTML = questions[index].answers[0];
+        document.getElementById("question2").nextElementSibling.innerHTML = questions[index].answers[1];
+        document.getElementById("question3").nextElementSibling.innerHTML = questions[index].answers[2];
+        document.getElementById("question4").nextElementSibling.innerHTML = questions[index].answers[3];
+    }
+    function changeQuestion() {
+        var randomIndex = Math.floor(Math.random() * questions.length);
+        answeredQuestions++;
+        
+        checkAnswer(randomIndex);
+        console.log(score);
+        assignQuestion(randomIndex);
+        assignAnswers(randomIndex);
+        testDone();
+    }
+    function testDone() {
+        if (answeredQuestions == questions.length) {
+            alert(`You have completed the test. Your score is ${score}`);
+            location.reload();
+        }
+    }
+    changeQuestion();
+</script>
+</html>
