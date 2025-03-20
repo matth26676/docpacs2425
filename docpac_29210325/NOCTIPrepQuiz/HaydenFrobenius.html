@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #question-container {
+            display: none;
+        }
+
+        #ui-container {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>NOCTI Practice Quiz</h1>
+    <button id="start-btn" onclick="startQuiz();">Start Quiz</button>
+
+    <div id="question-container">
+        <h2 id="question"></h2>
+        <div id="answers-container">
+            
+        </div>
+    </div>
+    <br>
+    <div id="ui-container">
+        <p id="score-text">Score: <span id='score-value'>0</span></p>
+        <button id="next-btn" onClick="nextQuestion();">Next</button>
+        <button id="stop-btn" onClick="stop()">Stop</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which of the following errors is caused by calculation error?",
+                options: ["logical", "arithmatic", 'truncation', 'semantic'],
+                answer: 1
+            },
+            {
+                question: "Which of the following uses three basic control structures?",
+                options: ['structured programming', 'circular connector', 'modular construction', 'loop structure'],
+                answer: 0
+            },
+            {
+                question: "What type of principle is used for configuring preferences that allow the user to personalize an application?",
+                options: ['CLI', 'GUI', 'API', 'DOS'],
+                answer: 1
+            },
+            {
+                question: "All computer instructions are based on four basic logic patterns. These patterns are simple sequence, selection, loop and...",
+                options: ['trailer', 'modular', 'top-down', 'branch'],
+                answer: 3
+            },
+            {
+                question: "Two types of programs that create machine codes are the interpreter and the...",
+                options: ['assembler', 'object', 'compiler', 'source'],
+                answer: 2
+            },
+            {
+                question: "In the order of calculations in a program",
+                options: ['addition precedes division', 'parentheses precede exponentation', 'subtraction precedes addition', 'multiplication precedes exponentation'],
+                answer: 3
+            },
+            {
+                question: "One of the main goals in analyzing user requirements is to",
+                options: ['troubleshoot the problem', 'shutdown and maintain the system', 'keep the customer happy', 'elicit requirements from a user\'s point of view.'],
+                answer: 3
+            },
+            {
+                question: "A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?",
+                options: ['billing', 'documentation', 'implementation', 'test'],
+                answer: 2
+            },
+            {
+                question: "An example of a loop structure is",
+                options: ['DO UNTIL', 'SELECT IF', 'EXECUTE', 'NEXT'],
+                answer: 0
+            },
+            {
+                question: "Which of the following consists of a sequence of events to follow so they can be repeated?",
+                options: ['runtime', 'test files', 'trace route', 'script'],
+                answer: 3
+            },
+            {
+                "question": "Which of the following is used to store a set of instructions for a computer to execute?",
+                "options": ["Program", "Buffer", "Script", "Port"],
+                "answer": 0
+            },
+            {
+                "question": "Which control structure is used to execute a block of code as long as a condition is true?",
+                "options": ["For loop", "While loop", "If-else", "Switch case"],
+                "answer": 1
+            },
+            {
+                "question": "What type of error occurs when the program does not produce the expected result?",
+                "options": ["Logic error", "Syntax error", "Runtime error", "Compilation error"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is used to display output in the console in most programming languages?",
+                "options": ["print", "input", "output", "show"],
+                "answer": 0
+            },
+            {
+                "question": "What is the primary purpose of a compiler?",
+                "options": ["To execute code", "To convert high-level code to machine code", "To debug code", "To monitor code execution"],
+                "answer": 1
+            },
+            {
+                "question": "Which data structure stores a collection of items in an ordered way?",
+                "options": ["List", "Set", "Dictionary", "Tuple"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is a characteristic of object-oriented programming?",
+                "options": ["Procedural approach", "Encapsulation", "Sequence execution", "Sequential statements"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is the best description of an algorithm?",
+                "options": ["A set of instructions to solve a problem", "A computer program", "A flowchart", "A data structure"],
+                "answer": 0
+            },
+            {
+                "question": "What does the term 'IDE' stand for in software development?",
+                "options": ["Integrated Debugging Environment", "Integrated Development Environment", "Internal Development Engine", "Interactive Design Editor"],
+                "answer": 1
+            },
+            {
+                "question": "What type of loop runs a set of instructions a specific number of times?",
+                "options": ["For loop", "While loop", "Do-while loop", "Infinite loop"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is an example of a high-level programming language?",
+                "options": ["Assembly", "Python", "Machine code", "Binary"],
+                "answer": 1
+            },
+            {
+                "question": "Which operation has the highest precedence in mathematical expressions?",
+                "options": ["Addition", "Multiplication", "Exponentiation", "Subtraction"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is used to define a function in Python?",
+                "options": ["def", "function", "method", "define"],
+                "answer": 0
+            },
+            {
+                "question": "In object-oriented programming, what is used to describe an object’s attributes and behavior?",
+                "options": ["Class", "Function", "Method", "Loop"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is NOT a primitive data type?",
+                "options": ["Integer", "String", "Float", "Array"],
+                "answer": 3
+            },
+            {
+                "question": "In which phase of software development do you identify potential risks?",
+                "options": ["Design", "Planning", "Testing", "Implementation"],
+                "answer": 1
+            },
+            {
+                "question": "Which type of loop executes a block of code at least once before checking the condition?",
+                "options": ["While loop", "Do-while loop", "For loop", "Repeat-until loop"],
+                "answer": 1
+            },
+            {
+                "question": "What does SQL stand for?",
+                "options": ["Structured Query Language", "Sequential Query Language", "Systematic Query Language", "Standard Query Language"],
+                "answer": 0
+            },
+            {
+                "question": "Which data structure uses the LIFO (Last In First Out) principle?",
+                "options": ["Queue", "Stack", "Array", "Linked list"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is the best way to handle exceptions in Python?",
+                "options": ["if-else", "try-except", "switch-case", "catch-finally"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is an example of a relational operator?",
+                "options": ["=", "<>", "AND", "OR"],
+                "answer": 1
+            },
+            {
+                "question": "What is the purpose of the 'break' statement in loops?",
+                "options": ["To skip the current iteration", "To terminate the loop", "To restart the loop", "To continue the next iteration"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is an example of a version control system?",
+                "options": ["Git", "SQL", "Python", "JavaScript"],
+                "answer": 0
+            },
+            {
+                "question": "Which function is used to find the length of a string in Python?",
+                "options": ["length()", "size()", "count()", "len()"],
+                "answer": 3
+            },
+            {
+                "question": "In which phase of software development is the final product delivered to the customer?",
+                "options": ["Testing", "Deployment", "Design", "Planning"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is a non-relational database?",
+                "options": ["MySQL", "SQLite", "MongoDB", "PostgreSQL"],
+                "answer": 2
+            },
+            {
+                "question": "What is the purpose of an API in programming?",
+                "options": ["To convert code into machine-readable instructions", "To allow different software applications to communicate", "To control the execution of code", "To store data permanently"],
+                "answer": 1
+            },
+            {
+                "question": "Which keyword is used to define a constant in most programming languages?",
+                "options": ["final", "const", "immutable", "constant"],
+                "answer": 1
+            },
+            {
+                "question": "What is a 'syntax error'?",
+                "options": ["A mistake in the program's logic", "A typo in the code that prevents compilation", "An issue that occurs during runtime", "A warning generated by the compiler"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is NOT an example of a loop control statement?",
+                "options": ["continue", "break", "exit", "return"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is a typical feature of a database management system (DBMS)?",
+                "options": ["Data integrity", "Data redundancy", "Data inconsistency", "Data encryption"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following sorting algorithms has the best average-case time complexity?",
+                "options": ["Bubble Sort", "Quick Sort", "Selection Sort", "Insertion Sort"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following programming languages is used for web development?",
+                "options": ["Python", "Java", "JavaScript", "C++"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is an example of a boolean data type value?",
+                "options": ["1", "True", "42", "None"],
+                "answer": 1
+            },
+            {
+                "question": "What is the purpose of the 'return' statement in a function?",
+                "options": ["To terminate the function", "To send a value back to the calling code", "To define the function's parameters", "To loop through the function's body"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following represents a binary value?",
+                "options": ["1", "True", "False", "Null"],
+                "answer": 0
+            },
+            {
+                "question": "What does HTTP stand for?",
+                "options": ["HyperText Transfer Protocol", "HyperText Transmission Protocol", "Hyper Transfer Text Protocol", "Hyperlink Text Transfer Protocol"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is a feature of Agile development?",
+                "options": ["Waterfall model", "Fixed timelines", "Continuous feedback", "Documentation-heavy"],
+                "answer": 2
+            },
+            {
+                "question": "If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called",
+                "options": ["piracy", "larceny", "felony", "spyware"],
+                "answer": 0
+            },
+            {
+                "question": "A programmer has to make programming changes to an existing program. therefore the comments in the existing program must also be updated. The comments are referred to as _____ documentation.",
+                "options": ["internal", "external", "primary", "secondary"],
+            }
+        ];
+
+        let startBtn = document.getElementById('start-btn');
+        let questionContainer = document.getElementById('question-container');
+        let questionText = document.getElementById('question');
+        let answersContainer = document.getElementById('answers-container');
+        let UIContainer = document.getElementById('ui-container');
+        let scoreValueText = document.getElementById('score-value');
+
+        let currentQuestion = null;
+        let score = 0;
+        let totalQuestionsAnswered = 0;
+
+        function startQuiz(){
+            startBtn.style.display = 'none';
+            questionContainer.style.display = 'block';
+            UIContainer.style.display = 'block';
+            nextQuestion();
+        }
+
+        function buildQuestion(index){
+            let question = questions[index];
+            currentQuestion = question;
+            questionText.innerText = question.question;
+            answersContainer.innerHTML = '';
+            question.options.forEach((option, i) => {
+                let radio = document.createElement('input');
+                let label = document.createElement('label');
+                let br = document.createElement('br');
+                radio.type = 'radio';
+                radio.name = 'answer';
+                radio.id = 'option' + i;
+                label.for = 'option' + i;
+                label.innerText = question.options[i];
+                label.appendChild(radio);
+                answersContainer.appendChild(label);
+                answersContainer.appendChild(br);
+            });
+        }
+
+        function nextQuestion(){
+            if(currentQuestion){
+                let selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                if(selectedAnswer){
+                    let answerIndex = parseInt(selectedAnswer.id.replace('option', ''));
+                    if(answerIndex === currentQuestion.answer){
+                        score++;
+                        scoreValueText.innerText = score;
+                    }
+                    totalQuestionsAnswered++;
+                }
+            }
+
+            let newQuestionIndex = Math.floor(Math.random() * questions.length);
+            buildQuestion(newQuestionIndex);
+        }
+        
+
+        function stop(){
+            questionContainer.style.display = 'none';
+            UIContainer.style.display = 'none';
+            startBtn.style.display = 'block';
+
+            alert(`Answered: ${totalQuestionsAnswered}\nCorrect: ${score}\nIncorrect: ${totalQuestionsAnswered - score}\nPercentage: ${Math.round((score / totalQuestionsAnswered) * 100)}%`);
+
+            score = 0;
+            scoreValueText.innerText = score;
+        }
+        
+    </script>
+</body>
+
+</html>
