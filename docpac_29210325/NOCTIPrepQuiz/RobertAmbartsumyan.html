@@ -311,6 +311,10 @@
                 let wrongQuestionElement = document.createElement('p');
                 wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
                 document.body.appendChild(wrongQuestionElement);
+
+                let correctAnswer = document.createElement('p');
+                correctAnswer.innerHTML = "Correct answer: " + questions.find(q => q.question == wrongQustions[i]).answer;
+                document.body.appendChild(correctAnswer);
             }
             
             let restartButton = document.createElement('button');
@@ -339,7 +343,7 @@
         if (selectedOption == answer) {
             score++;
         } else {
-            wrongQustions.push(questionText.innerHTML);
+            wrongQustions.push(questions[previusQuestions[previusQuestions.length - 1]].question);
         }
 
         if (questionNumber < questions.length) {
@@ -361,6 +365,10 @@
                 let wrongQuestionElement = document.createElement('p');
                 wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
                 document.body.appendChild(wrongQuestionElement);
+                
+                let correctAnswer = document.createElement('p');
+                correctAnswer.innerHTML = "Correct answer: " + questions.find(q => q.question == wrongQustions[i]).answer;
+                document.body.appendChild(correctAnswer);
             }
 
             let restartButton = document.createElement('button');
