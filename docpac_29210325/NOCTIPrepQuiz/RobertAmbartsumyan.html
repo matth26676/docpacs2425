@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+</head>
+
+<body>
+    <center>
+        <h1>QUIZ TIME</h1>
+        <h4 id='liveScore'>Score: 0</h4>
+        <div id="question">question:
+            <p id="questionText"></p>
+        </div>
+        <br>
+        <div id="options">
+            <select name="option" id="optionBox">
+            </select>
+        </div>
+        <br>
+        <button onClick=checkAnswer()>Submit / Next question</button>
+    </center>
+</body>
+<script>
+    // Needed Vars
+    let questionText = document.getElementById("questionText");
+    let optionBox = document.getElementById("optionBox");
+    let questionNumber = 0;
+    let score = 0;
+    let selectedoption = document.getElementById("optionBox").value;
+    let scoretext = document.getElementById("liveScore");
+    let answer = "";
+
+    // All 50 questions
+    let questions = [
+        {
+            question: "In flowcharts, what shape do you use to symbolize the big decision moment?",
+            options: ["Rectangle", "Diamond", "Circle", "Oval"],
+            answer: "Diamond"
+        },
+        {
+            question: "Which shape in a flowchart represents the start and finish of your whole plan?",
+            options: ["Square", "Oval", "Triangle", "Circle"],
+            answer: "Oval"
+        },
+        {
+            question: "Which shape says 'let's do some stuff' in a flowchart?",
+            options: ["Rectangle", "Oval", "Parallelogram", "Circle"],
+            answer: "Rectangle"
+        },
+        {
+            question: "The cool machine code creators are the interpreter and... who?",
+            options: ["Compiler", "Assembler", "Debugger", "Linker"],
+            answer: "Compiler"
+        },
+        {
+            question: "When you want to jam an item at the end of your array, what method is your best friend?",
+            options: ["push()", "pop()", "shift()", "unshift()"],
+            answer: "push()"
+        },
+        {
+            question: "Which keyword does the job of creating a constant in JavaScript?",
+            options: ["let", "var", "const", "constant"],
+            answer: "const"
+        },
+        {
+            question: "If you're writing a quick note to yourself in JS, what symbol do you use to comment?",
+            options: ["//", "#", "/*", "<!--"],
+            answer: "//"
+        },
+        {
+            question: "What's the deal with '==' in JavaScript? What's it do?",
+            options: ["Makes things equal", "Compares only values", "Compares both values and types", "None of the above"],
+            answer: "Compares only values"
+        },
+        {
+            question: "What JavaScript loop is the one that totally guarantees at least one go?",
+            options: ["while", "for", "do...while", "for...in"],
+            answer: "do...while"
+        },
+        {
+            question: "5 + '5' in JavaScript is a tricky one. What’s the result?",
+            options: ["55", "10", "Error", "undefined"],
+            answer: "55"
+        },
+        {
+            question: "When you 'return' in a function, what exactly are you doing?",
+            options: ["Stopping the function", "Sending something back from the function", "Declaring a variable", "Starting the function"],
+            answer: "Sending something back from the function"
+        },
+        {
+            question: "You have some bugs, what magical JavaScript spell do you cast to catch them?",
+            options: ["try...catch", "if...else", "for...in", "break"],
+            answer: "try...catch"
+        },
+        {
+            question: "What does 'typeof NaN' say in JavaScript?",
+            options: ["'number'", "'undefined'", "'object'", "'NaN'"],
+            answer: "'number'"
+        },
+        {
+            question: "'this' in JavaScript... what's it really talking about?",
+            options: ["The global object", "The function itself", "The object the function is tied to", "None of the above"],
+            answer: "The object the function is tied to"
+        },
+        {
+            question: "Want to turn a string into a number in JavaScript? Which function would help?",
+            options: ["parseFloat()", "parseInt()", "toString()", "Both A and B"],
+            answer: "Both A and B"
+        },
+        {
+            question: "You just lost the last element in your array. What method did you use?",
+            options: ["pop()", "push()", "shift()", "unshift()"],
+            answer: "pop()"
+        },
+        {
+            question: "What method can you use to make sure something’s an array in JavaScript?",
+            options: ["Array.isArray()", "isArray()", "isObject()", "Array.check()"],
+            answer: "Array.isArray()"
+        },
+        {
+            question: "What does 'false + 1' give you? Spoiler: it's not false.",
+            options: ["false", "1", "0", "NaN"],
+            answer: "1"
+        },
+        {
+            question: "Want a new date object in JavaScript? What's your go-to method?",
+            options: ["new Date()", "Date()", "new date()", "Date.now()"],
+            answer: "new Date()"
+        },
+        {
+            question: "You need to remove the first element from an array. What's the method?",
+            options: ["shift()", "unshift()", "pop()", "push()"],
+            answer: "shift()"
+        },
+        {
+            question: "Which loop in JavaScript lets you go through an object’s properties?",
+            options: ["for", "for...in", "for...of", "do...while"],
+            answer: "for...in"
+        },
+        {
+            question: "Which of these is NOT a proper JavaScript data type?",
+            options: ["undefined", "boolean", "integer", "object"],
+            answer: "integer"
+        },
+        {
+            question: "What happens when you do '0 == false' in JavaScript? It’s a weird one.",
+            options: ["true", "false", "NaN", "undefined"],
+            answer: "true"
+        },
+        {
+            question: "When you see 'null', what is JavaScript trying to tell you?",
+            options: ["An empty object", "A missing value", "A number", "An undefined value"],
+            answer: "A missing value"
+        },
+        {
+            question: "In flowchart language, what's the meaning of a parallelogram?",
+            options: ["Start/End", "Process", "Decision", "Input/Output"],
+            answer: "Input/Output"
+        },
+        {
+            question: "In the flowchart world, what's the rectangle's job?",
+            options: ["Diamond", "Oval", "Rectangle", "Parallelogram"],
+            answer: "Rectangle"
+        },
+        {
+            question: "If you see a circle in a flowchart, what's it usually about?",
+            options: ["Start/End", "Process", "Decision", "Connector"],
+            answer: "Connector"
+        },
+        {
+            question: "What's the decision shape in a flowchart? Pick the right one.",
+            options: ["Rectangle", "Diamond", "Oval", "Parallelogram"],
+            answer: "Diamond"
+        },
+        {
+            question: "An arrow in a flowchart? What’s it showing us?",
+            options: ["Process", "Flow of control", "Start/End", "Decision"],
+            answer: "Flow of control"
+        },
+        {
+            question: "Flowcharts: what’s their main job?",
+            options: ["To display the steps in a process", "To test code", "To declare variables", "To write functions"],
+            answer: "To display the steps in a process"
+        },
+        {
+            question: "What flowchart symbol is the decision-maker?",
+            options: ["Rectangle", "Parallelogram", "Diamond", "Circle"],
+            answer: "Diamond"
+        },
+        {
+            question: "Which of these isn’t a real flowchart symbol?",
+            options: ["Diamond", "Square", "Rectangle", "Oval"],
+            answer: "Square"
+        },
+        {
+            question: "In a flowchart, the start or end is marked by which shape?",
+            options: ["Rectangle", "Parallelogram", "Oval", "Circle"],
+            answer: "Oval"
+        },
+        {
+            question: "Want to keep your wrists healthy while typing? What’s the move?",
+            options: ["Keep them straight and relaxed", "Twist them at a 45-degree angle", "Rest them on the desk", "Lift them off the desk"],
+            answer: "Keep them straight and relaxed"
+        },
+        {
+            question: "How often should you take a break while typing all day long to keep the wrist pains at bay?",
+            options: ["Every 10-15 minutes", "Every hour", "Every 30 minutes", "Every 5 minutes"],
+            answer: "Every 30 minutes"
+        },
+        {
+            question: "You’re staring at your screen for hours. What's the common symptom of bad posture?",
+            options: ["Headaches", "Lower back pain", "Carpal tunnel syndrome", "All of the above"],
+            answer: "All of the above"
+        },
+        {
+            question: "What’s the best way to declare an array in JavaScript in the year 2010?",
+            options: ["var arr = [];", "arr = new Array();", "let arr = [];", "const arr = [];"],
+            answer: "var arr = [];"
+        },
+        {
+            question: "What happens if you mix 'undefined' with 'null' in JavaScript?",
+            options: ["They combine into 'nullified'", "They make an 'error'", "They stay different", "Nothing happens"],
+            answer: "They stay different"
+        },
+        {
+            question: "Which flowchart symbol screams 'this is a process'?",
+            options: ["Rectangle", "Diamond", "Oval", "Parallelogram"],
+            answer: "Rectangle"
+        },
+        {
+            question: "How do you check if a variable is an array in JavaScript like a pro?",
+            options: ["Array.check()", "Array.isArray()", "isArray()", "isObject()"],
+            answer: "Array.isArray()"
+        },
+        {
+            question: "Which of these doesn’t belong in the land of flowchart symbols?",
+            options: ["Rectangle", "Diamond", "Parallelogram", "Circle"],
+            answer: "Circle"
+        },
+        {
+            question: "Which part of JavaScript should be your best friend when debugging?",
+            options: ["alert()", "console.log()", "prompt()", "parseInt()"],
+            answer: "console.log()"
+        },
+        {
+            question: "What do you use in flowchart world to show a jump from one place to another?",
+            options: ["Arrow", "Circle", "Connector", "Parallelogram"],
+            answer: "Connector"
+        }
+    ];
+
+
+    loadquestions();
+
+    // Main functions
+    function loadquestions() {
+        questionText.innerHTML = questions[questionNumber].question;
+        optionBox.innerHTML = "";
+        answer = questions[questionNumber].answer;
+        for (let i = 0; i < questions[questionNumber].options.length; i++) {
+            optionBox.innerHTML += "<option value='"+ questions[questionNumber].options[i] +"'>" + questions[questionNumber].options[i] + "</option>";
+        }
+        questionNumber++;
+    }
+
+    function checkAnswer() {
+        selectedOption = document.getElementById("optionBox").value;
+
+        if (selectedOption == answer) {
+            score++;
+        }
+
+        if (questionNumber < questions.length) {
+            console.log("Score: " + score);
+            loadquestions();
+            scoretext.innerHTML = "Score: " + score;
+        } else {
+            alert(`Quiz is over! Your score is ${score}, your final grade precentage is ${Math.round(score/questions.length*100)}%. PAGE WILL REFRESH AFTER CLICKING 'OK'`);
+            location.reload();
+        }
+    }
+</script>
+
+</html>
