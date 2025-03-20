@@ -270,7 +270,7 @@
         },
         {
             question: "Which keyword is used to declare a variable that can be reassigned in JavaScript?",
-            options: ["const", "let", "var", "reassign"],
+            options: ["const", "let", ".pop", "reassign"],
             answer: "let"
         },
         {
@@ -289,18 +289,37 @@
             answer: "'object'"
         }
     ];
-
-    let previusQuestions = [
-        
-    ];
+    let previusQuestions = [];
+    let wrongQustions = [];
 
     randomQuestion();
 
     function randomQuestion() {
         let random = Math.floor(Math.random() * questions.length);
         if (previusQuestions.length == questions.length) {
-            alert("Quiz is over! Your score is " + score + ", your final grade precentage is " + Math.round(score/questions.length*100) + "%. PAGE WILL REFRESH AFTER CLICKING 'OK'");
-            location.reload();
+            document.body.innerHTML = '';
+
+            let scoretext = document.createElement('h1');
+            scoretext.innerHTML = `Your score is ${score}, your final grade precentage is ${Math.round(score / questions.length * 100)}%`;
+            document.body.appendChild(scoretext);
+
+            let wrongText = document.createElement('h2');
+            wrongText.innerHTML = "Wrong questions: ";
+            document.body.appendChild(wrongText);
+
+            for (let i = 0; i < wrongQustions.length; i++) {
+                let wrongQuestionElement = document.createElement('p');
+                wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
+                document.body.appendChild(wrongQuestionElement);
+            }
+            
+            let restartButton = document.createElement('button');
+            restartButton.innerHTML = "Restart";
+            restartButton.onclick = function () {
+                location.reload();
+            }
+            document.body.appendChild(restartButton);
+
         } else if (previusQuestions.includes(random)) {
             randomQuestion();
         } else {
@@ -309,7 +328,7 @@
             optionBox.innerHTML = "";
             answer = questions[random].answer;
             for (let i = 0; i < questions[random].options.length; i++) {
-                optionBox.innerHTML += "<option value='"+ questions[random].options[i] +"'>" + questions[random].options[i] + "</option>";
+                optionBox.innerHTML += "<option value='" + questions[random].options[i] + "'>" + questions[random].options[i] + "</option>";
             }
         }
     }
@@ -319,6 +338,8 @@
 
         if (selectedOption == answer) {
             score++;
+        } else {
+            wrongQustions.push(questionText.innerHTML);
         }
 
         if (questionNumber < questions.length) {
@@ -326,8 +347,28 @@
             randomQuestion();
             scoretext.innerHTML = "Score: " + score;
         } else {
-            alert(`Quiz is over! Your score is ${score}, your final grade precentage is ${Math.round(score/questions.length*100)}%. PAGE WILL REFRESH AFTER CLICKING 'OK'`);
-            location.reload();
+            document.body.innerHTML = '';
+
+            let scoretext = document.createElement('h1');
+            scoretext.innerHTML = `Your score is ${score}, your final grade precentage is ${Math.round(score / questions.length * 100)}%`;
+            document.body.appendChild(scoretext);
+
+            let text = document.createElement('h2');
+            text.innerHTML = "Wrong questions: ";
+            document.body.appendChild(text);
+
+            for (let i = 0; i < wrongQustions.length; i++) {
+                let wrongQuestionElement = document.createElement('p');
+                wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
+                document.body.appendChild(wrongQuestionElement);
+            }
+
+            let restartButton = document.createElement('button');
+            restartButton.innerHTML = "Restart";
+            restartButton.onclick = function () {
+                location.reload();
+            }
+            document.body.appendChild(restartButton);
         }
     }
 </script>
