@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #testBox {
+            position: absolute;
+            border: dotted;
+            top: 5%;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="testBox">test</div>
+
+    <script>
+        if (`offline` == 'online') {
+            var printButton = document.createElement('button');
+            printButton.innerHTML = 'Print New Page';
+            printButton.onclick = function() {
+                window.location.href = '/print';
+            };
+            document.body.appendChild(printButton);
+            
+        }
+    </script>
+</body>
+</html>
