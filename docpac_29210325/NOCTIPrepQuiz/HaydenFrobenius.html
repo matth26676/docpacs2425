@@ -322,6 +322,7 @@
             {
                 "question": "A programmer has to make programming changes to an existing program. therefore the comments in the existing program must also be updated. The comments are referred to as _____ documentation.",
                 "options": ["internal", "external", "primary", "secondary"],
+                "answer": 0
             }
         ];
 
@@ -339,14 +340,15 @@
         let currentQuestion = null;
         let score = 0;
         let totalQuestionsAnswered = 0;
-        let incorrect = [];
+        let incorrectQuestions = new Set();
 
         function startQuiz() {
             startBtn.style.display = 'none';
             questionContainer.style.display = 'block';
             UIContainer.style.display = 'block';
             wrongAnswersContainer.style.display = 'none';
-            incorrect = [];
+            totalQuestionsAnswered = 0;
+            incorrectQuestions.clear();
             score = 0;
             scoreValueText.innerText = score;
             nextQuestion();
@@ -397,7 +399,7 @@
 
                         let question = currentQuestion;
                         question.selectedAnswer = answerIndex;
-                        incorrect.push(currentQuestion);
+                        incorrectQuestions.add(question);
 
                     }
                     totalQuestionsAnswered++;
@@ -418,7 +420,7 @@
 
             wrongAnswersContainer.style.display = 'block';
             wrongAnswersContainer.innerHTML = '';
-            incorrect.forEach((question, i) => {
+            incorrectQuestions.forEach((question, i) => {
                 let div = document.createElement('div');
                 let p = document.createElement('p');
                 let p2 = document.createElement('p');
