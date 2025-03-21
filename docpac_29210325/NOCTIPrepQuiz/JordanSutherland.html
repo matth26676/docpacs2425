@@ -288,7 +288,6 @@ OUT = TEMP & right (in, text_len -n)`,
 
     function submit() {
         let correct = questions.length * 4
-        console.log(correct)
         let questionsDiv = document.querySelectorAll('input[type="radio"]')
         for (question of questionsDiv) {
             let found = questions.find((element) => element.text == question.name)
