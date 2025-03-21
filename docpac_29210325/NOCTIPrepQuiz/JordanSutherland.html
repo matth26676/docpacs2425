@@ -55,6 +55,9 @@
         .couldBeWrong {
             background-color: yellow !important;
         }
+        .couldBeRight {
+            background-color: yellow !important;
+        }
     </style>
 </head>
 <body>
@@ -292,6 +295,8 @@ OUT = TEMP & right (in, text_len -n)`,
             if (question.checked && question.className == found.right) {
                 console.log('right')
                 parent.setAttribute('class', 'right')
+            } else if (question.className == found.right) {
+                parent.setAttribute('class', 'couldBeRight')
             } else {
                 correct--
                 console.log('wrong')
