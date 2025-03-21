@@ -288,18 +288,18 @@ OUT = TEMP & right (in, text_len -n)`,
 
     function submit() {
         let correct = questions.length * 4
+        console.log(correct)
         let questionsDiv = document.querySelectorAll('input[type="radio"]')
         for (question of questionsDiv) {
             let found = questions.find((element) => element.text == question.name)
             let parent = question.parentElement
             if (question.checked && question.className == found.right) {
-                console.log('right')
                 parent.setAttribute('class', 'right')
             } else if (question.className == found.right) {
+                correct--
                 parent.setAttribute('class', 'couldBeRight')
             } else {
                 correct--
-                console.log('wrong')
                 let right = false
                 for (child of parent.parentElement.querySelectorAll('input[type="radio"]:not(.right)')) {
                     if (child.checked) parent.setAttribute('class', 'couldBeWrong'), right = true
