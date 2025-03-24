@@ -4,11 +4,13 @@ const SALES_TAX = 0.06;
 const SHIPPING = 5;
 
 const items = [
-    {name: 'Item 1', unitPrice: 10.0, retailPrice: 25.0 },
-    {name: 'Item 2', unitPrice: 20.0, retailPrice: 35.0 },
-    {name: 'Item 3', unitPrice: 30.0, retailPrice: 50.0 },
-    {name: 'Item 4', unitPrice: 40.0, retailPrice: 60.0 },
-    {name: 'Item 5', unitPrice: 50.0, retailPrice: 75.0 }
+    {name: 'Widget A', unitPrice: 5.0, retailPrice: 10.0},
+    {name: 'Widget B', unitPrice: 3.5, retailPrice: 7.0 },
+    {name: 'Widget C', unitPrice: 2.0, retailPrice: 5.0},
+    {name: 'Gadget X', unitPrice: 8.0, retailPrice: 15.0},
+    {name: 'Gadget Y', unitPrice: 6.5, retailPrice: 12.0},
+    {name: 'Tool Q', unitPrice: 12.0, retailPrice: 25.0},
+    {name: 'Tool R', unitPrice: 10.0, retailPrice: 20.0},
 ];
 
 
@@ -67,10 +69,7 @@ function editOrder() {
                 break;
             case '2':
                 let totals = calculateOrderTotals(order);
-                order.subTotal = totals.subTotal;
-                order.shipping = totals.shipping;
-                order.tax = totals.tax;
-                order.total = totals.total;
+                order.totals = totals
                 return;
             default:
                 console.log('Invalid Selection');
@@ -86,20 +85,21 @@ function showOrders() {
         console.log(`Address: ${order.address}`);
         console.log('Items:');
         order.items.forEach(orderItem => {
-            let item = items.find(x => x.id == orderItem.itemID);
-            console.log(`${item.name} $${item.price} x ${orderItem.quantity}`);
+            let item = items[orderItem.itemID];
+            console.log(`${item.name} $${item.retailPrice} x ${orderItem.quantity}`);
         });
-        console.log(`Subtotal: $${order.subTotal}`);
-        console.log(`Shipping: $${order.shipping}`);
-        console.log(`Tax: $${order.tax}`);
-        console.log(`Total: $${order.total}`);
+        console.log(`Subtotal: $${order.totals.subTotal}`);
+        console.log(`Shipping: $${order.totals.shipping}`);
+        console.log(`Tax: $${order.totals.tax}`);
+        console.log(`Profit: $${order.totals.profit}`);
+        console.log(`Total: $${order.totals.total}`);
         console.log('---------------------');
     });
 }
 
 function addItem(order) {
     items.forEach((item, itemID) => {
-        console.log(`${itemID}: ${item.name} $${item.price}`);
+        console.log(`${itemID}: ${item.name} $${item.retailPrice}`);
     });
 
     let selection = prompt('Select Item to Add: ');
@@ -120,10 +120,14 @@ function calculateOrderTotals(order) {
         subTotal: 0,
         shipping: 0,
         tax: 0,
+        unitTotal: 0,
+        profit: 0,
         total: 0
     };
+
     order.items.forEach(orderItem => {
         let item = items[orderItem.itemID];
+        totals.unitTotal += item.unitPrice * orderItem.quantity;
         totals.subTotal += item.retailPrice * orderItem.quantity;
     });
 
@@ -131,8 +135,8 @@ function calculateOrderTotals(order) {
         totals.shipping = SHIPPING;
     }
 
-    totals.tax = (totals.subTotal * SALES_TAX).toFixed(2);
-
+    totals.tax = Number((totals.subTotal * SALES_TAX).toFixed(2));
+    totals.profit = totals.subTotal - totals.unitTotal;
     totals.total = totals.subTotal + totals.shipping + totals.tax;
 
     return totals;
