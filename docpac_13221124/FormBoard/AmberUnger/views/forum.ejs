@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Boards</title>
+</head>
+<link rel="stylesheet" href="/style.css">
+<body>
+    <div id="contentBox">
+        <div id="leftSide">
+            <div id="header">
+                <h1>Welcome to the Forum Boards <%= user %></h1>
+            </div>
+            <div id="forumList">
+                <% forums.forEach(forum => { %>
+                    <div>
+                        <a href="/chat/<%= forum.title %>"><%= forum.title %></a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <div id="rightSide">
+            <div id="sidebar">
+                <form action="/forum" method="post">
+                    <input type="text" name="forumName" placeholder="Forum Name">
+                    <input type="submit" value="Create Forum">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

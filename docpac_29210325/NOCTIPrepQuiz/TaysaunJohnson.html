@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="questionBox">
+        <h2 class="question"></h2><br>
+        <input type="radio" name="answer" id="A"><label for="A"></label><br>
+        <input type="radio" name="answer" id="B"><label for="B"></label><br>
+        <input type="radio" name="answer" id="C"><label for="C"></label><br>
+        <input type="radio" name="answer" id="D"><label for="D"></label><br>
+    </div>
+    <button onclick="submit(randQuest)">Submit</button>
+</body>
+<script>
+    let questionBox = document.querySelector(".questionBox");
+    let question = document.querySelector(".question")
+    let answers = document.querySelectorAll("input")
+    let labels = document.querySelectorAll("label")
+
+    console.log(answers)
+
+    let questions = {
+        1: {
+            question: "The diamond programming flowchart symbol is a/an _____ symbol?",
+            answers: {
+                right: "Decision",
+                wrong: ["Processing", "Input/Output", "Connector"]
+            }
+        },
+
+        2: {
+            question: "One of the main goals in analyzing user requirements is to",
+            answers: {
+                right: "elicit requirements from a users point of view",
+                wrong: ["Troubleshoot the problem", "Shutdown and maintain the system", "Keep the customer happy"]
+            }
+        },
+
+        3: {
+            question: 'Which of the following errors is caused by a calculation error?',
+            answers: {
+                right: 'arithmetic',
+                wrong: ['logical', 'truncation', 'semantic']
+            }
+        },
+
+        4: {
+            question: 'Which of the following uses three basic control structures to form highly structured units of code?',
+            answers: {
+                right: 'structured programming',
+                wrong: ['circular connector', 'modular construction', 'loop structure']
+            }
+        },
+
+        5: {
+            question: 'Which type of principle is used for configuring preferences that allow the user to personalize an application?',
+            answers: {
+                right: 'GUI',
+                wrong: ['CLI', 'API', 'DOS']
+            }
+        },
+
+        6: {
+            question: 'All computer instructions are based on four basic logic patterns. These patterns are simple sequence, selection, loop, and ________.',
+            answers: {
+                right: 'branch',
+                wrong: ['trailer', 'modular', 'top-down']
+            }
+        },
+
+        7: {
+            question: 'If the memory speed of the bus is 750MHz, and the CPU is operating at twice the speed of the bus, what is the processor speed?',
+            answers: {
+                right: '1.5 GHz',
+                wrong: ['375 MHz', '750MHz', '2 GHz']
+            }
+        },
+
+        8: {
+            question: 'Two types of programs that create machine codes are the interpreter and the ________.',
+            answers: {
+                right: 'compiler',
+                wrong: ['assembler', 'object', 'source']
+            }
+        },
+
+        9: {
+            question: 'In the order of calculations in a program.',
+            answers: {
+                right: 'parentheses precede exponentiation',
+                wrong: ['addition precedes division', 'subtraction precedes addition', 'multiplication precedes exponentiation'],
+            }
+        },
+
+        10: {
+            question: 'When the code below is executed, strAdd will be equal to ________.',
+            answers: {
+                right: '"123456"',
+                wrong: ['"579"', '"123 + 456"', '"strFirst + strSecond"'],
+            }
+        },
+
+        11: {
+            question: 'If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called ________.',
+            answers: {
+                right: 'piracy',
+                wrong: ['larceny', 'felony', 'spyware']
+            }
+        },
+
+        12: {
+            question: 'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with compliance with SOX?',
+            answers: {
+                right: 'utilize system credentials instead of pass-through credentials',
+                wrong: ['create system logs of the transactions taken in the session', 'require a user to click three times when they are sure they want to proceed', 'help a user to request assistance from the system administrators']
+            }
+        },
+
+        13: {
+            question: 'If a record has the following field lengths, what is the record length?',
+            answers: {
+                right: '47',
+                wrong: ['42', '54', '56']
+            }
+        },
+
+        14: {
+            question: 'The parralelagram flowchart symbol is a/an ________ symbol.',
+            answers: {
+                right: 'input/output',
+                wrong: ['processing', 'decision', 'connector']
+            }
+        },
+
+        15: {
+            question: 'A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?',
+            answers: {
+                right: 'implementation',
+                wrong: ['billing', 'documentation', 'test']
+            }
+        },
+
+        16: {
+            question: 'A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and a set of data. What is the best data structure the programmer can use?',
+            answers: {
+                right: 'array',
+                wrong: ['constant', 'string', 'field']
+            }
+        },
+
+        17: {
+            question: 'When a programmer is ready to create executable code, what process is used?',
+            answers: {
+                right: 'compiling',
+                wrong: ['debugging', 'editing', 'disassembling'],
+            }
+        },
+
+        18: {
+            question: 'The source document and _____ should follow the same order.',
+            answers: {
+                right: 'input screen design',
+                wrong: ['output screen design', 'decision-type operator symbols', 'processing function symbols']
+            }
+        },
+
+        19: {
+            question: 'Which of the following is a correct name for a variable?',
+            answers: {
+                right: 'State_Zipcode',
+                wrong: ['State+Zipcode', 'State Zipcode', 'State=Zipcode']
+            }
+        },
+
+        20: {
+            question: 'Why is the following expression invalid? A=10 + "New Data"',
+            answers: {
+                right: 'data types are mixed',
+                wrong: ['Variable 5 is not defined', '"New Data" is not a string', '"New Data" equals zero']
+            }
+        },
+
+        21: {
+            question: 'An output field has "Los Angeles" moved to it and when examined contains "Los Angel." This indicates a/an ________ error.',
+            answers: {
+                right: 'truncation',
+                wrong: ['logical', 'arithmetic', 'semantic']
+            }
+        },
+
+        22: {
+            question: 'A programmer needs to define the type value for a variable. What pre-defined set of characteristics for a variable can the programmer choose?',
+            answers: {
+                right: 'data type',
+                wrong: ['storage location', 'return value', 'method modifier',]
+            }
+        },
+
+        23: {
+            question: 'One example of scripting (text processing) language is ________.',
+            answers: {
+                right: 'Perl',
+                wrong: ['C++', 'Fortran', 'Beta']
+            }
+        },
+
+        24: {
+            question: 'Which of the following enables the use of "plain English" queries?',
+            answers: {
+                right: 'SQL',
+                wrong: ['BASIC', 'FORTRAN', 'C++']
+            }
+        },
+
+        25: {
+            question: 'An example of loop structure is ________.',
+            answers: {
+                right: 'DO UNTIL',
+                wrong: ['SELECT IF', 'EXECUTE', 'NEXT']
+            }
+        },
+
+        26: {
+            question: 'Compile errors can be caused by ________.',
+            answers: {
+                right: 'bad syntax',
+                wrong: ['input data', 'insufficient test data', 'incorrect user specifications']
+            }
+        },
+
+        27: {
+            question: 'Typically after successful intergration testing, a ______ test is performed to complete a front-to-back execution of the entire application.',
+            answers: {
+                right: 'system',
+                wrong: ['unit', 'fuzz', 'beta']
+            }
+        },
+
+        28: {
+            question: 'The Implementation phase consists of coding, testing, and ________.',
+            answers: {
+                right: 'integration',
+                wrong: ['designing', 'building prototype programs', 'establishing requirements']
+            }
+        },
+
+        29: {
+            question: 'When TEXT1.VALUE="March 7", TEXT1_LEN= <br> Sub Form_Click(); IN = TEXT1.VALUE; TEXT1_len = LEN$(IN); For I = TEXT_len to 1 step -1; TEMP = TEMP & mid (in, I, 1); NEXT; OUT = TEMP & right (in, text_len -n)',
+            answers: {
+                right: '7',
+                wrong: ['8', '9', '10']
+            }
+        },
+
+        30: {
+            question: 'A data element is intended to contain a range from 15 to 30 and after testing it contains 32. What kind of error is this?',
+            answers: {
+                right: 'boundary',
+                wrong: ['truncation', 'rounding', 'run time']
+            }
+        },
+
+        31: {
+            question: 'Which of the following consists of a sequence of events to follow so they can be repeated?',
+            answers: {
+                right: 'script',
+                wrong: ['runtime', 'test files', 'trace route']
+            }
+        },
+
+        32: {
+            question: 'Maintenance refers to changes to a system in operating arising from error corrections, performance improvements, changes in the business environment, and ________.',
+            answers: {
+                right: 'enhancements in functions',
+                wrong: ['application requirements', 'referencing software', 'material requirements']
+            }
+        },
+
+        33: {
+            question: 'One method of ensuring that updates to documentation are efficiently distributed is to _____.',
+            answers: {
+                right: 'make changes in an online help system rather than printed sources',
+                wrong: ['send customers printed documentation annually regardless of whether there have been changes', 'send filers containing only the changes rather than new printed volumes', 'make changes only on a pre-specified schedule'],
+            }
+        },
+
+        34: {
+            question: 'A programmer has to make programming changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as _____ documentation.',
+            answers: {
+                right: 'internal',
+                wrong: ['external', 'primary', 'secondary']
+            }
+        },
+
+        35: {
+            question: "A Programmer has decided to create a pop-up window that will display a brief descriptions of a control's purpose when the mouse hovers over it. This pop-up window is known as a ________.",
+            answers: {
+                right: 'tool tip',
+                wrong: ['hyper clip', 'task bar', 'help bar'],
+            }
+        },
+
+        36: {
+            question: "What is the primary purpose of a flowchart in programming?",
+            answers: {
+                right: "To visually represent the logic of a program",
+                wrong: ["To execute code", "To store data", "To debug errors"]
+            }
+        },
+
+        37: {
+            question: "Which of the following is a key characteristic of object-oriented programming?",
+            answers: {
+                right: "Encapsulation",
+                wrong: ["Linear execution", "Single-threaded processing", "Hardcoded logic"]
+            }
+        },
+
+        38: {
+            question: "In structured programming, which control structure is used to repeat a block of code while a condition is true?",
+            answers: {
+                right: "Loop",
+                wrong: ["Branch", "Sequence", "Decision"]
+            }
+        },
+
+        39: {
+            question: "Which programming paradigm focuses on functions and avoids changing state and mutable data?",
+            answers: {
+                right: "Functional programming",
+                wrong: ["Object-oriented programming", "Procedural programming", "Imperative programming"]
+            }
+        },
+
+        40: {
+            question: "A syntax error in a program is typically detected during which phase?",
+            answers: {
+                right: "Compilation",
+                wrong: ["Execution", "Debugging", "Deployment"]
+            }
+        },
+
+        41: {
+            question: "What is the main function of an interpreter in programming?",
+            answers: {
+                right: "Execute code line-by-line",
+                wrong: ["Convert high-level code to machine code", "Debug errors automatically", "Optimize code for speed"]
+            }
+        },
+
+        42: {
+            question: "In a relational database, which of the following ensures uniqueness of data within a table?",
+            answers: {
+                right: "Primary key",
+                wrong: ["Foreign key", "Index", "View"]
+            }
+        },
+
+        43: {
+            question: "Which type of loop ensures that the code inside executes at least once?",
+            answers: {
+                right: "Do-while loop",
+                wrong: ["While loop", "For loop", "Infinite loop"]
+            }
+        },
+
+        44: {
+            question: "What is the main purpose of version control in software development?",
+            answers: {
+                right: "Track changes to code over time",
+                wrong: ["Debug programs", "Compile code", "Store backup copies"]
+            }
+        },
+
+        45: {
+            question: "Which of the following is an example of a runtime error?",
+            answers: {
+                right: "Division by zero",
+                wrong: ["Syntax error", "Misspelled variable", "Incorrect indentation"]
+            }
+        },
+
+        46: {
+            question: "Which type of memory is volatile and loses its data when the power is turned off?",
+            answers: {
+                right: "RAM",
+                wrong: ["ROM", "Flash memory", "Hard drive"]
+            }
+        },
+
+        47: {
+            question: "What is the primary purpose of an IP address in networking?",
+            answers: {
+                right: "To identify a device on a network",
+                wrong: ["To encrypt data", "To speed up internet connections", "To store website cookies"]
+            }
+        },
+
+        48: {
+            question: "Which of the following is an example of a high-level programming language?",
+            answers: {
+                right: "Python",
+                wrong: ["Assembly", "Machine code", "Binary"]
+            }
+        },
+
+        49: {
+            question: "Which file format is commonly used for storing structured data in a lightweight, human-readable format?",
+            answers: {
+                right: "JSON",
+                wrong: ["XML", "CSV", "TXT"]
+            }
+        },
+        
+        50: {
+            question: "Which software development methodology focuses on short development cycles and frequent feedback?",
+            answers: {
+                right: "Agile",
+                wrong: ["Waterfall", "Spiral", "V-Model"]
+            }
+        }
+
+    }
+
+    let numOf = Object.keys(questions).length
+    let randQuest;
+
+    function nextQuestion() {
+        randQuest = Math.floor(Math.random() * numOf) + 1
+
+        console.log(randQuest)
+
+        question.innerHTML = questions[randQuest].question
+        let tempans = questions[randQuest].answers.wrong.concat(questions[randQuest].answers.right)
+        let rightAns = tempans[3]
+        let rightIndex = Math.floor(Math.random() * 4)
+        let replace = tempans[rightIndex]
+
+        tempans[rightIndex] = rightAns
+        tempans[3] = replace
+
+        console.log(rightIndex)
+        console.log(tempans)
+
+        tempans.forEach((ans, i) => {
+            answers[i].value = ans
+            labels[i].innerText = ans
+        })
+
+    }
+    nextQuestion()
+
+    function submit(randQuest) {
+        for (let i = 0; i < answers.length; i++) {
+            if (answers[i].value == questions[randQuest].answers.right && answers[i].checked) {
+                console.log(answers[i].checked)
+                question.innerText = "Correct"
+                setTimeout(() => {
+                    nextQuestion()
+                    answers[i].checked = false
+                }, 2000)
+                break;
+            } else {
+                console.log(answers[i].checked)
+                question.innerText = "Incorrect"
+                setTimeout(() => {
+                    question.innerText = questions[randQuest].question
+                }, 2000)
+            }
+        }
+    }
+
+
+
+
+</script>
+
+</html>
