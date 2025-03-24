@@ -32,13 +32,17 @@ while (true) {
                     case 0:
                         console.clear()
                         var Name = readline.question('Whats the name of this product?')
-                        var Price = parseFloat(readline.question('Whats the esitmated price?'))
                         var Amount = parseFloat(readline.question('How many do you want?'))
+                        var unitPrice = parseFloat(readline.question('What is the unit price?'))
+                        var retailPrice = parseFloat(readline.question('What is the retail price?'))
+
 
                         var item = {
                             name: Name,
-                            price: Price,
-                            amount: Amount
+                            amount: Amount,
+                            unitPrice: unitPrice,
+                            retailPrice: retailPrice
+
                         }
                         order.items.push(item)
                         break;
@@ -47,7 +51,7 @@ while (true) {
                         var shipFee = 5
                         var total = 0
                         order.items.forEach(item => {
-                            total += item.price * item.amount
+                            total += item.unitPrice * item.amount
                         });
                         order.total = total
                         var tax = total * 0.06
@@ -72,4 +76,3 @@ while (true) {
             
     }
 }
-
