@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title> nocti quiz</title>
+   </head>
+
+<script>
+   // half of the answers are A i am just to lazy to fix
+   let score = 0
+   const questions = {
+  1: "What shape is used for the start and end of a flowchart? A. oval B. triangle C. rectangle D. diamond", 
+  2: "What shape represents any step of a process in a flowchart? A. oval B. triangle C. rectangle D. diamond", 
+  3: "What shape represents a decision in a flowchart? A. oval B. triangle C. rectangle D. diamond", 
+  4: "What does an arrow represent in a flowchart? A. Direction of flow B. Input C. Output D. Process", 
+  5: "What is the purpose of a flowchart? A. To visualize data B. To represent code execution C. To visually represent a process D. To perform calculations", 
+  6: "What is a terminal in a flowchart? A. The start or end point B. A decision point C. A process D. A connector", 
+  7: "What is a decision symbol used for in a flowchart? A. To show inputs B. To represent a decision point C. To show the end D. To show a process", 
+  8: "What is pseudocode? A. Code written in a programming language B. High-level description of an algorithm C. Machine language D. The output of a program", 
+  9: "What is an algorithm? A. A set of programming rules B. A process for solving a problem step by step C. A program D. A programming language", 
+  10: "What is the purpose of a loop in programming? A. To store data B. To repeat a set of instructions C. To create a new function D. To return a value", 
+  11: "What is the difference between a while loop and a for loop? A. While loop repeats until condition is false; for loop repeats a set number of times B. Both are identical C. While loop is faster D. For loop uses conditions", 
+  12: "What is an if-else statement used for? A. To iterate through a list B. To make decisions based on conditions C. To create functions D. To execute a loop", 
+  13: "What is a switch-case statement? A. A loop B. A function C. A decision structure D. A mathematical operator", 
+  14: "What is a function in programming? A. A block of reusable code that performs a specific task B. A variable C. A loop D. A program", 
+  15: "What is a variable? A. A storage location for data B. A function C. A class D. A loop", 
+  16: "What is the purpose of a constant in programming? A. To store a value that never changes B. To define a function C. To initialize a variable D. To control the flow of the program", 
+  17: "What is the difference between a global and a local variable? A. Global variables are accessible everywhere; local variables are limited to the function they're declared in B. Local variables can be accessed from anywhere C. Both are the same D. Global variables are stored permanently", 
+  18: "What is recursion? A. When a function calls itself B. When a function repeats indefinitely C. A function that calls another function D. A loop structure", 
+  19: "What is an infinite loop? A. A loop that repeats a fixed number of times B. A loop that never ends unless stopped manually C. A loop with an exit condition D. A function that runs indefinitely", 
+  20: "What does a return statement do in a function? A. It exits the function and optionally returns a value B. It stops the program C. It starts a loop D. It defines a variable", 
+  21: "What are the basic data types in most programming languages? A. integer, float, string, boolean B. list, tuple, set, dictionary C. variable, function, class D. process, decision, output", 
+  22: "What is the difference between an integer and a floating-point number? A. Integers are whole numbers; floating-point numbers have decimals B. Both are the same C. Integers are decimals; floating-point numbers are whole numbers D. Integers are strings", 
+  23: "What is an array? A. A collection of elements identified by index B. A type of variable C. A control structure D. A function", 
+  24: "What is a list in programming? A. An ordered collection of elements B. A block of code C. A type of loop D. A variable", 
+  25: "What is a dictionary (or hashmap)? A. A collection of key-value pairs B. A data structure for storing arrays C. A collection of ordered elements D. A function", 
+  26: "What is a string? A. A sequence of characters B. A loop C. A type of variable D. A collection of numbers", 
+  27: "What is concatenation in programming? A. Combining strings together B. Storing strings in an array C. Changing data types D. Defining a function", 
+  28: "What is the difference between a list and a tuple? A. Lists are mutable; tuples are immutable B. Lists cannot be changed; tuples can be C. Both are immutable D. Lists are faster", 
+  29: "What is a stack in data structures? A. A collection that follows First In, First Out (FIFO) B. A collection that follows Last In, First Out (LIFO) C. A function D. A sorting algorithm", 
+  30: "What is a queue in data structures? A. A collection that follows First In, First Out (FIFO) B. A collection that follows Last In, First Out (LIFO) C. A function D. A sorting algorithm", 
+  31: "What is Object-Oriented Programming (OOP)? A. A programming paradigm that uses objects and classes B. A way of organizing data in arrays C. A method of executing loops D. A technique for recursion", 
+  32: "What is a class in OOP? A. A blueprint for creating objects B. A type of function C. A type of loop D. A variable", 
+  33: "What is an object in OOP? A. An instance of a class B. A method C. A variable D. A function", 
+  34: "What is encapsulation? A. The bundling of data and methods that operate on that data within one unit B. A type of class C. A type of loop D. The process of recursion", 
+  35: "What is inheritance in OOP? A. Creating new classes from existing ones B. Defining a function C. Combining objects D. Using a stack", 
+  36: "What is polymorphism? A. The ability of different classes to respond to the same method call in different ways B. The process of inheritance C. The use of recursion D. A function that repeats code", 
+  37: "What is an abstract class? A. A class that cannot be instantiated B. A class that defines a method C. A collection of variables D. A loop structure", 
+  38: "What is a constructor in OOP? A. A special method used to initialize objects B. A type of loop C. A function D. A variable", 
+  39: "What is the difference between public and private variables in OOP? A. Public variables are accessible from anywhere; private variables are restricted to the class B. Public variables are restricted; private variables are accessible C. Both are private D. Both are public", 
+  40: "What is an interface in programming? A. A contract defining methods that must be implemented by a class B. A type of class C. A method D. A function", 
+  41: "What is debugging? A. The process of identifying and fixing errors in code B. Writing the initial code C. Storing data D. Repeating functions", 
+  42: "What is a syntax error? A. An error that violates the syntax rules of the programming language B. An error that happens during runtime C. An error that occurs in logic D. An error that happens during recursion", 
+  43: "What is a runtime error? A. An error that occurs while the program is running B. An error in logic C. An error that happens during the compilation D. An error in variables", 
+  44: "What is a logic error in programming? A. An error where the program runs but produces incorrect results B. An error that stops the program C. An error in syntax D. An error in the data types", 
+  45: "What is a compiler? A. A program that translates source code into machine code B. A tool for debugging C. A program for creating interfaces D. A program that runs code", 
+  46: "What is an interpreter? A. A program that directly executes instructions in a programming language B. A program that translates code into binary C. A program for storing data D. A program for error checking", 
+  47: "What is the difference between compiled and interpreted languages? A. Compiled languages are translated before execution; interpreted languages are executed line by line B. Interpreted languages are faster C. Compiled languages cannot be debugged D. There is no difference", 
+  48: "What is an IDE (Integrated Development Environment)? A. A software application that provides tools for writing and debugging code B. A type of loop C. A software used to run compiled code D. A tool for data storage", 
+  49: "What is a software development lifecycle (SDLC)? A. The process of planning, creating, testing, and deploying software B. The process of writing code C. The process of debugging D. The process of defining variables", 
+  50: "What is the purpose of a comment in code? A) To execute code B) To improve the readability and understanding of the code C) To change the behavior of the code D) To store data in the code",
+   }
+
+
+   const Answers = {
+  1: "A", 2: "C", 3: "D", 4: "A", 5: "C", 6: "A", 7: "B", 8: "B", 9: "B", 10: "B", 
+  11: "A", 12: "B", 13: "C", 14: "A", 15: "A", 16: "A", 17: "A", 18: "A", 19: "B", 20: "A", 
+  21: "A", 22: "A", 23: "A", 24: "A", 25: "A", 26: "A", 27: "A", 28: "A", 29: "B", 30: "A",
+  31: "A", 32: "A", 33: "A", 34: "A", 35: "A", 36: "A", 37: "A", 38: "A", 39: "A", 40: "A", 
+  41: "A", 42: "A", 43: "A", 44: "A", 45: "A", 46: "A", 47: "A", 48: "A", 49: "A", 50: "B"
+};
+
+   for (quest in questions) {
+     let userAnswer = prompt(questions[quest])
+     
+      if (userAnswer.toLocaleUpperCase() === Answers[quest] && questions ){ score ++
+        alert("correct") 
+      }
+      else {alert("incorrect the correct answer was " + Answers[quest] ) }
+     
+     console.log(score)
+   }
+   document.write("your score is " + score + " out of 50")
+</script>
+
+
+<body>
+
+</body>
+
+</html>
