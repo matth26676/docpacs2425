@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Nocti Practice Quiz</title>
+</head>
+<body>
+    <div id='quizDiv'>
+        <h1>Nocti Practice Quiz</h1>
+        <div id='score'>Score: 0 / 60</div>
+    </div>
+</body>
+<script>
+
+    //////////////////////////////////////////////////////////////////////////////
+    //   ___  _   _ _____ ____ _____ ___ ___  _   _ ____    _   _   _   _   _   //
+    //  / _ \| | | | ____/ ___|_   _|_ _/ _ \| \ | / ___|  | | | | | | | | | |  //
+    // | | | | | | |  _| \___ \ | |  | | | | |  \| \___ \  | | | | | | | | | |  //
+    // | |_| | |_| | |___ ___) || |  | | |_| | |\  |___) | |_| |_| |_| |_| |_|  //
+    //  \__\_\\___/|_____|____/ |_| |___\___/|_| \_|____/  (_) (_) (_) (_) (_)  //
+    //                                                                          //
+    //////////////////////////////////////////////////////////////////////////////
+
+    const questions = [
+    {
+        question: 'Which of the following is a type of computer memory that is non-volatile?',
+        answers: ['RAM', 'ROM', 'Cache', 'Register'],
+        correct: 'ROM'
+    },
+    {
+        question: 'What is the primary function of an operating system?',
+        answers: ['To manage hardware and software resources', 'To compile programs', 'To execute database queries', 'To control peripheral devices only'],
+        correct: 'To manage hardware and software resources'
+    },
+    {
+        question: 'Which of the following is NOT an example of application software?',
+        answers: ['Web browser', 'Word processor', 'Operating system', 'Spreadsheet software'],
+        correct: 'Operating system'
+    },
+    {
+        question: 'What is the binary equivalent of the decimal number 10?',
+        answers: ['1001', '1010', '1100', '1111'],
+        correct: '1010'
+    },
+    {
+        question: 'Which network topology has a central hub to which all nodes are connected?',
+        answers: ['Ring', 'Mesh', 'Star', 'Bus'],
+        correct: 'Star'
+    },
+    {
+        question: 'What does HTTP stand for?',
+        answers: ['Hypertext Transfer Protocol', 'Hyper Transfer Text Protocol', 'High-level Text Transfer Protocol', 'Hyperlink Transfer Protocol'],
+        correct: 'Hypertext Transfer Protocol'
+    },
+    {
+        question: 'Which of the following is used to uniquely identify a device on a network?',
+        answers: ['MAC address', 'URL', 'DNS', 'HTTP'],
+        correct: 'MAC address'
+    },
+    {
+        question: 'What is the function of a compiler?',
+        answers: ['To execute a program directly', 'To convert high-level code to machine code', 'To interpret code line by line', 'To optimize a program\'s performance'],
+        correct: 'To convert high-level code to machine code'
+    },
+    {
+        question: 'What is the smallest unit of data in a computer?',
+        answers: ['Bit', 'Byte', 'Kilobyte', 'Megabyte'],
+        correct: 'Bit'
+    },
+    {
+        question: 'Which of the following storage devices is volatile?',
+        answers: ['SSD', 'HDD', 'RAM', 'Flash Drive'],
+        correct: 'RAM'
+    },
+    {
+        question: 'What does CPU stand for?',
+        answers: ['Central Processing Unit', 'Central Program Unit', 'Control Processing Unit', 'Computer Processing Unit'],
+        correct: 'Central Processing Unit'
+    },
+    {
+        question: 'Which programming language is primarily used for web development?',
+        answers: ['Python', 'Java', 'JavaScript', 'C++'],
+        correct: 'JavaScript'
+    },
+    {
+        question: 'What is the purpose of an IP address?',
+        answers: ['To uniquely identify a device on a network', 'To store website data', 'To encrypt internet traffic', 'To manage hardware components'],
+        correct: 'To uniquely identify a device on a network'
+    },
+    {
+        question: 'Which of the following is an example of an input device?',
+        answers: ['Monitor', 'Keyboard', 'Speaker', 'Printer'],
+        correct: 'Keyboard'
+    },
+    {
+        question: 'Which of the following is considered a high-level programming language?',
+        answers: ['Assembly', 'C++', 'Machine Code', 'Binary'],
+        correct: 'C++'
+    },
+    {
+        question: 'What is the primary function of RAM in a computer?',
+        answers: ['To store permanent files', 'To execute programs and store temporary data', 'To process network requests', 'To provide power to the CPU'],
+        correct: 'To execute programs and store temporary data'
+    },
+    {
+        question: 'What is a firewall used for in computing?',
+        answers: ['To speed up internet connections', 'To protect a network from unauthorized access', 'To store large amounts of data', 'To increase processor speed'],
+        correct: 'To protect a network from unauthorized access'
+    },
+    {
+        question: 'Which of the following is a markup language?',
+        answers: ['JavaScript', 'CSS', 'HTML', 'Python'],
+        correct: 'HTML'
+    },
+    {
+        question: 'What is the main function of a database management system (DBMS)?',
+        answers: ['To create network connections', 'To manage and store data', 'To process images', 'To optimize computer performance'],
+        correct: 'To manage and store data'
+    },
+    {
+        question: 'Which type of software allows users to create and edit text documents?',
+        answers: ['Spreadsheet software', 'Word processor', 'Database software', 'Antivirus software'],
+        correct: 'Word processor'
+    },
+    {
+        question: 'Which of the following is an example of system software?',
+        answers: ['Web Browser', 'Operating System', 'Spreadsheet Software', 'Word Processor'],
+        correct: 'Operating System'
+    },
+    {
+        question: 'Which network topology has all nodes connected to a central hub?',
+        answers: ['Ring', 'Bus', 'Star', 'Mesh'],
+        correct: 'Star'
+    },
+    {
+        question: 'Which of the following is an example of a database management system?',
+        answers: ['Windows', 'MySQL', 'Photoshop', 'Excel'],
+        correct: 'MySQL'
+    },
+    {
+        question: 'What does GPU stand for?',
+        answers: ['General Processing Unit', 'Graphical Processing Unit', 'Global Processing Utility', 'Graph Processing User'],
+        correct: 'Graphical Processing Unit'
+    },
+    {
+        question: 'Which protocol is used for sending email?',
+        answers: ['HTTP', 'FTP', 'SMTP', 'SSH'],
+        correct: 'SMTP'
+    },
+    {
+        question: 'What is the purpose of DNS?',
+        answers: ['To assign IP addresses', 'To translate domain names to IP addresses', 'To encrypt network traffic', 'To route packets between networks'],
+        correct: 'To translate domain names to IP addresses'
+    },
+    {
+        question: 'Which of the following is an example of cloud storage?',
+        answers: ['USB drive', 'Google Drive', 'External hard disk', 'CD-ROM'],
+        correct: 'Google Drive'
+    },
+    {
+        question: 'What does SSD stand for?',
+        answers: ['Solid State Drive', 'Standard Storage Device', 'Secure System Data', 'Solid Speed Disk'],
+        correct: 'Solid State Drive'
+    },
+    {
+        question: 'Which type of malware replicates itself and spreads to other computers?',
+        answers: ['Trojan', 'Virus', 'Spyware', 'Ransomware'],
+        correct: 'Virus'
+    },
+    {
+        question: 'Which programming language is commonly used for data analysis?',
+        answers: ['Java', 'C#', 'Python', 'Swift'],
+        correct: 'Python'
+    },
+    {
+        question: 'What does HTML stand for?',
+        answers: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyperlink and Text Management Language', 'Home Tool Markup Language'],
+        correct: 'Hyper Text Markup Language'
+    },
+    {
+        question: 'Which of the following is a relational database management system?',
+        answers: ['MongoDB', 'Oracle', 'Redis', 'Cassandra'],
+        correct: 'Oracle'
+    },
+    {
+        question: 'What does LAN stand for?',
+        answers: ['Local Access Node', 'Long Area Network', 'Local Area Network', 'Logical Access Network'],
+        correct: 'Local Area Network'
+    },
+    {
+        question: 'Which component is responsible for executing instructions in a computer?',
+        answers: ['Hard Drive', 'CPU', 'RAM', 'GPU'],
+        correct: 'CPU'
+    },
+    {
+        question: 'What is the function of a router?',
+        answers: ['To connect different networks', 'To store files', 'To manage user accounts', 'To enhance graphics'],
+        correct: 'To connect different networks'
+    },
+    {
+        question: 'Which file format is commonly used for lossless image compression?',
+        answers: ['JPEG', 'PNG', 'GIF', 'BMP'],
+        correct: 'PNG'
+    },
+    {
+        question: 'What is the main purpose of an operating system?',
+        answers: ['To manage hardware and software resources', 'To browse the internet', 'To edit videos', 'To store backup files'],
+        correct: 'To manage hardware and software resources'
+    },
+    {
+        question: 'Which type of network covers a large geographic area?',
+        answers: ['LAN', 'WAN', 'PAN', 'MAN'],
+        correct: 'WAN'
+    },
+    {
+        question: 'What does VPN stand for?',
+        answers: ['Virtual Private Network', 'Verified Public Node', 'Variable Protocol Networking', 'Virtual Processing Net'],
+        correct: 'Virtual Private Network'
+    },
+    {
+        question: 'Which of the following is a programming paradigm?',
+        answers: ['Object-Oriented Programming', 'Network Architecture', 'Binary Processing', 'File Compression'],
+        correct: 'Object-Oriented Programming'
+    },
+    {
+        question: 'What is the function of an IP address?',
+        answers: ['Identify devices on a network', 'Encrypt user data', 'Improve internet speed', 'Store web pages'],
+        correct: 'Identify devices on a network'
+    },
+    {
+        question: 'Which unit is used to measure clock speed in a CPU?',
+        answers: ['Hertz', 'Bytes', 'Cores', 'Watts'],
+        correct: 'Hertz'
+    },
+    {
+        question: 'What type of memory is volatile?',
+        answers: ['RAM', 'ROM', 'SSD', 'Flash Memory'],
+        correct: 'RAM'
+    },
+    {
+        question: 'Which of the following is an example of open-source software?',
+        answers: ['Windows', 'Linux', 'MacOS', 'iOS'],
+        correct: 'Linux'
+    },
+    {
+        question: 'What is the purpose of a cache in computing?',
+        answers: ['To store frequently accessed data', 'To store backup files', 'To connect devices wirelessly', 'To enhance screen resolution'],
+        correct: 'To store frequently accessed data'
+    },
+    {
+        question: 'Which of the following is an example of a programming language?',
+        answers: ['HTML', 'Python', 'SQL', 'CSS'],
+        correct: 'Python'
+    },
+    {
+        question: 'What does SSL stand for?',
+        answers: ['Secure Sockets Layer', 'System Security Lock', 'Software Safety Level', 'Secure System Log'],
+        correct: 'Secure Sockets Layer'
+    },
+    {
+        question: 'Which company developed the Windows operating system?',
+        answers: ['Apple', 'Google', 'Microsoft', 'IBM'],
+        correct: 'Microsoft'
+    },
+    {
+        question: 'What is a primary key in a database?',
+        answers: ['A unique identifier for records', 'A duplicate value used for indexing', 'A password to access the database', 'A backup key for encryption'],
+        correct: 'A unique identifier for records'
+    },
+    {
+        question: 'Which layer of the OSI model is responsible for data encryption?',
+        answers: ['Application', 'Presentation', 'Network', 'Physical'],
+        correct: 'Presentation'
+    },
+    {
+        question: 'Which of the following is an example of an interpreted programming language?',
+        answers: ['C', 'Java', 'Python', 'Assembly'],
+        correct: 'Python'
+    },
+    {
+        question: 'What does the acronym SQL stand for?',
+        answers: ['Structured Query Language', 'Sequential Query Logic', 'System Query Language', 'Structured Quick Logic'],
+        correct: 'Structured Query Language'
+    },
+    {
+        question: 'Which type of malware is designed to trick users into providing sensitive information?',
+        answers: ['Trojan', 'Spyware', 'Ransomware', 'Phishing'],
+        correct: 'Phishing'
+    },
+    {
+        question: 'What is the main function of a BIOS in a computer?',
+        answers: ['To store files permanently', 'To manage RAM usage', 'To initialize hardware during startup', 'To control network traffic'],
+        correct: 'To initialize hardware during startup'
+    },
+    {
+        question: 'Which type of storage device uses magnetic disks to store data?',
+        answers: ['SSD', 'RAM', 'HDD', 'Flash Drive'],
+        correct: 'HDD'
+    },
+    {
+        question: 'What does API stand for in software development?',
+        answers: ['Application Programming Interface', 'Automated Process Integration', 'Advanced Processing Instruction', 'Application Process Identifier'],
+        correct: 'Application Programming Interface'
+    },
+    {
+        question: 'Which layer of the OSI model is responsible for routing data between networks?',
+        answers: ['Data Link', 'Transport', 'Network', 'Application'],
+        correct: 'Network'
+    },
+    {
+        question: 'What is the primary function of a database index?',
+        answers: ['To store data', 'To speed up data retrieval', 'To provide data encryption', 'To manage user permissions'],
+        correct: 'To speed up data retrieval'
+    },
+    {
+        question: 'Which of the following protocols is used for secure web browsing?',
+        answers: ['FTP', 'HTTP', 'SSH', 'HTTPS'],
+        correct: 'HTTPS'
+    },
+    {
+        question: 'Which of the following is an example of a real-time operating system?',
+        answers: ['Windows 10', 'Linux Ubuntu', 'RTOS', 'macOS'],
+        correct: 'RTOS'
+    },
+];
+</script>
+<script>
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    //  _   _  ___ _____    ___  _   _ _____ ____ _____ ___ ___  _   _ ____    _   _   _   _   _    //
+    // | \ | |/ _ \_   _|  / _ \| | | | ____/ ___|_   _|_ _/ _ \| \ | / ___|  | | | | | | | | | |   //
+    // |  \| | | | || |   | | | | | | |  _| \___ \ | |  | | | | |  \| \___ \  | | | | | | | | | |   //
+    // | |\  | |_| || |   | |_| | |_| | |___ ___) || |  | | |_| | |\  |___) | |_| |_| |_| |_| |_|   //
+    // |_| \_|\___/ |_|    \__\_\\___/|_____|____/ |_| |___\___/|_| \_|____/  (_) (_) (_) (_) (_)   //
+    //                                                                                              //
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Function to shuffle
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    // Shuffle questions
+    shuffle(questions);
+    let userScore = 0;
+    // Loop through questions
+    for (const question in questions) {
+        // Create question div and add attributes
+        const questionDiv = document.createElement('div');
+        questionDiv.innerHTML = questions[question].question;
+        questionDiv.id = `question${question}`;
+        // Append question div to quiz div
+        document.getElementById('quizDiv').appendChild(questionDiv);
+        document.getElementById('quizDiv').appendChild(document.createElement('br'));
+        document.getElementById(`question${question}`).appendChild(document.createElement('br'));
+        // Shuffle then loop through answers
+        shuffle(questions[question].answers);
+        for (const answer in questions[question].answers) {
+            // Create answer button and add attributes
+            const answerButton = document.createElement('button');
+            answerButton.innerHTML = questions[question].answers[answer];
+            // Check if answer is correct. Change button color and, if correct, increment score
+            answerButton.onclick = () => {
+                if (questions[question].correct == questions[question].answers[answer]) {
+                    answerButton.style.backgroundColor = 'green';
+                    userScore++;
+                    document.getElementById('score').innerHTML = `Score: ${userScore} / 60`;
+                } else {
+                    answerButton.style.backgroundColor = 'red';
+                };
+                // Disable all buttons in question
+                for (const button in document.getElementById(`question${question}`).children) {
+                    document.getElementById(`question${question}`).children[button].disabled = true;
+                };
+            };
+            // Append answer button to question div
+            document.getElementById(`question${question}`).appendChild(answerButton);
+        };
+    };
+</script>
+</html>

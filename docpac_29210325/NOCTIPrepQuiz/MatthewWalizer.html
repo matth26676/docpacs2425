@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="flashCards">
+
+    </form>
+    <button id="submitAnswers" onclick="checkQuestions()">Check Answers</button>
+    <button id="resetQuestions" onclick="resetQuestions()">Reset Questions</button>
+
+    <script>
+        var questions = [
+            {
+                question: 'Which of the following errors is caused by a calculation error?',
+                answer: ['logical', 'arithmetic', 'truncation', 'semantic'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'arithmetic'
+            },
+            {
+                question: 'Which of the following uses three basic control structures to form highly structured units of code?',
+                answer: ['structured programming', 'circular connector', 'modular construction', 'loop structure'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'structured programming'
+            },
+            {
+                question: 'Which type of principle is used for configuring preferences that allow the user to personalize an application?',
+                answer: ['CLI', 'GUI', 'API', 'DOS'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'GUI'
+            },
+            {
+                question: 'All computer instructions are based on four basic logic patterns. These patterns are simple sequence, selection, loop, and ________.',
+                answer: ['trailer', 'modular', 'top-down', 'branch'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'branch'
+            },
+            {
+                question: 'If the memory speed of the bus is 750MHz, and the CPU is operating at twice the speed of the bus, what is the processor speed?',
+                answer: ['375 MHz', '750MHz', '1.5 GHz', '2 GHz'],
+                section: 'General Information and Concepts',
+                correctAnswer: '1.5 GHz'
+            },
+            {
+                question: 'Two types of programs that create machine codes are the interpreter and the ________.',
+                answer: ['assembler', 'object', 'compiler', 'source'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'compiler'
+            },
+            {
+                question: 'In the order of calculations in a program.',
+                answer: ['addition precedes division', 'parentheses precede exponentiation', 'subtraction precedes addition', 'multiplication precedes exponentiation'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'parentheses precede exponentiation'
+            },
+            {
+                question: 'When the code below is executed, strAdd will be equal to ________.',
+                extra: 'strFirst = "123"\n strSecond = "456"\n strAdd = strFirst + strSecond',
+                answer: ['"579"', '"123 + 456"', '"123456"', '"strFirst + strSecond"'],
+                section: 'General Information and Concepts',
+                correctAnswer: '"123456"'
+            },
+            {
+                question: 'If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called ________.',
+                answer: ['piracy', 'larceny', 'felony', 'spyware'],
+                section: 'Ethics, Legal Compliance, and Security',
+                correctAnswer: 'piracy'
+            },
+            {
+                question: 'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with compliance with SOX?',
+                answer: ['create system logs of the transactions taken in the session', 'require a user to click three times when they are sure they want to proceed', 'help a user to request assistance from the system administrators', 'utilize system credentials instead of pass-through credentials'],
+                section: 'Ethics, Legal Compliance, and Security',
+                correctAnswer: 'utilize system credentials instead of pass-through credentials'
+            },
+            {
+                question: 'The following program flowchart symbol is a/an ________ symbol.',
+                extra: 'A diamond',
+                answer: ['processing', 'input/output', 'decision', 'connector'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'decision'
+            },
+            {
+                question: 'One of the main goals in analyzing user requirements is to ________.',
+                answer: ['troubleshoot the problem', 'shutdown and mantain the system', 'keep the customer happy', "elicit requirements from a user's point of view"],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'elicit requirements from a user\'s point of view'
+            },
+            {
+                question: 'If a record has the following field lengths, what is the record length?',
+                extra: 'Name=35,Zipcode=5,District=7',
+                answer: ['42', '47', '54', '56'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: '47'
+            },
+            {
+                question: 'The following program flowchart symbol is a/an ________ symbol.',
+                extra: 'A parralelagram',
+                answer: ['processing', 'input/output', 'decision', 'connector'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'input/output'
+            },
+            {
+                question: 'A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?',
+                answer: ['billing', 'documentation', 'implementation', 'test'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'implementation'
+            },
+            {
+                question: 'A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and a set of data. What is the best data structure the programmer can use?',
+                answer: ['array', 'constant', 'string', 'field'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'array'
+            },
+            {
+                question: 'When a programmer is ready to create executable code, what process is used?',
+                answer: ['debugging', 'editing', 'compiling', 'disassembling'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'compiling'
+            },
+            {
+                question: 'The source document and _____ should follow the same order.',
+                answer: ['input screen design', 'output screen design', 'decision-type operator symbols', 'processing function symbols'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'input screen design'
+            },
+            {
+                question: 'Which of the following is a correct name for a variable?',
+                answer: ['State_Zipcode', 'State+Zipcode', 'State Zipcode', 'State=Zipcode'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'State_Zipcode'
+            },
+            {
+                question: 'Why is the following expression invalid? A=10 + "New Data"',
+                answer: ['Variable 5 is not defined', 'data types are mixed', '"New Data" is not a string', '"New Data" equals zero'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'data types are mixed'
+            },
+            {
+                question: 'An output field has "Los Angeles" moved to it and when examined contains "Los Angel." This indicates a/an ________ error.',
+                answer: ['logical', 'arithmetic', 'truncation', 'semantic'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'truncation'
+            },
+            {
+                question: 'A programmer needs to define the type value for a variable. What pre-defined set of characteristics for a variable can the programmer choose?',
+                answer: ['storage location', 'return value', 'method modifier', 'data type'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'data type'
+            },
+            {
+                question: 'One example of scripting (text processing) language is ________.',
+                answer: ['Perl', 'C++', 'Fortran', 'Beta'],
+                section: 'Code Programs',
+                correctAnswer: 'Perl'
+            },
+            {
+                question: 'Which of the following enables the use of "plain English" queries?',
+                answer: ['BASIC', 'FORTRAN', 'SQL', 'C++'],
+                section: 'Code Programs',
+                correctAnswer: 'SQL'
+            },
+            {
+                question: 'An example of loop structure is ________.',
+                answer: ['DO UNTIL', 'SELECT IF', 'EXECUTE', 'NEXT'],
+                section: 'Code Programs',
+                correctAnswer: 'DO UNTIL'
+            },
+            {
+                question: 'Compile errors can be caused by ________.',
+                answer: ['bad syntax', 'input data', 'insufficient test data', 'incorrect user specifications'],
+                section: 'Code Programs',
+                correctAnswer: 'bad syntax'
+            },
+            {
+                question: 'Typically after successful intergration testing, a ______ test is performed to complete a front-to-back execution of the entire application.',
+                answer: ['system', 'unit', 'fuzz', 'beta'],
+                section: 'Test Programs',
+                correctAnswer: 'system'
+            },
+            {
+                question: 'The Implementation phase consists of coding, testing, and ________.',
+                answer: ['designing', 'building prototype programs', 'establishing requirements', 'integration'],
+                section: 'Test Programs',
+                correctAnswer: 'integration'
+            },
+            {
+                question: 'When TEXT1.VALUE="March 7", TEXT1_LEN=',
+                extra: 'Sub Form_Click()\n IN = TEXT1.VALUE\n TEXT1_len = LEN$(IN)\n For I = TEXT_len to 1 step -1\n TEMP = TEMP & mid (in, I, 1)\n NEXT\n OUT = TEMP & right (in, text_len -n)',
+                answer: ['7', '8', '9', '10'],
+                section: 'Test Programs',
+                correctAnswer: '7'
+            },
+            {
+                question: 'A data element is intended to contain a range from 15 to 30 and after testing it contains 32. What kind of error is this?',
+                answer: ['truncation', 'rounding', 'run time', 'boundary'],
+                section: 'Test Programs',
+                correctAnswer: 'boundary'
+            },
+            {
+                question: 'Which of the following consists of a sequence of events to follow so they can be repeated?',
+                answer: ['runtime', 'test files', 'trace route', 'script'],
+                section: 'Test Programs',
+                correctAnswer: 'script'
+            },
+            {
+                question: 'Maintenance refers to changes to a system in operating arising from error corrections, performance improvements, changes in the business environment, and ________.',
+                answer: ['enhancements in functions', 'application requirements', 'referencing software', 'material requirements'],
+                section: 'Maintain Programs and Implement Change Management Procedures',
+                correctAnswer: 'enhancements in functions'
+            },
+            {
+                question: 'One method of ensuring that updates to documentation are efficiently distributed is to _____.',
+                answer: ['send customers printed documentation annually regardless of whether there have been changes', 'make changes in an online help system rather than printed sources', 'send filers containing only the changes rather than new printed volumes', 'make changes only on a pre-specified schedule'],
+                section: 'Maintain Programs and Implement Change Management Procedures',
+                correctAnswer: 'make changes in an online help system rather than printed sources'
+            },
+            {
+                question: 'A programmer has to make programming changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as _____ documentation.',
+                answer: ['external', 'internal', 'primary', 'secondary'],
+                section: 'Complete User Documentation and Technical Writing',
+                correctAnswer: 'internal'
+            },
+            {
+                question: "A Programmer has decided to create a pop-up window that will display a brief descriptions of a control's purpose when the mouse hovers over it. This pop-up window is known as a ________.",
+                answer: ['hyper clip', 'tool tip', 'task bar', 'help bar'],
+                section: 'Complete User Documentation and Technical Writing',
+                correctAnswer: 'tool tip'
+            },
+            {
+                question: 'Which data structure uses a key-value pair to store data?',
+                answer: ['array', 'linked list', 'dictionary', 'stack'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'dictionary'
+            },
+            {
+                question: 'Which of the following is a key advantage of using a relational database?',
+                answer: ['Data redundancy', 'Data integrity', 'Data inconsistency', 'Data fragmentation'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'Data integrity'
+            },
+            {
+                question: 'What is the primary function of an operating system?',
+                answer: ['Manage hardware resources', 'Execute machine code', 'Store data in databases', 'Design user interfaces'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'Manage hardware resources'
+            },
+            {
+                question: 'Which of the following is an example of a non-procedural programming language?',
+                answer: ['Java', 'Python', 'SQL', 'C++'],
+                section: 'Code Programs',
+                correctAnswer: 'SQL'
+            },
+            {
+                question: 'Which of the following logical operators returns true when both conditions are true?',
+                answer: ['AND', 'OR', 'XOR', 'NOT'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'AND'
+            },
+            {
+                question: 'When an application becomes unresponsive due to an infinite loop, this is considered a ________ error.',
+                answer: ['logical', 'run-time', 'boundary', 'semantic'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'run-time'
+            },
+            {
+                question: 'In a flowchart, what does a rectangle typically represent?',
+                answer: ['Decision', 'Process', 'Input/Output', 'Connector'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'Process'
+            },
+            {
+                question: 'Which of the following is the first step in the software development life cycle (SDLC)?',
+                answer: ['Design', 'Implementation', 'Requirement gathering', 'Testing'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'Requirement gathering'
+            },
+            {
+                question: 'In object-oriented programming, a class is used to define a blueprint for creating ________.',
+                answer: ['objects', 'methods', 'variables', 'functions'],
+                section: 'Code Programs',
+                correctAnswer: 'objects'
+            },
+            {
+                question: 'Which of the following types of software is used to protect against malware and viruses?',
+                answer: ['Firewall', 'Antivirus', 'Debugger', 'Compiler'],
+                section: 'Ethics, Legal Compliance, and Security',
+                correctAnswer: 'Antivirus'
+            },
+            {
+                question: 'What type of programming error occurs when the programmer provides an invalid condition for a loop?',
+                answer: ['logical', 'syntax', 'semantic', 'runtime'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'logical'
+            },
+            {
+                question: 'Which of the following describes a situation in which a variable holds a value that is incompatible with its intended data type?',
+                answer: ['Type mismatch', 'Boundary error', 'Overflow error', 'Runtime error'],
+                section: 'Design Program Solutions',
+                correctAnswer: 'Type mismatch'
+            },
+            {
+                question: 'In a structured program, what structure allows a program to repeat a set of instructions?',
+                answer: ['Loop', 'Selection', 'Sequence', 'Branch'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'Loop'
+            },
+            {
+                question: 'What is the purpose of a "primary key" in a database?',
+                answer: ['Identify each record uniquely', 'Group related records', 'Establish relationships between tables', 'Sort the data'],
+                section: 'Analyze Program Problems, Manage Projects, and Create Flowchart Solutions',
+                correctAnswer: 'Identify each record uniquely'
+            },
+            {
+                question: 'Which of the following is an example of a compiled programming language?',
+                answer: ['Python', 'Java', 'C++', 'PHP'],
+                section: 'General Information and Concepts',
+                correctAnswer: 'C++'
+            },
+            {
+                question: 'Which of the following actions would you take to secure sensitive data in a database?',
+                answer: ['Encrypt the data', 'Store data in plain text', 'Send data over the network without encryption', 'Use weak passwords'],
+                section: 'Ethics, Legal Compliance, and Security',
+                correctAnswer: 'Encrypt the data'
+            }
+        ];
+
+        function resetQuestions() {
+            document.getElementById('flashCards').innerHTML = '';
+            for (question in questions) {
+                var newQuestion = document.createElement('p');
+                newQuestion.innerHTML = (parseInt(question) + 1) + '. ' + questions[question].question;
+                newQuestion.id = 'question' + question;
+                newQuestion.name = 'question' + question;
+                if (questions[question].extra) {
+                    let extra = document.createElement('p');
+                    extra.innerHTML = questions[question].extra;
+                    newQuestion.appendChild(extra);
+                }
+                for (answer in questions[question].answer) {
+                    let space = document.createElement('br');
+                    newQuestion.appendChild(space);
+                    let newAnswer = document.createElement('input');
+                    let newLabel = document.createElement('label');
+                    newAnswer.type = 'radio';
+                    newAnswer.name = 'question' + question;
+                    newAnswer.value = questions[question].answer[answer];
+                    newLabel.innerHTML = questions[question].answer[answer];
+                    newQuestion.appendChild(newAnswer);
+                    newQuestion.appendChild(newLabel);
+                }
+                document.getElementById('flashCards').appendChild(newQuestion);
+            }
+        }
+
+        function checkQuestions() {
+            var correct = 0;
+            var incorrect = [];
+            var questionsAnswered = 0;
+            for (question in questions) {
+                var questionAnswer = document.getElementsByName('question' + question);
+                for (answer in questionAnswer) {
+                    if (questionAnswer[answer].checked) {
+                        questionsAnswered++;
+                        if (questionAnswer[answer].value == questions[question].correctAnswer) {
+                            correct++;
+                            questionAnswer[answer].parentNode.style.color = 'green';
+                            if (document.getElementById('correctAnswer' + question)) {
+                                document.getElementById('correctAnswer' + question).remove();
+                            }
+                        } else {
+                            incorrect.push(parseInt(question) + 1);
+                            questionAnswer[answer].parentNode.style.color = 'red';
+                            let correctAnswer = document.createElement('p');
+                            correctAnswer.id = 'correctAnswer' + question;
+                            correctAnswer.style.color = 'black';
+                            correctAnswer.innerHTML = 'Correct Answer: ' + questions[question].correctAnswer;
+                            questionAnswer[answer].parentNode.appendChild(correctAnswer);
+                        }
+                    }
+                }
+            }
+            alert('Correct: ' + correct + ' out of ' + questionsAnswered + '\n Questions that are Incorrect: ' + incorrect);
+        }
+
+        resetQuestions();
+    </script>
+</body>
+
+</html>
