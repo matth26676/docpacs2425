@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+</head>
+
+<body>
+
+    <h1>Quiz</h1>
+    <div id="quiz-container"></div><br>
+    <button onclick="checkScore()">Submit</button><br>
+    <div id="result" class="result"></div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which of the folowing errors is caused by a calculation error?",
+                answers: {
+                    A: "logical",
+                    B: "arithmetic",
+                    C: "truncation",
+                    D: "semantic"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which of the following uses three basic control structures to form highly structured units of code?",
+                answers: {
+                    A: "structured programming",
+                    B: "circular connector",
+                    C: "mobular construction",
+                    D: "loop structure"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "What type of principle is used for configuring preferences that allow the user to personalize an application?",
+                answers: {
+                    A: "CLI",
+                    B: "GUI",
+                    C: "API",
+                    D: "DOS"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "All computer instructions are based on four basiclogic patterns. Thesr patterns are simple sequence, selection, loop and",
+                answers: {
+                    A: "trailer",
+                    B: "modular",
+                    C: "top-down",
+                    D: "branch"
+                },
+                correctAnswer: "D"
+            }, {
+                question: "A programmer is starting a new programming project. During what phase of the programming project shold the programmer begin planning for data storage?",
+                answers: {
+                    A: "billing",
+                    B: "documentation",
+                    C: "implementation",
+                    D: "test"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "If the memory speed of the bus is 750 MHZ, and the CPU is operating at twice the speed of the bus, what is the processor speed??",
+                answers: {
+                    A: "375MHz",
+                    B: "750MHz",
+                    C: "1.5GHz",
+                    D: "2GHz"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Two types of programs that create machine codes are the interpreer and the ",
+                answers: {
+                    A: "assembler",
+                    B: "object",
+                    C: "compiler",
+                    D: "source"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "In the order of calculations in a program",
+                answers: {
+                    A: "addition precedes division",
+                    B: "parenthases precede exponebtiation",
+                    C: "subtraction precedes addition",
+                    D: "multiplication precedes exponetiation"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "if a programmer downloads a copy of microsoft SQL Server from a file-sharing website withought paying for it, the progammer has committed an offense called",
+                answers: {
+                    A: "piracy",
+                    B: "larceny",
+                    C: "felony",
+                    D: "spyware"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "The Sarbanes-Oxely Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with a compliance with SOX?",
+                answers: {
+                    A: "Create system logs of the transactions taken in the session",
+                    B: "require a user to click three times when they are sure they want to proceed",
+                    C: "help a user to request asistance from the system administrators",
+                    D: "utilize system credentials instead of pass-through credentials"
+                },
+                correctAnswer: "D"
+            }, {
+                question: "One of the main goals in analzing user requirements is to",
+                answers: {
+                    A: "troubleshoot the problem",
+                    B: "shutdown and maintain the system",
+                    C: "keep the cutomer happy",
+                    D: "elicit requirements from user's point of view"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which type of error occurs when a program attempts to access a memory location that is not allowed?",
+                answers: {
+                    A: "syntax error",
+                    B: "runtime error",
+                    C: "logic error",
+                    D: "segmentation fault"
+                },
+                correctAnswer: "D"
+            }, {
+                question: "Which of the following programming paradigms uses objects and classes?",
+                answers: {
+                    A: "structured programming",
+                    B: "object-oriented programming",
+                    C: "procedural programming",
+                    D: "functional programming"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is the primary purpose of a flowchart in software development?",
+                answers: {
+                    A: "Write the program's code",
+                    B: "Organize files in the database",
+                    C: "Visually represent the program's logic",
+                    D: "Track hardware performance"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which of the following is used to test whether a condition is true or false in programming?",
+                answers: {
+                    A: "loop",
+                    B: "variable",
+                    C: "function",
+                    D: "if statement"
+                },
+                correctAnswer: "D"
+            }, {
+                question: "When a programmer uses comments in a codebase, the purpose is to:",
+                answers: {
+                    A: "improve code speed",
+                    B: "explain the code to other developers",
+                    C: "reduce memory usage",
+                    D: "fix logic errors"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which of the following is an example of a high-level programming language?",
+                answers: {
+                    A: "Assembly",
+                    B: "C++",
+                    C: "Machine code",
+                    D: "Binary"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "In the software development life cycle (SDLC), which phase involves defining user requirements?",
+                answers: {
+                    A: "Design",
+                    B: "Analysis",
+                    C: "Implementation",
+                    D: "Testing"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is the primary function of an interpreter in programming?",
+                answers: {
+                    A: "Convert code into machine language line-by-line",
+                    B: "Compile code to an executable",
+                    C: "Detect errors during runtime",
+                    D: "Store variables in memory"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "Which of the following is a relational database management system?",
+                answers: {
+                    A: "MongoDB",
+                    B: "MySQL",
+                    C: "Redis",
+                    D: "Cassandra"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "In object-oriented programming, what is a class?",
+                answers: {
+                    A: "A specific instance of an object",
+                    B: "A blueprint or template for objects",
+                    C: "A function used to manipulate data",
+                    D: "A variable that holds multiple data types"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which data structure uses LIFO (Last In, First Out) order?",
+                answers: {
+                    A: "Queue",
+                    B: "Stack",
+                    C: "Array",
+                    D: "Linked List"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is the term for a program that converts source code into machine code?",
+                answers: {
+                    A: "Debugger",
+                    B: "Compiler",
+                    C: "Interpreter",
+                    D: "Assembler"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "In a relational database, what term is used for a row in a table?",
+                answers: {
+                    A: "Attribute",
+                    B: "Tuple",
+                    C: "Column",
+                    D: "Index"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which of the following programming languages is primarily used for developing mobile applications?",
+                answers: {
+                    A: "Java",
+                    B: "Python",
+                    C: "C++",
+                    D: "HTML"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "What is the primary function of an operating system?",
+                answers: {
+                    A: "Run antivirus software",
+                    B: "Manage hardware and software resources",
+                    C: "Design network protocols",
+                    D: "Translate programming languages"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which HTML tag is used to create a hyperlink?",
+                answers: {
+                    A: "<a>",
+                    B: "<link>",
+                    C: "<href>",
+                    D: "<url>"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "Which of the following is an example of a version control system?",
+                answers: {
+                    A: "Apache",
+                    B: "Git",
+                    C: "MySQL",
+                    D: "Java"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What does the acronym SQL stand for?",
+                answers: {
+                    A: "Structured Question Language",
+                    B: "Sequential Query Language",
+                    C: "Structured Query Language",
+                    D: "Simplified Query Logic"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which of the following best describes an algorithm?",
+                answers: {
+                    A: "A set of instructions to solve a problem",
+                    B: "A high-level programming language",
+                    C: "A program for detecting errors",
+                    D: "A method of storing data in memory"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "What is the primary goal of unit testing?",
+                answers: {
+                    A: "Test the entire application",
+                    B: "Ensure that individual functions or methods work correctly",
+                    C: "Verify the design of the database",
+                    D: "Evaluate user experience"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which HTTP status code indicates that a requested resource was not found?",
+                answers: {
+                    A: "200",
+                    B: "302",
+                    C: "404",
+                    D: "500"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "In JavaScript, which keyword is used to declare a constant variable?",
+                answers: {
+                    A: "var",
+                    B: "let",
+                    C: "const",
+                    D: "define"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "What is the name of the process used to find and fix errors in a program?",
+                answers: {
+                    A: "Compiling",
+                    B: "Testing",
+                    C: "Debugging",
+                    D: "Refactoring"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which of the following best describes a binary search algorithm?",
+                answers: {
+                    A: "Searches one element at a time",
+                    B: "Divides the list in half and searches recursively",
+                    C: "Uses a random approach to find the element",
+                    D: "Compares adjacent elements to find the desired value"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is an IDE in programming?",
+                answers: {
+                    A: "Internet Development Environment",
+                    B: "Integrated Development Environment",
+                    C: "Interface Design Editor",
+                    D: "Intelligent Debugging Engine"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which command is used to list the contents of a directory in Linux?",
+                answers: {
+                    A: "dir",
+                    B: "ls",
+                    C: "cd",
+                    D: "pwd"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is the purpose of a foreign key in a database?",
+                answers: {
+                    A: "Define the primary identifier for a table",
+                    B: "Link records between two tables",
+                    C: "Index records for faster retrieval",
+                    D: "Ensure data consistency in a single table"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "In Python, which keyword is used to define a function?",
+                answers: {
+                    A: "function",
+                    B: "define",
+                    C: "def",
+                    D: "func"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "What does XML stand for?",
+                answers: {
+                    A: "Extensible Markup Language",
+                    B: "Extra Modular Language",
+                    C: "Executable Markup Language",
+                    D: "Extended Metadata Logic"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "Which of the following statements best describes polymorphism in OOP?",
+                answers: {
+                    A: "Combining two classes to create a single object",
+                    B: "Allowing a class to inherit from multiple classes",
+                    C: "Providing multiple implementations of a method",
+                    D: "Restricting access to class members"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which type of loop ensures that the block of code runs at least once before evaluating the condition?",
+                answers: {
+                    A: "while loop",
+                    B: "for loop",
+                    C: "do-while loop",
+                    D: "infinite loop"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which SQL command is used to retrieve data from a database?",
+                answers: {
+                    A: "SELECT",
+                    B: "INSERT",
+                    C: "UPDATE",
+                    D: "DELETE"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "In JavaScript, what will be the output of `typeof null`?",
+                answers: {
+                    A: "null",
+                    B: "undefined",
+                    C: "object",
+                    D: "string"
+                },
+                correctAnswer: "C"
+            }, {
+                question: "Which programming language is primarily used for developing iOS applications?",
+                answers: {
+                    A: "Swift",
+                    B: "Java",
+                    C: "Kotlin",
+                    D: "C#"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "What does the acronym API stand for?",
+                answers: {
+                    A: "Application Programming Interface",
+                    B: "Automated Process Integration",
+                    C: "Advanced Programming Interface",
+                    D: "Application Process Integration"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "Which symbol is used for comments in Python?",
+                answers: {
+                    A: "//",
+                    B: "#",
+                    C: "/* */",
+                    D: "<!-- -->"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "Which software development model emphasizes iterative development and collaboration between teams?",
+                answers: {
+                    A: "Waterfall",
+                    B: "Agile",
+                    C: "V-Model",
+                    D: "RAD"
+                },
+                correctAnswer: "B"
+            }, {
+                question: "What is the primary purpose of using version control in software development?",
+                answers: {
+                    A: "To manage code changes and maintain history",
+                    B: "To increase code execution speed",
+                    C: "To reduce storage space",
+                    D: "To improve user experience"
+                },
+                correctAnswer: "A"
+            }, {
+                question: "In database normalization, which form eliminates duplicate columns from the same table?",
+                answers: {
+                    A: "First Normal Form (1NF)",
+                    B: "Second Normal Form (2NF)",
+                    C: "Third Normal Form (3NF)",
+                    D: "Fourth Normal Form (4NF)"
+                },
+                correctAnswer: "A"
+            }
+        ]
+
+        function displayQuestions() {
+            const quizContainer = document.getElementById("quiz-container");
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+
+                const questionText = document.createElement("p");
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+
+                const answersDiv = document.createElement("div");
+                answersDiv.classList.add("answers");
+
+                for (const [key, value] of Object.entries(q.answers)) {
+                    const answerOption = document.createElement("div");
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = `q${index}`;
+                    input.value = key;
+                    input.id = `q${index}${key}`;
+
+                    const label = document.createElement("label");
+                    label.htmlFor = `q${index}${key}`;
+                    label.textContent = value;
+
+                    answerOption.appendChild(input);
+                    answerOption.appendChild(label);
+                    answersDiv.appendChild(answerOption);
+                }
+
+                questionDiv.appendChild(answersDiv);
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function checkScore() {
+        let score = 0;
+
+        questions.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const answers = document.querySelectorAll(`input[name="q${index}"]`);
+
+            answers.forEach((answer) => {
+                const label = document.querySelector(`label[for="${answer.id}"]`);
+
+
+                if (selected && answer === selected && answer.value == q.correctAnswer) {
+                    label.style.color = "green";
+                }
+
+                if (selected && answer === selected && answer.value !== q.correctAnswer) {
+                    label.style.color = "red";
+                }
+            });
+
+            if (selected && selected.value === q.correctAnswer) {
+                score++;
+            }
+        });
+
+        const resultDiv = document.getElementById("result");
+        alert(`You scored ${score} out of ${questions.length}.`);
+    }
+
+        displayQuestions();
+    </script>
+</body>
+
+</html>
