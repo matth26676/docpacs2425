@@ -232,6 +232,20 @@ OUT = TEMP & right (in, text_len -n)`,
     {text: 'What does the term "debugging" refer to in programming?', 
     selections: {A: 'Writing new features into a program', B: 'Removing unnecessary code', C: 'Identifying and fixing errors in code', D: 'Refactoring code for efficiency'}, right: 'C'},
     ]
+
+    function shuffle(arr) {
+        let currentIndex = arr.length
+
+        while (currentIndex != 0) {
+            let randomIndex = Math.floor(Math.random() * currentIndex)
+            currentIndex--
+
+            [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]]
+        }
+    }
+
+    shuffle(questions)
+
     let form = document.querySelector('#form')
     let quiz = document.getElementById('questions')
     for (question of questions) {
