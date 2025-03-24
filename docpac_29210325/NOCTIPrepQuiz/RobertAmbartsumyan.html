@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+</head>
+
+<body>
+    <center>
+        <h1>QUIZ TIME</h1>
+        <h4 id='liveScore'>Score: 0</h4>
+        <div id="question">question:
+            <p id="questionText"></p>
+        </div>
+        <br>
+        <div id="options">
+            <select name="option" id="optionBox">
+            </select>
+        </div>
+        <br>
+        <button onClick=checkAnswer()>Submit / Next question</button>
+        <br>
+        <p id="correct"></p>
+    </center>
+</body>
+<script>
+    // Needed Vars
+    let questionText = document.getElementById("questionText");
+    let optionBox = document.getElementById("optionBox");
+    let questionNumber = 0;
+    let score = 0;
+    let selectedoption = document.getElementById("optionBox").value;
+    let scoretext = document.getElementById("liveScore");
+    let answer = "";
+    let correct = document.getElementById("correct");
+
+    // All 50 questions
+    let questions = [
+        {
+            question: "In flowcharts, which shape represents a decision point?",
+            options: ["Rectangle", "Diamond", "Circle", "Oval"],
+            answer: "Diamond"
+        },
+        {
+            question: "Which shape in a flowchart signifies the start or end of a process?",
+            options: ["Square", "Oval", "Triangle", "Circle"],
+            answer: "Oval"
+        },
+        {
+            question: "In a flowchart, which shape is used to represent a process or action step?",
+            options: ["Rectangle", "Oval", "Parallelogram", "Circle"],
+            answer: "Rectangle"
+        },
+        {
+            question: "Which tool, alongside the interpreter, translates code into machine language?",
+            options: ["Compiler", "Assembler", "Debugger", "Linker"],
+            answer: "Compiler"
+        },
+        {
+            question: "Which array method is used to add an element to the end of an array in JavaScript?",
+            options: ["push()", "pop()", "shift()", "unshift()"],
+            answer: "push()"
+        },
+        {
+            question: "Which keyword is used to declare a constant in JavaScript?",
+            options: ["let", "var", "const", "constant"],
+            answer: "const"
+        },
+        {
+            question: "What symbol is used to write a single-line comment in JavaScript?",
+            options: ["//", "#", "/*", "<!--"],
+            answer: "//"
+        },
+        {
+            question: "What does the '==' operator do in JavaScript?",
+            options: ["Assigns values", "Compares values only", "Compares values and types", "None of the above"],
+            answer: "Compares values only"
+        },
+        {
+            question: "Which JavaScript loop guarantees at least one execution of its block?",
+            options: ["while", "for", "do...while", "for...in"],
+            answer: "do...while"
+        },
+        {
+            question: "What is the result of '5' + 5 in JavaScript?",
+            options: ["55", "10", "Error", "undefined"],
+            answer: "55"
+        },
+        {
+            question: "What does the 'return' statement do in a JavaScript function?",
+            options: ["Stops the function", "Returns a value from the function", "Declares a variable", "Starts the function"],
+            answer: "Returns a value from the function"
+        },
+        {
+            question: "Which JavaScript construct is used to handle errors?",
+            options: ["try...catch", "if...else", "for...in", "break"],
+            answer: "try...catch"
+        },
+        {
+            question: "What is the result of 'typeof NaN' in JavaScript?",
+            options: ["'number'", "'undefined'", "'object'", "'NaN'"],
+            answer: "'number'"
+        },
+        {
+            question: "What does the 'this' keyword refer to in JavaScript?",
+            options: ["The global object", "The function itself", "The object the function belongs to", "None of the above"],
+            answer: "The object the function belongs to"
+        },
+        {
+            question: "Which functions can convert a string to a number in JavaScript?",
+            options: ["parseFloat()", "parseInt()", "toString()", "Both A and B"],
+            answer: "Both A and B"
+        },
+        {
+            question: "Which array method removes the last element from an array?",
+            options: ["pop()", "push()", "shift()", "unshift()"],
+            answer: "pop()"
+        },
+        {
+            question: "Which method checks if a variable is an array in JavaScript?",
+            options: ["Array.isArray()", "isArray()", "isObject()", "Array.check()"],
+            answer: "Array.isArray()"
+        },
+        {
+            question: "What is the result of 'false + 1' in JavaScript?",
+            options: ["false", "1", "0", "NaN"],
+            answer: "1"
+        },
+        {
+            question: "How do you create a new date object in JavaScript?",
+            options: ["new Date()", "Date()", "new date()", "Date.now()"],
+            answer: "new Date()"
+        },
+        {
+            question: "Which method removes the first element from an array in JavaScript?",
+            options: ["shift()", "unshift()", "pop()", "push()"],
+            answer: "shift()"
+        },
+        {
+            question: "Which loop iterates over the properties of an object in JavaScript?",
+            options: ["for", "for...in", "for...of", "do...while"],
+            answer: "for...in"
+        },
+        {
+            question: "Which of the following is NOT a valid JavaScript data type?",
+            options: ["undefined", "boolean", "integer", "object"],
+            answer: "integer"
+        },
+        {
+            question: "What is the result of '0 == false' in JavaScript?",
+            options: ["true", "false", "NaN", "undefined"],
+            answer: "true"
+        },
+        {
+            question: "What does 'null' represent in JavaScript?",
+            options: ["An empty object", "A missing value", "A number", "An undefined value"],
+            answer: "A missing value"
+        },
+        {
+            question: "In flowcharts, what does a parallelogram represent?",
+            options: ["Start/End", "Process", "Decision", "Input/Output"],
+            answer: "Input/Output"
+        },
+        {
+            question: "In flowcharts, what does a rectangle represent?",
+            options: ["Start/End", "Process", "Decision", "Connector"],
+            answer: "Process"
+        },
+        {
+            question: "What does a circle typically represent in a flowchart?",
+            options: ["Start/End", "Process", "Decision", "Connector"],
+            answer: "Connector"
+        },
+        {
+            question: "Which shape represents a decision in a flowchart?",
+            options: ["Rectangle", "Diamond", "Oval", "Parallelogram"],
+            answer: "Diamond"
+        },
+        {
+            question: "What does an arrow indicate in a flowchart?",
+            options: ["Process", "Flow of control", "Start/End", "Decision"],
+            answer: "Flow of control"
+        },
+        {
+            question: "What is the primary purpose of a flowchart?",
+            options: ["To display the steps in a process", "To test code", "To declare variables", "To write functions"],
+            answer: "To display the steps in a process"
+        },
+        {
+            question: "Which of these is NOT a valid flowchart symbol?",
+            options: ["Diamond", "Square", "Rectangle", "Oval"],
+            answer: "Square"
+        },
+        {
+            question: "What is the best posture to maintain while typing?",
+            options: ["Keep wrists straight and relaxed", "Twist wrists at a 45-degree angle", "Rest wrists on the desk", "Lift wrists off the desk"],
+            answer: "Keep wrists straight and relaxed"
+        },
+        {
+            question: "How often should you take breaks while typing to avoid strain?",
+            options: ["Every 10-15 minutes", "Every hour", "Every 30 minutes", "Every 5 minutes"],
+            answer: "Every 30 minutes"
+        },
+        {
+            question: "What are common symptoms of poor posture while working at a computer?",
+            options: ["Headaches", "Lower back pain", "Carpal tunnel syndrome", "All of the above"],
+            answer: "All of the above"
+        },
+        {
+            question: "What is the preferred way to declare an array in modern JavaScript?",
+            options: ["arr = [];", "arr = new Array();", "let arr = [];", "const arr = [];"],
+            answer: "let arr = [];"
+        },
+        {
+            question: "What happens when you mix 'undefined' and 'null' in JavaScript?",
+            options: ["They combine into 'nullified'", "They cause an error", "They remain distinct", "Nothing happens"],
+            answer: "They remain distinct"
+        },
+        {
+            question: "Which flowchart symbol represents a process?",
+            options: ["Rectangle", "Diamond", "Oval", "Parallelogram"],
+            answer: "Rectangle"
+        },
+        {
+            question: "How can you check if a variable is an array in JavaScript?",
+            options: ["Array.check()", "Array.isArray()", "isArray()", "isObject()"],
+            answer: "Array.isArray()"
+        },
+        {
+            question: "Which of these is NOT a standard flowchart symbol?",
+            options: ["Rectangle", "Diamond", "Parallelogram", "Circle"],
+            answer: "Circle"
+        },
+        {
+            question: "Which JavaScript method is most commonly used for debugging?",
+            options: ["alert()", "console.log()", "prompt()", "parseInt()"],
+            answer: "console.log()"
+        },
+        {
+            question: "In flowcharts, what symbol is used to indicate a connection or jump?",
+            options: ["Arrow", "Circle", "Connector", "Parallelogram"],
+            answer: "Connector"
+        },
+        {
+            question: "What is the result of '2' + 2 in JavaScript?",
+            options: ["22", "4", "NaN", "Error"],
+            answer: "22"
+        },
+        {
+            question: "Which method converts a JSON string into a JavaScript object?",
+            options: ["JSON.stringify()", "JSON.parse()", "JSON.objectify()", "JSON.convert()"],
+            answer: "JSON.parse()"
+        },
+        {
+            question: "What does the '===' operator do in JavaScript?",
+            options: ["Assigns a value", "Compares values only", "Compares values and types", "None of the above"],
+            answer: "Compares values and types"
+        },
+        {
+            question: "Which keyword is used to declare a variable that can be reassigned in JavaScript?",
+            options: ["const", "let", ".pop", "reassign"],
+            answer: "let"
+        },
+        {
+            question: "What is the purpose of the 'break' statement in JavaScript?",
+            options: ["To exit a loop or switch", "To pause execution", "To declare a variable", "To create a function"],
+            answer: "To exit a loop or switch"
+        },
+        {
+            question: "Which method adds elements to the beginning of an array in JavaScript?",
+            options: ["push()", "pop()", "shift()", "unshift()"],
+            answer: "unshift()"
+        },
+        {
+            question: "What is the result of 'typeof null' in JavaScript?",
+            options: ["'null'", "'undefined'", "'object'", "'string'"],
+            answer: "'object'"
+        }
+    ];
+    let previusQuestions = [];
+    let wrongQustions = [];
+
+    randomQuestion();
+
+    function randomQuestion() {
+        let random = Math.floor(Math.random() * questions.length);
+        if (previusQuestions.length == questions.length) {
+            document.body.innerHTML = '';
+
+            let scoretext = document.createElement('h1');
+            scoretext.innerHTML = `Your score is ${score}, your final grade precentage is ${Math.round(score / questions.length * 100)}%`;
+            document.body.appendChild(scoretext);
+
+            let wrongText = document.createElement('h2');
+            wrongText.innerHTML = "Wrong questions: ";
+            document.body.appendChild(wrongText);
+
+            for (let i = 0; i < wrongQustions.length; i++) {
+                let wrongQuestionElement = document.createElement('p');
+                wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
+                document.body.appendChild(wrongQuestionElement);
+
+                let correctAnswer = document.createElement('p');
+                correctAnswer.innerHTML = "Correct answer: " + questions.find(q => q.question == wrongQustions[i]).answer;
+                document.body.appendChild(correctAnswer);
+            }
+            
+            let restartButton = document.createElement('button');
+            restartButton.innerHTML = "Restart";
+            restartButton.onclick = function () {
+                location.reload();
+            }
+            document.body.appendChild(restartButton);
+
+        } else if (previusQuestions.includes(random)) {
+            randomQuestion();
+        } else {
+            previusQuestions.push(random);
+            questionText.innerHTML = questions[random].question;
+            optionBox.innerHTML = "";
+            answer = questions[random].answer;
+            for (let i = 0; i < questions[random].options.length; i++) {
+                optionBox.innerHTML += "<option value='" + questions[random].options[i] + "'>" + questions[random].options[i] + "</option>";
+            }
+        }
+    }
+
+    function checkAnswer() {
+        selectedOption = document.getElementById("optionBox").value;
+
+        if (selectedOption == answer) {
+            score++;
+        } else {
+            wrongQustions.push(questions[previusQuestions[previusQuestions.length - 1]].question);
+        }
+
+        if (questionNumber < questions.length) {
+            questionNumber++;
+            randomQuestion();
+            scoretext.innerHTML = "Score: " + score;
+        } else {
+            document.body.innerHTML = '';
+
+            let scoretext = document.createElement('h1');
+            scoretext.innerHTML = `Your score is ${score}, your final grade precentage is ${Math.round(score / questions.length * 100)}%`;
+            document.body.appendChild(scoretext);
+
+            let text = document.createElement('h2');
+            text.innerHTML = "Wrong questions: ";
+            document.body.appendChild(text);
+
+            for (let i = 0; i < wrongQustions.length; i++) {
+                let wrongQuestionElement = document.createElement('p');
+                wrongQuestionElement.innerHTML = "<b>" + wrongQustions[i] + "</b>";
+                document.body.appendChild(wrongQuestionElement);
+                
+                let correctAnswer = document.createElement('p');
+                correctAnswer.innerHTML = "Correct answer: " + questions.find(q => q.question == wrongQustions[i]).answer;
+                document.body.appendChild(correctAnswer);
+            }
+
+            let restartButton = document.createElement('button');
+            restartButton.innerHTML = "Restart";
+            restartButton.onclick = function () {
+                location.reload();
+            }
+            document.body.appendChild(restartButton);
+        }
+    }
+</script>
+
+</html>
