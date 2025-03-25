@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice NOCTI Quiz</title>
+</head>
+
+<body>
+
+    <h1>Programming Practice Quiz</h1>
+    <div id="quiz"></div><br>
+    <button onclick="checkScore()">Submit</button><br>
+    <div id="result" class="result"></div>
+
+    <script>
+        var questions = [
+    {
+        question: "Which of the following is a high-level programming language?",
+        answers: {
+            A: "Assembly",
+            B: "Machine Code",
+            C: "Python",
+            D: "Binary"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "What is the main purpose of an algorithm?",
+        answers: {
+            A: "To compile code",
+            B: "To solve a problem",
+            C: "To execute a program",
+            D: "To store data"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following best describes an array?",
+        answers: {
+            A: "A single data value",
+            B: "A collection of variables of different types",
+            C: "A collection of elements of the same type",
+            D: "A single object reference"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which data type is best for storing a single character?",
+        answers: {
+            A: "int",
+            B: "float",
+            C: "char",
+            D: "boolean"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which control structure is used to execute a block of code repeatedly while a condition is true?",
+        answers: {
+            A: "If-else",
+            B: "For loop",
+            C: "Switch statement",
+            D: "Try-catch"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "What is the primary function of an IDE (Integrated Development Environment)?",
+        answers: {
+            A: "To execute code only",
+            B: "To assist in software development",
+            C: "To replace operating systems",
+            D: "To store and retrieve data"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following is NOT a valid variable name in most programming languages?",
+        answers: {
+            A: "myVariable",
+            B: "_tempVar",
+            C: "123Variable",
+            D: "var_name"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "What is a syntax error?",
+        answers: {
+            A: "An error in logic",
+            B: "An error in spelling or grammar of the programming language",
+            C: "An error that occurs during runtime",
+            D: "An error that results in infinite loops"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following is an example of a relational operator?",
+        answers: {
+            A: "+",
+            B: "-",
+            C: "==",
+            D: "*"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "What is the primary purpose of version control systems like Git?",
+        answers: {
+            A: "To execute programs faster",
+            B: "To manage and track changes in code",
+            C: "To increase hardware performance",
+            D: "To store user data"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following statements about object-oriented programming (OOP) is true?",
+        answers: {
+            A: "OOP does not support encapsulation",
+            B: "OOP uses classes and objects to structure code",
+            C: "OOP cannot be used in web development",
+            D: "OOP does not allow code reuse"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "What does SQL stand for?",
+        answers: {
+            A: "Structured Query Language",
+            B: "Simple Question Language",
+            C: "System Query Logic",
+            D: "Sequential Query Logic"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Which type of error occurs when a program runs but produces incorrect results due to incorrect logic?",
+        answers: {
+            A: "Syntax error",
+            B: "Runtime error",
+            C: "Logical error",
+            D: "Compiler error"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which data structure follows the Last In, First Out (LIFO) principle?",
+        answers: {
+            A: "Queue",
+            B: "Stack",
+            C: "Array",
+            D: "Linked List"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "What is the primary purpose of debugging?",
+        answers: {
+            A: "To execute a program faster",
+            B: "To find and fix errors in code",
+            C: "To compile code into machine language",
+            D: "To add new features"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following errors is caused by a calculation error?",
+        answers: {
+            A: "Logical",
+            B: "Arithmetic",
+            C: "Truncation",
+            D: "Semantic"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following uses three basic control structures to form highly structured units of code?",
+        answers: {
+            A: "Structured programming",
+            B: "Circular connector",
+            C: "Modular varruction",
+            D: "Loop structure"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Which type of principle is used for configuring preferences that allow the user to personalize an application?",
+        answers: {
+            A: "CLI",
+            B: "GUI",
+            C: "API",
+            D: "DOS"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "All computer instructions are based on four basic logic patterns. These patterns are simple sequence, selection, loop, and ________.",
+        answers: {
+            A: "Trailer",
+            B: "Modular",
+            C: "Top-down",
+            D: "Branch"
+        },
+        rightAnswer: "D"
+    },
+    {
+        question: "If the memory speed of the bus is 750MHz, and the CPU is operating at twice the speed of the bus, what is the processor speed?",
+        answers: {
+            A: "375 MHz",
+            B: "750 MHz",
+            C: "1.5 GHz",
+            D: "2 GHz"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Two types of programs that create machine codes are the interpreter and the ________.",
+        answers: {
+            A: "Assembler",
+            B: "Object",
+            C: "Compiler",
+            D: "Source"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "In the order of calculations in a program.",
+        answers: {
+            A: "Addition precedes division",
+            B: "Parentheses precede exponentiation",
+            C: "Subtraction precedes addition",
+            D: "Multiplication precedes exponentiation"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "When the code below is executed, strAdd will be equal to ________.",
+        extra: "strFirst = '123' strSecond = '456' strAdd = strFirst + strSecond",
+        answers: {
+            A: "\"579\"",
+            B: "\"123 + 456\"",
+            C: "\"123456\"",
+            D: "\"strFirst + strSecond\""
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called ________.",
+        answers: {
+            A: "Piracy",
+            B: "Larceny",
+            C: "Felony",
+            D: "Spyware"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "The following program flowchart symbol is a/an ________ symbol.",
+        extra: "A diamond",
+        answers: {
+            A: "Processing",
+            B: "Input/Output",
+            C: "Decision",
+            D: "Connector"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "One of the main goals in analyzing user requirements is to ________.",
+        answers: {
+            A: "Troubleshoot the problem",
+            B: "Shutdown and maintain the system",
+            C: "Keep the customer happy",
+            D: "Elicit requirements from a user's point of view"
+        },
+        rightAnswer: "D"
+    },
+    {
+        question: "If a record has the following field lengths, what is the record length?",
+        extra: "Name=35, Zipcode=5, District=7",
+        answers: {
+            A: "42",
+            B: "47",
+            C: "54",
+            D: "56"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "The following program flowchart symbol is a/an ________ symbol.",
+        extra: "A parallelogram",
+        answers: {
+            A: "Processing",
+            B: "Input/Output",
+            C: "Decision",
+            D: "Connector"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and a set of data. What is the best data structure the programmer can use?",
+        answers: {
+            A: "Array",
+            B: "varant",
+            C: "String",
+            D: "Field"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "When a programmer is ready to create executable code, what process is used?",
+        answers: {
+            A: "Debugging",
+            B: "Editing",
+            C: "Compiling",
+            D: "Disassembling"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "The source document and _____ should follow the same order.",
+        answers: {
+            A: "Input screen design",
+            B: "Output screen design",
+            C: "Decision-type operator symbols",
+            D: "Processing function symbols"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Which of the following is a correct name for a variable?",
+        answers: {
+            A: "State_Zipcode",
+            B: "State+Zipcode",
+            C: "State Zipcode",
+            D: "State=Zipcode"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Why is the following expression invalid? A=10 + \"New Data\"",
+        answers: {
+            A: "Variable 5 is not defined",
+            B: "Data types are mixed",
+            C: "\"New Data\" is not a string",
+            D: "\"New Data\" equals zero"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following enables the use of 'plain English' queries?",
+        answers: {
+            A: "BASIC",
+            B: "FORTRAN",
+            C: "SQL",
+            D: "C++"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "An example of loop structure is ________.",
+        answers: {
+            A: "DO UNTIL",
+            B: "SELECT IF",
+            C: "EXECUTE",
+            D: "NEXT"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Typically after successful integration testing, a ______ test is performed to complete a front-to-back execution of the entire application.",
+        answers: {
+            A: "System",
+            B: "Unit",
+            C: "Fuzz",
+            D: "Beta"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Maintenance refers to changes to a system in operation arising from error corrections, performance improvements, changes in the business environment, and ________.",
+        answers: {
+            A: "Enhancements in functions",
+            B: "Application requirements",
+            C: "Referencing software",
+            D: "Material requirements"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Which of the following is NOT an example of a data structure?",
+        answers: {
+            A: "Queue",
+            B: "Stack",
+            C: "Array",
+            D: "Print Statement"
+        },
+        rightAnswer: "D"
+    },
+    {
+        question: "Which type of loop will execute at least once, regardless of the condition?",
+        answers: {
+            A: "While loop",
+            B: "Do-while loop",
+            C: "For loop",
+            D: "For-each loop"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "What does the 'break' statement do in a loop?",
+        answers: {
+            A: "Pauses the loop for a specified time",
+            B: "Exits the loop immediately",
+            C: "Resumes the loop from the start",
+            D: "Ignores the current iteration"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following is an example of a non-primitive data type?",
+        answers: {
+            A: "int",
+            B: "char",
+            C: "String",
+            D: "boolean"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which of the following is a key feature of recursion in programming?",
+        answers: {
+            A: "It uses loops to repeat a block of code",
+            B: "It allows a function to call itself",
+            C: "It increases memory usage by default",
+            D: "It requires the use of multiple variables"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which algorithm is commonly used for sorting an array of elements?",
+        answers: {
+            A: "Merge Sort",
+            B: "Dijkstra's Algorithm",
+            C: "Breadth-First Search",
+            D: "Quick Sort"
+        },
+        rightAnswer: "D"
+    },
+    {
+        question: "What does HTML stand for?",
+        answers: {
+            A: "Hyper Transfer Markup Language",
+            B: "Hyper Text Markup Language",
+            C: "Home Text Markup Language",
+            D: "Hyper Tabular Markup Language"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "Which of the following is an example of a 'logical' error?",
+        answers: {
+            A: "The program does not compile",
+            B: "The program produces incorrect results",
+            C: "The program crashes during execution",
+            D: "The program syntax is incorrect"
+        },
+        rightAnswer: "B"
+    },
+    {
+        question: "In object-oriented programming, which term refers to the ability to create multiple methods with the same name but different parameters?",
+        answers: {
+            A: "Abstraction",
+            B: "Inheritance",
+            C: "Overloading",
+            D: "Polymorphism"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which of the following is a type of a software bug that occurs when a program consumes excessive system resources?",
+        answers: {
+            A: "Memory leak",
+            B: "Race condition",
+            C: "Stack overflow",
+            D: "Deadlock"
+        },
+        rightAnswer: "A"
+    },
+    {
+        question: "Which of the following programming languages is specifically designed for database management?",
+        answers: {
+            A: "C++",
+            B: "Python",
+            C: "SQL",
+            D: "Java"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which concept is used in object-oriented programming to hide the internal workings of a class and only expose necessary functionality?",
+        answers: {
+            A: "Inheritance",
+            B: "Polymorphism",
+            C: "Encapsulation",
+            D: "Abstraction"
+        },
+        rightAnswer: "C"
+    },
+    {
+        question: "Which of the following describes a deadlock in computing?",
+        answers: {
+            A: "When a process is infinitely delayed due to the inability to access a required resource",
+            B: "When two processes are running without interacting",
+            C: "When memory is exhausted by an infinite loop",
+            D: "When a process is stuck due to insufficient permissions"
+        },
+        rightAnswer: "A"
+    }
+];
+
+
+        function displayQuestions() {
+            var quizBox = document.getElementById("quiz");
+
+            questions.forEach((q, index) => {
+                var questionBox = document.createElement("div");
+                questionBox.classList.add("question");
+
+                var questionText = document.createElement("p");
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionBox.appendChild(questionText);
+
+
+                var answers = document.createElement("div");
+                answers.classList.add("answers");
+
+                for (var [key, value] of Object.entries(q.answers)) {
+                    var answerOption = document.createElement("div");
+
+                    var input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = `q${index}`;
+                    input.value = key;
+                    input.id = `q${index}${key}`;
+
+                    var label = document.createElement("label");
+                    label.htmlFor = `q${index}${key}`;
+                    label.textContent = value;
+
+                    answerOption.appendChild(input);
+                    answerOption.appendChild(label);
+                    answers.appendChild(answerOption);
+                }
+
+                questionBox.appendChild(answers);
+                quizBox.appendChild(questionBox);
+            });
+        }
+
+        function checkScore() {
+        var score = 0;
+
+        questions.forEach((q, index) => {
+            var selected = document.querySelector(`input[name="q${index}"]:checked`);
+            var answers = document.querySelectorAll(`input[name="q${index}"]`);
+
+            answers.forEach((answer) => {
+                var label = document.querySelector(`label[for="${answer.id}"]`);
+
+
+                if (selected && answer === selected && answer.value == q.rightAnswer) {
+                    label.style.color = "green";
+                }
+
+                if (selected && answer === selected && answer.value !== q.rightAnswer) {
+                    label.style.color = "red";
+                }
+            });
+
+            if (selected && selected.value === q.rightAnswer) {
+                score++;
+            }
+        });
+
+        var resultDiv = document.getElementById("result");
+        alert(`You scored ${score} out of ${questions.length}.`);
+    }
+
+        displayQuestions();
+    </script>
+</body>
+
+</html>

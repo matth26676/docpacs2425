@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOCTI Practice Quiz</title>
+</head>
+
+<body onload="newQuestion()">
+    <h1>NOCTI Practice Quiz</h1>
+    <h3>Kris Bowman</h3>
+    <br>
+    <form id=quiz>
+        <div id="question"></div>
+        <div id="options"></div>
+        <input type="submit" id="submit" value="Submit">
+    </form>
+</body>
+
+<script>
+    const quizDiv = document.getElementById("quiz");
+    const questionDiv = document.getElementById("question");
+    const optionsDiv = document.getElementById("options");
+    const submit = document.getElementById("submit");
+    const questionTotal = 50;
+    var questionNum = 1;
+    var score = 0;
+    var incorrect = []
+
+    const questionList = [
+        {},
+        {
+            question: "Which of the following programming errors occurs when a value is divided by zero?",
+            options: ["Syntax", "Logical", "Runtime", "Compilation"],
+            correct: "C",
+        },
+        {
+            question: "Which type of loop executes at least once before checking a condition?",
+            options: ["For loop", "While loop", "Do-While loop", "Infinite loop"],
+            correct: "C",
+        },
+        {
+            question: "What type of error occurs when a program attempts to use an uninitialized variable?",
+            options: ["Syntax error", "Runtime error", "Logical error", "Typographical error"],
+            correct: "B",
+        },
+        {
+            question: "Which of the following data structures uses FIFO (First In, First Out)?",
+            options: ["Stack", "Queue", "Linked List", "Binary Tree"],
+            correct: "B",
+        },
+        {
+            question: "What programming concept ensures that a function only accesses variables within its own scope?",
+            options: ["Polymorphism", "Encapsulation", "Inheritance", "Abstraction"],
+            correct: "B",
+        },
+        {
+            question: "What type of language is Python considered?",
+            options: ["Compiled", "Interpreted", "Machine language", "Assembly"],
+            correct: "B",
+        },
+        {
+            question: "Which of the following is NOT a valid data type in JavaScript?",
+            options: ["Boolean", "Float", "String", "Undefined"],
+            correct: "B",
+        },
+        {
+            question: "What does SQL stand for?",
+            options: ["Structured Query Language", "Standard Query Logic", "System Question Language", "Sequential Query Logic"],
+            correct: "A",
+        },
+        {
+            question: "What is the primary purpose of a function prototype in programming?",
+            options: ["Define the function body", "Specify the function's return type, arguments, and parameters", "Execute the function", "Store variables globally"],
+            correct: "B",
+        },
+        {
+            question: "What is the default value of an uninitialized variable in JavaScript?",
+            options: ["0", "NULL", "Undefined", "NaN"],
+            correct: "C",
+        },
+        {
+            question: "Which of these is an example of a compiled language?",
+            options: ["Python", "JavaScript", "C++", "HTML"],
+            correct: "C",
+        },
+        {
+            question: "What does the term 'polymorphism' refer to in Object-Oriented Programming?",
+            options: ["A function with multiple return types", "The ability of different classes to use the same method name", "Code that is impossible to modify", "A method that never executes"],
+            correct: "B",
+        },
+        {
+            question: "What keyword is used in JavaScript to declare a variable with block scope?",
+            options: ["var", "let", "const", "Both B and C"],
+            correct: "D",
+        },
+        {
+            question: "Which of the following statements is true about recursion?",
+            options: ["It requires a loop to function", "A base condition is necessary to prevent infinite execution", "It always executes faster than iteration", "It cannot return a value"],
+            correct: "B",
+        },
+        {
+            question: "In an SQL database, what does the 'JOIN' clause do?",
+            options: ["Merges two databases", "Combines rows from two or more tables", "Deletes duplicate entries", "Creates a new table"],
+            correct: "B",
+        },
+        {
+            question: "What does HTML stand for?",
+            options: ["HyperText Markup Language", "High-Level Text Marking Logic", "Hyper Transfer Markup Language", "Hyper Tool Machine Language"],
+            correct: "A",
+        },
+        {
+            question: "Which of these is NOT a valid way to declare a variable in JavaScript?",
+            options: ["let x = 5", "var x = 5", "x = 'Hello'", "const y, z = 2, 3"],
+            correct: "D",
+        },
+        {
+            question: "What is the time complexity of a binary search algorithm?",
+            options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+            correct: "B",
+        },
+        {
+            question: "What is the function of a constructor in a JavaScript class?",
+            options: ["Initializes object properties", "Destroys objects", "Defines a method", "Allocates memory dynamically"],
+            correct: "A",
+        },
+        {
+            question: "What is the purpose of the 'break' statement in a loop?",
+            options: ["Restart the loop", "Exit the loop immediately", "Skip the current iteration", "Move to the next case in a switch statement"],
+            correct: "B",
+        },
+        {
+            question: "If a programmer downloads a copy of Adobe Photoshop from a file-sharing site without paying for it, what crime has been committed?",
+            options: ["Piracy", "Larceny", "Felony", "Spyware"],
+            correct: "A",
+        },
+        {
+            question: "What ethical concern arises when a programmer hides a software flaw rather than reporting it?",
+            options: ["Transparency", "Efficiency", "Open-source licensing", "Code obfuscation"],
+            correct: "A",
+        },
+        {
+            question: "A software company collects user data without their consent. What ethical principle does this violate?",
+            options: ["Privacy", "Debugging", "Open-source compliance", "Accessibility"],
+            correct: "A",
+        },
+        {
+            question: "A programmer intentionally writes code that disables competitor software. What is this unethical practice called?",
+            options: ["Malware development", "Code injection", "Reverse engineering", "Fair competition"],
+            correct: "A",
+        },
+        {
+            question: "The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly set up a program that would violate SOX compliance?",
+            options: ["Create system logs of all transactions", "Use system credentials instead of pass-through credentials", "Require users to confirm transactions", "Send audit logs to regulators"],
+            correct: "B",
+        },
+        {
+            question: "A developer finds a vulnerability in a financial system and exploits it for personal gain. This is an example of:",
+            options: ["Ethical hacking", "White-hat hacking", "Black-hat hacking", "Open-source development"],
+            correct: "C",
+        },
+        {
+            question: "Which of the following actions would be considered an ethical responsibility of a software developer?",
+            options: ["Reporting security vulnerabilities responsibly", "Hiding bugs to meet a deadline", "Using user data without permission", "Reverse-engineering proprietary software"],
+            correct: "A",
+        },
+        {
+            question: "What does GDPR stand for, and what is its purpose?",
+            options: ["General Data Protection Regulation protects personal data privacy", "Global Digital Processing Rights – protects software copyrights", "General Development Programming Rules – ensures ethical coding", "Government Data Processing Requirements – regulates data storage"],
+            correct: "A",
+        },
+        {
+            question: "A software company tracks users' locations without informing them. Which ethical guideline is being violated?",
+            options: ["User consent", "Debugging protocol", "Modular design", "Open-source licensing"],
+            correct: "A",
+        },
+        {
+            question: "What is an ethical way for a software developer to use open-source code in their project?",
+            options: ["Copying it without credit", "Following the licensing terms and attributing the original author", "Selling it under their name", "Removing copyright notices and republishing"],
+            correct: "B",
+        },
+        {
+            question: "What is the primary purpose of an operating system?",
+            options: ["Manage hardware resources", "Execute user applications", "Provide internet access", "Encrypt user data"],
+            correct: "A",
+        },
+        {
+            question: "Which of the following sorting algorithms has the worst-case time complexity of O(n²)?",
+            options: ["Merge Sort", "Quick Sort", "Bubble Sort", "Heap Sort"],
+            correct: "C",
+        },
+        {
+            question: "Which data structure uses LIFO (Last In, First Out)?",
+            options: ["Queue", "Stack", "Array", "Linked List"],
+            correct: "B",
+        },
+        {
+            question: "Which of the following is NOT an OOP principle?",
+            options: ["Encapsulation", "Polymorphism", "Abstraction", "Recursion"],
+            correct: "D",
+        },
+        {
+            question: "Which of these is a dynamically typed language?",
+            options: ["Java", "C++", "Python", "C#"],
+            correct: "C",
+        },
+        {
+            question: "What is the purpose of the 'finally' block in a try-catch statement?",
+            options: ["Handles an exception", "Executes code regardless of an exception", "Skips the catch block", "Stops execution"],
+            correct: "B",
+        },
+        {
+            question: "What does the acronym API stand for?",
+            options: ["Application Process Integration", "Automated Programming Interface", "Application Programming Interface", "Advanced Protocol Interaction"],
+            correct: "C",
+        },
+        {
+            question: "What is the purpose of a 'foreign key' in a database?",
+            options: ["Uniquely identifies a record", "Links tables together", "Speeds up queries", "Encrypts data"],
+            correct: "B",
+        },
+        {
+            question: "Which HTTP method is used to send data to a server to create or update a resource?",
+            options: ["GET", "POST", "DELETE", "PATCH"],
+            correct: "B",
+        },
+        {
+            question: "What is the primary function of the 'DNS' in networking?",
+            options: ["Provides internet access", "Translates domain names to IP addresses", "Encrypts network traffic", "Routes network packets"],
+            correct: "B",
+        },
+        {
+            question: "Which programming paradigm focuses on functions and immutability?",
+            options: ["Procedural", "Object-Oriented", "Functional", "Imperative"],
+            correct: "C",
+        },
+        {
+            question: "What keyword is used to inherit a class in Java?",
+            options: ["this", "inherits", "super", "extends"],
+            correct: "D",
+        },
+        {
+            question: "Which JavaScript method converts a string to an integer?",
+            options: ["parseInt()", "toInt()", "convertInt()", "int()"],
+            correct: "A",
+        },
+        {
+            question: "Which data structure is best suited for implementing a priority queue?",
+            options: ["Stack", "Heap", "Array", "Linked List"],
+            correct: "B",
+        },
+        {
+            question: "What is the result of 5 + '5' in JavaScript?",
+            options: ["10", "55", "Error", "NaN"],
+            correct: "B",
+        },
+        {
+            question: "Which of the following is NOT a NoSQL database?",
+            options: ["MongoDB", "Cassandra", "PostgreSQL", "Redis"],
+            correct: "C",
+        },
+        {
+            question: "What is the primary purpose of the 'git merge' command?",
+            options: ["Create a new branch", "Merge changes from one branch into another", "Delete a branch", "Clone a repository"],
+            correct: "B",
+        },
+        {
+            question: "What does the 'typeof' operator return for null in JavaScript?",
+            options: ["null", "undefined", "object", "string"],
+            correct: "C",
+        },
+        {
+            question: "Which command is used to create a new directory in a Linux terminal?",
+            options: ["mkdir", "cd", "rmdir", "touch"],
+            correct: "A",
+        },
+        {
+            question: "What is the main advantage of using a linked list over an array?",
+            options: ["Faster indexing", "Efficient memory usage for dynamic sizes", "Consumes less memory", "Elements are stored contiguously"],
+            correct: "B",
+        },
+    ];
+
+
+    function newQuestion() {
+        event.preventDefault(); //prevent form from submitting
+        if (questionNum <= questionTotal) {
+            //display question
+            questionDiv.innerHTML = `
+            <h2>Question # ${questionNum}</h2>
+            ${questionList[questionNum].question}
+            `;
+            //display options
+            optionsDiv.innerHTML = ""; //clear previous options
+            questionList[questionNum].options.forEach((option, index) => {
+                const letter = String.fromCharCode(65 + index); // Convert index to letter (A, B, C, D)
+                optionsDiv.innerHTML += `<input type="radio" name="option" value="${letter}">${letter}. ${option}<br>`;
+            });
+            //check answer
+            submit.onclick = function () {
+                const selectedOption = document.querySelector('input[name="option"]:checked');
+                if (selectedOption) {
+                    const answer = selectedOption.value;
+                    if (answer === questionList[questionNum].correct) {
+                        score++;
+                    } else {
+                        incorrect.push(questionNum);
+                    }
+                    questionNum++;
+                    newQuestion(); //move to the next question
+                } else {
+                    alert("Please select an answer.");
+                };
+            };
+        } else {
+            quiz.innerHTML = `
+            Practice Quiz Complete!
+            <br>
+            Score: ${score} / ${questionTotal}
+            <br>
+            Incorrect Question Numbers: ${incorrect}
+            `;
+        };
+    };
+
+</script>
+
+</html>
