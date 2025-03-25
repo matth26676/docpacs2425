@@ -32,7 +32,7 @@ while (true) {
                     case 0:
                         console.clear()
                         var Name = readline.question('Whats the name of this product?')
-                        var Price = parseFloat(readline.question('Whats around the price? (To facilate identifying your product)'))
+                        var Price = parseFloat(readline.question('Whats the esitmated price?'))
                         var Amount = parseFloat(readline.question('How many do you want?'))
 
                         var item = {
