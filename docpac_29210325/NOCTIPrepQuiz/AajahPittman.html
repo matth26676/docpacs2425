@@ -10,7 +10,7 @@
 <body>
 
     <h1>Programming Practice Quiz</h1>
-    <div id="quiz-container"></div><br>
+    <div id="quiz"></div><br>
     <button onclick="checkScore()">Submit</button><br>
     <div id="result" class="result"></div>
 
@@ -524,7 +524,7 @@
 
 
         function displayQuestions() {
-            var quizBox = document.getElementById("quiz box");
+            var quizBox = document.getElementById("quiz");
 
             questions.forEach((q, index) => {
                 var questionBox = document.createElement("div");
