@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lab 11-1</title>
+</head>
+
+<body>
+    <h3>CIW JavaScript Specialist</h3>
+    <hr />
+    <script type="text/javascript">
+        // this is where the Javascript goes  place below
+
+        let isOpera = (typeof opr !== 'undefined' && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        let isFirefox = typeof InstallTrigger !== 'undefined';
+        let isSafari =
+            /constructor/i.test(window.HTMLElement) ||
+            (function (p) {
+                return p.toString() === "[object SafariRemoteNotification]";
+            })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        let isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        let isBlink = (isChrome || isOpera) && !!window.CSS;
+        let isBrave = navigator.userAgent.indexOf('Brave') >= 0;
+
+        alert('isOpera: ' + isOpera + '\n' +
+            'isFirefox: ' + isFirefox + '\n' +
+            'isSafari: ' + isSafari + '\n' +
+            'isChrome: ' + isChrome + '\n' +
+            'isBlink: ' + isBlink + '\n' +
+            'isBrave: ' + isBrave);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #question-container {
+            display: none;
+        }
+
+        #ui-container {
+            display: none;
+        }
+
+        @keyframes fadeOut {
+                0% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+        }
+
+        #happy {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        #sad {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        img:not(.fade) {
+            opacity: 1;
+        }
+
+        img.fade {
+            animation: fadeOut 1s forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>NOCTI Practice Quiz</h1>
+    <button id="start-btn" onclick="startQuiz();">Start Quiz</button>
+
+    <div id="question-container">
+        <h2 id="question"></h2>
+        <div id="answers-container">
+
+        </div>
+    </div>
+    <br>
+    <div id="ui-container">
+        <p id="score-text">Score: <span id='score-value'>0</span></p>
+        <button id="next-btn" onClick="nextQuestion();">Next</button>
+        <button id="stop-btn" onClick="stop()">Stop</button>
+    </div>
+
+    <div id="wrong-answers-container">
+    </div>
+
+    <img id='happy' src="data:image/jpeg;base64,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">
+    <img id='sad' src="data:image/jpeg;base64,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">
+    <script>
+        const questions = [
+            {
+                question: "Which of the following errors is caused by calculation error?",
+                options: ["logical", "arithmatic", 'truncation', 'semantic'],
+                answer: 1
+            },
+            {
+                question: "Which of the following uses three basic control structures?",
+                options: ['structured programming', 'circular connector', 'modular construction', 'loop structure'],
+                answer: 0
+            },
+            {
+                question: "What type of principle is used for configuring preferences that allow the user to personalize an application?",
+                options: ['CLI', 'GUI', 'API', 'DOS'],
+                answer: 1
+            },
+            {
+                question: "All computer instructions are based on four basic logic patterns. These patterns are simple sequence, selection, loop and...",
+                options: ['trailer', 'modular', 'top-down', 'branch'],
+                answer: 3
+            },
+            {
+                question: "Two types of programs that create machine codes are the interpreter and the...",
+                options: ['assembler', 'object', 'compiler', 'source'],
+                answer: 2
+            },
+            {
+                question: "In the order of calculations in a program",
+                options: ['addition precedes division', 'parentheses precede exponentation', 'subtraction precedes addition', 'multiplication precedes exponentation'],
+                answer: 3
+            },
+            {
+                question: "One of the main goals in analyzing user requirements is to",
+                options: ['troubleshoot the problem', 'shutdown and maintain the system', 'keep the customer happy', 'elicit requirements from a user\'s point of view.'],
+                answer: 3
+            },
+            {
+                question: "A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?",
+                options: ['billing', 'documentation', 'implementation', 'test'],
+                answer: 2
+            },
+            {
+                question: "An example of a loop structure is",
+                options: ['DO UNTIL', 'SELECT IF', 'EXECUTE', 'NEXT'],
+                answer: 0
+            },
+            {
+                question: "Which of the following consists of a sequence of events to follow so they can be repeated?",
+                options: ['runtime', 'test files', 'trace route', 'script'],
+                answer: 3
+            },
+            {
+                "question": "Which of the following is used to store a set of instructions for a computer to execute?",
+                "options": ["Program", "Buffer", "Script", "Port"],
+                "answer": 0
+            },
+            {
+                "question": "Which control structure is used to execute a block of code as long as a condition is true?",
+                "options": ["For loop", "While loop", "If-else", "Switch case"],
+                "answer": 1
+            },
+            {
+                "question": "What type of error occurs when the program does not produce the expected result?",
+                "options": ["Logic error", "Syntax error", "Runtime error", "Compilation error"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is used to display output in the console in most programming languages?",
+                "options": ["print", "input", "output", "show"],
+                "answer": 0
+            },
+            {
+                "question": "What is the primary purpose of a compiler?",
+                "options": ["To execute code", "To convert high-level code to machine code", "To debug code", "To monitor code execution"],
+                "answer": 1
+            },
+            {
+                "question": "Which data structure stores a collection of items in an ordered way?",
+                "options": ["List", "Set", "Dictionary", "Tuple"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is a characteristic of object-oriented programming?",
+                "options": ["Procedural approach", "Encapsulation", "Sequence execution", "Sequential statements"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is the best description of an algorithm?",
+                "options": ["A set of instructions to solve a problem", "A computer program", "A flowchart", "A data structure"],
+                "answer": 0
+            },
+            {
+                "question": "What does the term 'IDE' stand for in software development?",
+                "options": ["Integrated Debugging Environment", "Integrated Development Environment", "Internal Development Engine", "Interactive Design Editor"],
+                "answer": 1
+            },
+            {
+                "question": "What type of loop runs a set of instructions a specific number of times?",
+                "options": ["For loop", "While loop", "Do-while loop", "Infinite loop"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is an example of a high-level programming language?",
+                "options": ["Assembly", "Python", "Machine code", "Binary"],
+                "answer": 1
+            },
+            {
+                "question": "Which operation has the highest precedence in mathematical expressions?",
+                "options": ["Addition", "Multiplication", "Exponentiation", "Subtraction"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is used to define a function in Python?",
+                "options": ["def", "function", "method", "define"],
+                "answer": 0
+            },
+            {
+                "question": "In object-oriented programming, what is used to describe an object’s attributes and behavior?",
+                "options": ["Class", "Function", "Method", "Loop"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is NOT a primitive data type?",
+                "options": ["Integer", "String", "Float", "Array"],
+                "answer": 3
+            },
+            {
+                "question": "In which phase of software development do you identify potential risks?",
+                "options": ["Design", "Planning", "Testing", "Implementation"],
+                "answer": 1
+            },
+            {
+                "question": "Which type of loop executes a block of code at least once before checking the condition?",
+                "options": ["While loop", "Do-while loop", "For loop", "Repeat-until loop"],
+                "answer": 1
+            },
+            {
+                "question": "What does SQL stand for?",
+                "options": ["Structured Query Language", "Sequential Query Language", "Systematic Query Language", "Standard Query Language"],
+                "answer": 0
+            },
+            {
+                "question": "Which data structure uses the LIFO (Last In First Out) principle?",
+                "options": ["Queue", "Stack", "Array", "Linked list"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is the best way to handle exceptions in Python?",
+                "options": ["if-else", "try-except", "switch-case", "catch-finally"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is an example of a relational operator?",
+                "options": ["=", "<>", "AND", "OR"],
+                "answer": 1
+            },
+            {
+                "question": "What is the purpose of the 'break' statement in loops?",
+                "options": ["To skip the current iteration", "To terminate the loop", "To restart the loop", "To continue the next iteration"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is an example of a version control system?",
+                "options": ["Git", "SQL", "Python", "JavaScript"],
+                "answer": 0
+            },
+            {
+                "question": "Which function is used to find the length of a string in Python?",
+                "options": ["length()", "size()", "count()", "len()"],
+                "answer": 3
+            },
+            {
+                "question": "In which phase of software development is the final product delivered to the customer?",
+                "options": ["Testing", "Deployment", "Design", "Planning"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is a non-relational database?",
+                "options": ["MySQL", "SQLite", "MongoDB", "PostgreSQL"],
+                "answer": 2
+            },
+            {
+                "question": "What is the purpose of an API in programming?",
+                "options": ["To convert code into machine-readable instructions", "To allow different software applications to communicate", "To control the execution of code", "To store data permanently"],
+                "answer": 1
+            },
+            {
+                "question": "Which keyword is used to define a constant in most programming languages?",
+                "options": ["final", "const", "immutable", "constant"],
+                "answer": 1
+            },
+            {
+                "question": "What is a 'syntax error'?",
+                "options": ["A mistake in the program's logic", "A typo in the code that prevents compilation", "An issue that occurs during runtime", "A warning generated by the compiler"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following is NOT an example of a loop control statement?",
+                "options": ["continue", "break", "exit", "return"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is a typical feature of a database management system (DBMS)?",
+                "options": ["Data integrity", "Data redundancy", "Data inconsistency", "Data encryption"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following sorting algorithms has the best average-case time complexity?",
+                "options": ["Bubble Sort", "Quick Sort", "Selection Sort", "Insertion Sort"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following programming languages is used for web development?",
+                "options": ["Python", "Java", "JavaScript", "C++"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is an example of a boolean data type value?",
+                "options": ["1", "True", "42", "None"],
+                "answer": 1
+            },
+            {
+                "question": "What is the purpose of the 'return' statement in a function?",
+                "options": ["To terminate the function", "To send a value back to the calling code", "To define the function's parameters", "To loop through the function's body"],
+                "answer": 1
+            },
+            {
+                "question": "Which of the following represents a binary value?",
+                "options": ["1", "True", "False", "Null"],
+                "answer": 0
+            },
+            {
+                "question": "What does HTTP stand for?",
+                "options": ["HyperText Transfer Protocol", "HyperText Transmission Protocol", "Hyper Transfer Text Protocol", "Hyperlink Text Transfer Protocol"],
+                "answer": 0
+            },
+            {
+                "question": "Which of the following is a feature of Agile development?",
+                "options": ["Waterfall model", "Fixed timelines", "Continuous feedback", "Documentation-heavy"],
+                "answer": 2
+            },
+            {
+                "question": "If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called",
+                "options": ["piracy", "larceny", "felony", "spyware"],
+                "answer": 0
+            },
+            {
+                "question": "A programmer has to make programming changes to an existing program. therefore the comments in the existing program must also be updated. The comments are referred to as _____ documentation.",
+                "options": ["internal", "external", "primary", "secondary"],
+                "answer": 0
+            }
+        ];
+
+        let startBtn = document.getElementById('start-btn');
+        let questionContainer = document.getElementById('question-container');
+        let questionText = document.getElementById('question');
+        let answersContainer = document.getElementById('answers-container');
+        let UIContainer = document.getElementById('ui-container');
+        let wrongAnswersContainer = document.getElementById('wrong-answers-container');
+        let scoreValueText = document.getElementById('score-value');
+
+        let happyGuy = document.getElementById('happy');
+        let sadGuy = document.getElementById('sad');
+
+        let currentQuestion = null;
+        let score = 0;
+        let totalQuestionsAnswered = 0;
+        let incorrectQuestions = new Set();
+
+        function startQuiz() {
+            startBtn.style.display = 'none';
+            questionContainer.style.display = 'block';
+            UIContainer.style.display = 'block';
+            wrongAnswersContainer.style.display = 'none';
+            totalQuestionsAnswered = 0;
+            incorrectQuestions.clear();
+            score = 0;
+            scoreValueText.innerText = score;
+            nextQuestion();
+        }
+
+        function buildQuestion(index) {
+            let question = questions[index];
+            currentQuestion = question;
+            questionText.innerText = question.question;
+            answersContainer.innerHTML = '';
+            question.options.forEach((option, i) => {
+                let radio = document.createElement('input');
+                let label = document.createElement('label');
+                let br = document.createElement('br');
+                radio.type = 'radio';
+                radio.name = 'answer';
+                radio.id = 'option' + i;
+                label.for = 'option' + i;
+                label.innerText = question.options[i];
+                label.appendChild(radio);
+                answersContainer.appendChild(label);
+                answersContainer.appendChild(br);
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion) {
+                let selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                if (selectedAnswer) {
+                    let answerIndex = parseInt(selectedAnswer.id.replace('option', ''));
+                    if (answerIndex === currentQuestion.answer) {
+                        score++;
+                        scoreValueText.innerText = score;
+                        happyGuy.style.display = 'block';
+                        happyGuy.classList.remove('fade');
+
+                        setTimeout(() => {
+                            happyGuy.classList.add('fade');
+                        }, 100);
+
+                    } else {
+                        sadGuy.style.display = 'block';
+                        sadGuy.classList.remove('fade');
+
+                        setTimeout(() => {
+                            sadGuy.classList.add('fade');
+                        }, 100);
+
+                        let question = currentQuestion;
+                        question.selectedAnswer = answerIndex;
+                        incorrectQuestions.add(question);
+
+                    }
+                    totalQuestionsAnswered++;
+                }
+            }
+
+            let newQuestionIndex = Math.floor(Math.random() * questions.length);
+            buildQuestion(newQuestionIndex);
+        }
+
+
+        function stop() {
+            questionContainer.style.display = 'none';
+            UIContainer.style.display = 'none';
+            startBtn.style.display = 'block';
+
+            alert(`Answered: ${totalQuestionsAnswered}\nCorrect: ${score}\nIncorrect: ${totalQuestionsAnswered - score}\nPercentage: ${Math.round((score / totalQuestionsAnswered) * 100)}%`);
+
+            wrongAnswersContainer.style.display = 'block';
+            wrongAnswersContainer.innerHTML = '';
+            incorrectQuestions.forEach((question, i) => {
+                let div = document.createElement('div');
+                let p = document.createElement('p');
+                let p2 = document.createElement('p');
+                let br = document.createElement('br');
+                p.innerText = question.question;
+                p2.innerText = `Selected: ${question.options[question.selectedAnswer]}\nCorrect: ${question.options[question.answer]}`;
+                div.appendChild(p);
+                div.appendChild(p2);
+                div.appendChild(br);
+                wrongAnswersContainer.appendChild(div);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
