@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Lab 9-1</title>
+
+        <script type="text/javascript">
+            <!--
+            function changeButton() {
+            if(document.getElementById('radiobuttonWebdev').checked === true) {
+            radioButton = document.getElementById('radiobuttonWebdev').value;
+            var header = document.getElementById('radiobuttonWebdev').value.innerHTML = "Web Developer!";
+             alert("Hello " + header);
+            }
+            if(document.getElementById('radiobuttonGovernment').checked === true) {
+            radioButton = document.getElementById('radiobuttonGovernment').value;
+            var header = document.getElementById('radiobuttonGovernment').value.innerHTML = "Uncle Sam!";
+            alert("Hello " + header);
+            }
+            if(document.getElementById('radiobuttonTranslate').checked === true) {
+            radioButton = document.getElementById('radiobuttonTranslate').value;
+            var header = document.getElementById('radiobuttonTranslate').value.innerHTML = "Google Translate!";
+            alert("Welcom to " + header);
+            }
+            if(document.getElementById('radiobuttonB').checked === true) {
+            radioButton = document.getElementById('radiobuttonB').value;
+            var header = document.getElementById('radiobuttonB').value.innerHTML = "Formbar!";
+            alert("Welcom to " + header);
+            }
+            if(document.getElementById('radiobuttonC').checked === true) {
+            radioButton = document.getElementById('radiobuttonC').value;
+            var header = document.getElementById('radiobuttonC').value.innerHTML = "Formbeta!";
+            alert("Welcom to " + header);
+            }
+            getTest();
+            }
+            -->
+        </script>
+    </head>
+
+    <body>
+        <h3>CIW JavaScript Specialist</h3>
+        <hr />
+        <form>
+            <p>Please select your favorite type of Website:</p>
+            <input id="radiobuttonWebdev" type="radio" name="group1" value="Web_Development" checked>Web Development</input><br />
+
+            <input id="radiobuttonGovernment" type="radio" name="group1" value="Government">Government</input><br />
+
+            <input id="radiobuttonTranslate" type="radio" name="group1" value="translate"> Translate </input><br />
+            <input id="radiobuttonB" type="radio" name="group1" value="B"> Formbar </input><br />
+            <input id="radiobuttonC" type="radio" name="group1" value="C"> Formbeta </input><br />
+            <script type="text/javascript">
+                <!--
+                function getTest()
+                {
+                document.write("<h3>CIW JavaScript Specialist</h3>");
+                document.write("<hr />");
+
+                if(radioButton == "Web_Development")
+                {
+                document.write("<p>Here's a great site for Web developers:</p><a href=http://www.CIWcertified.com/>CIW Certified</a>");
+                }
+                if(radioButton == "Government")
+                {
+                document.write("<p>Here's a great site if you're interested in U.S. government:</p><a href=http://www.whitehouse.gov/>The White House</a>");
+                }
+                if(radioButton == "translate")
+                {
+                document.write("<p>Here's Google translate:</p><a href=https://translate.google.com/>translate</a>");
+                }
+                if(radioButton == "B")
+                {
+                document.write("<p>Here's Formbar:</p><a href=https://formbar.yorktechapps.com/>Formbar</a>");
+                }
+                if(radioButton == "C")
+                {
+                document.write("<p>Here's Formbeta:</p><a href=https://formbeta.yorktechapps.com/>Formbeta</a>");
+                }
+                }
+                -->
+            </script>
+            <p>
+                <input type="button" onclick="changeButton()" value="Click Here" />
+            </p>
+        </form>
+    </body>
+</html>
