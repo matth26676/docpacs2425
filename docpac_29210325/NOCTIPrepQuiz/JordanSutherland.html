@@ -275,8 +275,10 @@ OUT = TEMP & right (in, text_len -n)`,
         for (selection of Object.keys(question.selections)) {
             let qDiv = document.createElement('div')
             qDiv.className = 'question'
+            qDiv.id = 'qDiv'
             let text = question.selections[selection]
             let radio = document.createElement('input')
+            radio.addEventListener('click', (event) => {submit(true, div)})
             radio.setAttribute('type', 'radio')
             radio.setAttribute('name', question.text)
             radio.className = selection
@@ -300,27 +302,26 @@ OUT = TEMP & right (in, text_len -n)`,
 
     }
 
-    function submit() {
+    function submit(bool = false, elem = document.querySelectorAll('#qDiv')) {
         let correct = questions.length * 4
-        let questionsDiv = document.querySelectorAll('input[type="radio"]')
-        for (question of questionsDiv) {
-            let found = questions.find((element) => element.text == question.name)
-            let parent = question.parentElement
-            if (question.checked && question.className == found.right) {
-                parent.setAttribute('class', 'right')
-            } else if (question.className == found.right) {
-                correct--
-                parent.setAttribute('class', 'couldBeRight')
-            } else {
-                correct--
-                let right = false
-                for (child of parent.parentElement.querySelectorAll('input[type="radio"]:not(.right)')) {
-                    if (child.checked) parent.setAttribute('class', 'couldBeWrong'), right = true
+        if (!elem.length && bool) elem = [elem]
+        for (elem of elem) {
+            for (child of elem.querySelectorAll('input[type="radio"]')) {
+                parent = child.parentElement
+                let found = questions.find((element) => element.text == child.name)
+                if (found.right == child.className) {
+                    parent.setAttribute('class', 'right')
+                    if (child.checked) correct++
+                } else if (child.checked) {
+                    parent.setAttribute('class', 'wrong')
                 }
-                if (!right) parent.setAttribute('class', 'wrong')
+                else {
+                    parent.setAttribute('class', 'couldBeRight')
+                }
+                correct--
             }
         }
-        alert(`You got ${correct} / ${questions.length}`)
-    }
+        if (!bool) alert(`You got ${correct} / ${questions.length}`)
+        }
 </script>
 </html>
