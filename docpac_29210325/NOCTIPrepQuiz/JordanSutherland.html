@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,13 @@
             text-align: center;
             font-size: 2vi;
         }
+
         h1 {
             font-size: 5vi;
         }
+
         button {
-            width:  5vi;
+            width: 5vi;
             height: 4vi;
             font-size: 1cqi;
             text-align: center;
@@ -23,43 +26,54 @@
             border-color: gray;
             transition: all 200ms;
         }
+
         #submit {
             position: fixed;
             bottom: 5%;
         }
+
         button:hover {
             transform: translateY(-5px);
             border: outset gray;
         }
+
         button:active {
             transform: translateY(0px);
             border: inset;
         }
+
         input {
             width: 1.5vi;
             height: 1.5vi;
         }
+
         .question {
             display: block;
             text-align: left;
         }
+
         h3 {
             margin-bottom: 0;
         }
+
         .right {
             background-color: green !important;
         }
-        .wrong {   
+
+        .wrong {
             background-color: red;
         }
+
         .couldBeWrong {
             background-color: yellow !important;
         }
+
         .couldBeRight {
             background-color: yellow !important;
         }
     </style>
 </head>
+
 <body>
     <h1>Nocti Quiz 😊</h1>
     <button onclick="start(event)">Start Quiz</button>
@@ -70,168 +84,413 @@
 </body>
 
 <script>
-    let questions = [{text:'Which of the following errors is caused by a calculation error?', selections:{A:'logical', B:'arithmetic', C:'truncation', D:'semantic'}, right:'B'},
-
-    {text:'Which of the following uses three basic control structures to form highly structured units of code?', 
-    selections:{A:'Structured Programming', B:'Circular Connector', C:'Modular Construction', D:'Loop Structure'}, right:'A'},
-
-    {text:'What type of principle is used for configuring preferences that allow the user to personalize an application?', 
-    selections:{A:'CLI', B:'GUI', C:'API', D:'DOS'}, right:'B'},
-
-    {text:'All computer instructions are based on four basic logical patterns. These patterns are simple sequence, selection, loop, and', 
-    selections:{A:'Trailer', B:'Modular', C:'Top-Down', D:'Branch'}, right:'D'},
-
-    {text:'If the memory speed of the bus is 750Mhz, and the CPU is operating at twice the speed of the bus, what is the processor speed?', 
-    selections:{A:'375 MHz', B:'750 MHz', C:' 1.5 GHz', D:' 2GHz'}, right:'C'},
-
-    {text:'Two types of programs that create machine codes are the interpreter and the', 
-    selections:{A:'Assembler', B:'Object', C:'Compiler', D:'Source'}, right:'C'},
-
-    {text:'In the order of calculations in a program', 
-    selections:{A:'Addition precedes Division', B:'Parentheses precede exponentiation', C:'Subtraction precedes addition', D:'Multiplication precedes exponentiation'}, right:'B'},
-
-    {text:'When the code below is executed, strAdd will be equal to', block:`strFirst = "123"<br>
+    let questions = [{ text: 'Which of the following errors is caused by a calculation error?', selections: { A: 'logical', B: 'arithmetic', C: 'truncation', D: 'semantic' }, right: 'B' },
+    {
+        text: 'Which of the following uses three basic control structures to form highly structured units of code?',
+        selections: { A: 'Structured Programming', B: 'Circular Connector', C: 'Modular Construction', D: 'Loop Structure' }, right: 'A'
+    },
+    {
+        text: 'What type of principle is used for configuring preferences that allow the user to personalize an application?',
+        selections: { A: 'CLI', B: 'GUI', C: 'API', D: 'DOS' }, right: 'B'
+    },
+    {
+        text: 'All computer instructions are based on four basic logical patterns. These patterns are simple sequence, selection, loop, and',
+        selections: { A: 'Trailer', B: 'Modular', C: 'Top-Down', D: 'Branch' }, right: 'D'
+    },
+    {
+        text: 'If the memory speed of the bus is 750Mhz, and the CPU is operating at twice the speed of the bus, what is the processor speed?',
+        selections: { A: '375 MHz', B: '750 MHz', C: ' 1.5 GHz', D: ' 2GHz' }, right: 'C'
+    },
+    {
+        text: 'Two types of programs that create machine codes are the interpreter and the',
+        selections: { A: 'Assembler', B: 'Object', C: 'Compiler', D: 'Source' }, right: 'C'
+    },
+    {
+        text: 'In the order of calculations in a program',
+        selections: { A: 'Addition precedes Division', B: 'Parentheses precede exponentiation', C: 'Subtraction precedes addition', D: 'Multiplication precedes exponentiation' }, right: 'B'
+    },
+    {
+        text: 'When the code below is executed, strAdd will be equal to', block: `strFirst = "123"<br>
 srtSecond = "456"<br>
 strAdd = strFirst + strSecond`,
-    selections:{A:'"579"', B:'"123 + 456"', C:'"123456"', D:' "strFirst + strSecond"'}, right:'C'},
-
-    {text:'If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called', 
-    selections:{A:'Piracy', B:'Larceny', C:'Felony', D:'Spyware'}, right:'A'},
-
-    {text:'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with compliance with SOX?', 
-    selections:{A:'Create system logs of the transactions taken in the session', 
-    B:'Require a user to click three times when they are sure they want to proceed', 
-    C:'Help a user to request assistance from the system administrators', 
-    D:'Utilize system credentials instead of pass-through credentials'}, right:'D'},
-
-    {text:'The following programming flowchart symbol is a/an ______ symbol.', block:'◇',
-    selections:{A:'Processing', B:'input/Output', C:'Decision', D:'Connector'}, right:'C'},
-    
-    {text:'One of the main goals in analyzing user requirements is to', 
-    selections:{A:'Troubleshoot the problem', B:'Shutdown and maintain the system', C:'Keep the customer happy', D:'Elicit requirements from the users point of view.'}, right:'D'},
-
-    {text:'If a record has the following field lengths, what is the record length?', block:'Name=35,ZipCode=5,District=7',
-    selections:{A:'42', B:'47', C:'54', D:'56'}, right:'B'},
-
-    {text:'The following programming flowchart symbol is a/an ______ symbol.', block:'▱',
-    selections:{A:'Processing', B:'input/Output', C:'Decision', D:'Connector'}, right:'B'},
-
-    {text:'A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?', 
-    selections:{A:'Billing', B:'Documentation', C:'Implementation', D:'Test'}, right:'C'},
-
-    {text:'A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and set of data. What is the best data structure the programmer can use?', 
-    selections:{A:'Array', B:'Constant', C:'String', D:'Field'}, right:'A'},
-    
-    {text:'When a programmer is ready to create executable code, what process is used?', 
-    selections:{A:'Debugging', B:'Editing', C:'Compiling', D:'Disassembling'}, right:'C'},
-
-    {text:'The source document and _______ should follow the same order.', 
-    selections:{A:'Input screen design', B:'Output screen design', C:'Decision-type operator symbols', D:'Processing function symbols'}, right:'A'},
-
-    {text:'Which of the following is the correct name for a variable?', 
-    selections:{A:'State_Zipcode', B:'State+Zipcode', C:'State Zipcode', D:'State=Zipcode'}, right:'A'},
-
-    {text:'Why is the following expression invalid?', block:'A=10 + "New Data"',
-    selections:{A:'Variable 5 is not defined', B:'Data types are mixed', C:'"New Data" is not a string', D:'"New Data " equals zero'}, right:'B'},
-
-    {text:'An output field has "Los Angeles" moved to it and when examined contains "Los Angel." This indicates a/an ______ error.', 
-    selections:{A:'Logical', B:'Arithmetic', C:'Truncation', D:'Semantic'}, right:'C'},
-
-    {text:'A programmer needs to define the type of the value for a variable. What predefined set of characteristics for a variable can the programmer choose?', 
-    selections:{A:'Storage Location', B:'Return Value', C:'Method Modifier', D:'Data Type'}, right:'D'},
-
-    {text:'One example of scripting (text processing) language is', 
-    selections:{A:'Pearl', B:'C++', C:'Fortran', D:'Beta'}, right:'A'},
-
-    {text:'Which of the following enables the use of "Plane English" queries?', 
-    selections:{A:'BASIC', B:'FORTRAN', C:'SQL', D:'C++'}, right:'C'},
-
-    {text:'An example of loop structure is', 
-    selections:{A:'DO UNTIL', B:'SELECT IF', C:'EXECUTE', D:'NEXT'}, right:'A'},
-
-    {text:'Compile errors can be caused by', 
-    selections:{A:'Bad syntax', B:'Input data', C:'Insufficient test data', D:'Incorrect user specification'}, right:'A'},
-
-    {text:'Typically after successful interrogation testing, a ______ test preformed to complete a front-to-back execution of the entire application.', 
-    selections:{A:'System', B:'Unit', C:'Fuzz', D:'Beta'}, right:'A'},
-
-    {text:'The implementation phase consists of coding, testing, and', 
-    selections:{A:'Designing', B:'Building Prototype programs', C:'Establishing Requirements', D:'Integration'}, right:'D'},
-
-    {text:'When', block:`Sub Form_Click( )<br>
+        selections: { A: '"579"', B: '"123 + 456"', C: '"123456"', D: ' "strFirst + strSecond"' }, right: 'C'
+    },
+    {
+        text: 'If a programmer downloads a copy of Microsoft SQL Server from a file-sharing website without paying for it, the programmer has committed an offense called',
+        selections: { A: 'Piracy', B: 'Larceny', C: 'Felony', D: 'Spyware' }, right: 'A'
+    },
+    {
+        text: 'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly setup a program that would cause problems with compliance with SOX?',
+        selections: {
+            A: 'Create system logs of the transactions taken in the session',
+            B: 'Require a user to click three times when they are sure they want to proceed',
+            C: 'Help a user to request assistance from the system administrators',
+            D: 'Utilize system credentials instead of pass-through credentials'
+        }, right: 'D'
+    },
+    {
+        text: 'The following programming flowchart symbol is a/an ______ symbol.', block: '◇',
+        selections: { A: 'Processing', B: 'input/Output', C: 'Decision', D: 'Connector' }, right: 'C'
+    },
+    {
+        text: 'One of the main goals in analyzing user requirements is to',
+        selections: { A: 'Troubleshoot the problem', B: 'Shutdown and maintain the system', C: 'Keep the customer happy', D: 'Elicit requirements from the users point of view.' }, right: 'D'
+    },
+    {
+        text: 'If a record has the following field lengths, what is the record length?', block: 'Name=35,ZipCode=5,District=7',
+        selections: { A: '42', B: '47', C: '54', D: '56' }, right: 'B'
+    },
+    {
+        text: 'The following programming flowchart symbol is a/an ______ symbol.', block: '▱',
+        selections: { A: 'Processing', B: 'input/Output', C: 'Decision', D: 'Connector' }, right: 'B'
+    },
+    {
+        text: 'A programmer is starting a new programming project. During what phase of the programming project should the programmer begin planning for data storage?',
+        selections: { A: 'Billing', B: 'Documentation', C: 'Implementation', D: 'Test' }, right: 'C'
+    },
+    {
+        text: 'A programmer needs to manipulate data that consists of a sequence of numbers that must be used as both an individual object and set of data. What is the best data structure the programmer can use?',
+        selections: { A: 'Array', B: 'Constant', C: 'String', D: 'Field' }, right: 'A'
+    },
+    {
+        text: 'When a programmer is ready to create executable code, what process is used?',
+        selections: { A: 'Debugging', B: 'Editing', C: 'Compiling', D: 'Disassembling' }, right: 'C'
+    },
+    {
+        text: 'The source document and _______ should follow the same order.',
+        selections: { A: 'Input screen design', B: 'Output screen design', C: 'Decision-type operator symbols', D: 'Processing function symbols' }, right: 'A'
+    },
+    {
+        text: 'Which of the following is the correct name for a variable?',
+        selections: { A: 'State_Zipcode', B: 'State+Zipcode', C: 'State Zipcode', D: 'State=Zipcode' }, right: 'A'
+    },
+    {
+        text: 'Why is the following expression invalid?', block: 'A=10 + "New Data"',
+        selections: { A: 'Variable 5 is not defined', B: 'Data types are mixed', C: '"New Data" is not a string', D: '"New Data " equals zero' }, right: 'B'
+    },
+    {
+        text: 'An output field has "Los Angeles" moved to it and when examined contains "Los Angel." This indicates a/an ______ error.',
+        selections: { A: 'Logical', B: 'Arithmetic', C: 'Truncation', D: 'Semantic' }, right: 'C'
+    },
+    {
+        text: 'A programmer needs to define the type of the value for a variable. What predefined set of characteristics for a variable can the programmer choose?',
+        selections: { A: 'Storage Location', B: 'Return Value', C: 'Method Modifier', D: 'Data Type' }, right: 'D'
+    },
+    {
+        text: 'One example of scripting (text processing) language is',
+        selections: { A: 'Pearl', B: 'C++', C: 'Fortran', D: 'Beta' }, right: 'A'
+    },
+    {
+        text: 'Which of the following enables the use of "Plane English" queries?',
+        selections: { A: 'BASIC', B: 'FORTRAN', C: 'SQL', D: 'C++' }, right: 'C'
+    },
+    {
+        text: 'An example of loop structure is',
+        selections: { A: 'DO UNTIL', B: 'SELECT IF', C: 'EXECUTE', D: 'NEXT' }, right: 'A'
+    },
+    {
+        text: 'Compile errors can be caused by',
+        selections: { A: 'Bad syntax', B: 'Input data', C: 'Insufficient test data', D: 'Incorrect user specification' }, right: 'A'
+    },
+    {
+        text: 'Typically after successful interrogation testing, a ______ test preformed to complete a front-to-back execution of the entire application.',
+        selections: { A: 'System', B: 'Unit', C: 'Fuzz', D: 'Beta' }, right: 'A'
+    },
+    {
+        text: 'The implementation phase consists of coding, testing, and',
+        selections: { A: 'Designing', B: 'Building Prototype programs', C: 'Establishing Requirements', D: 'Integration' }, right: 'D'
+    },
+    {
+        text: 'When', block: `Sub Form_Click( )<br>
 IN = TEXT 1.VALUE<br>
 TEXT1_len = LEN$(IN)<br>
 TEMP = TEMP & mid (in, I, 1)<br>
 NEXT<br>
 OUT = TEMP & right (in, text_len -n)`,
-    selections:{A:'7', B:'8', C:'9', D:'10'}, right:'A'},
-
-    {text:'A data element is intended to contain a range from 15 to 30 and after testing it contains 32. What kind of error is this?', 
-    selections:{A:'Truncation', B:'Rounding', C:'Run Time', D:'Boundary'}, right:'D'},
-    
-    {text:'Which of the following consists of a sequence of events to follow so they can be repeated?', 
-    selections:{A:'Runtime', B:'Test Files', C:'Trace Route', D:'Script'}, right:'D'},
-
-    {text:'Maintenance refers to changes to a system in operating arising from error corrections, performance improvements, changes int the business environment and', 
-    selections:{A:'Enhancements and functions', B:'Application Requirements', C:'Referencing Software', D:'Material Requirements'}, right:'A'},
-
-    {text:'One method of ensuring that updates to documentation are efficiently distributed is to', 
-    selections:{A:'Send customers printed documents annually regardless of whether there have been changes', 
-    B:'Make changes in an online help system rather then printed sources', 
-    C:'Send fliers containing only the changes rather then a new printed volumes', 
-    D:'Make changes only on a pre-specified schedule'}, right:'B'},
-
-    {text:'A programmer has to make programmer changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as ______ documentation.', 
-    selections:{A:'External', B:'Internal', C:'Primary', D:'Secondary'}, right:'B'},
-
-    {text:'A programmer has decided to create a pop-up window that will display a brief description of a controls purpose when the mouse hovers over it. This pop-up window is known as a', 
-    selections:{A:'Hyper Clip', B:'Tool Tip', C:'Task Bar', D:'Help Bar'}, right:'B'},
-
-    {text: 'If the memory speed of the bus is 750MHz, and the CPU is operating at twice the speed of the bus, what is the processor speed?', 
-    selections: {A: '1500 MHz', B: '375 MHz', C: '2000 MHz', D: '1000 MHz'}, right: 'A'},
-
-    {text: 'The Sarbanes-Oxley Act (SOX) requires monitoring and documentation of transactions. How could a programmer mistakenly set up a program that would cause problems with compliance with SOX?', 
-    selections: {A: 'Failing to document transaction logs', B: 'Using an inefficient database system', C: 'Creating large files for data storage', D: 'Designing a program without user authentication'}, right: 'A'},
-
-    {text: 'Which of the following is the correct name for a variable?', 
-    selections: {A: '1variable', B: '$varName', C: 'var-name', D: 'varName!'}, right: 'B'},
-
-    {text: 'Which of the following is a control structure used for decision making?', 
-    selections: {A: 'Loop', B: 'Function', C: 'Selection', D: 'Sequence'}, right: 'C'},
-
-    {text: 'What type of programming language is designed to allow for easy interaction with hardware?', 
-    selections: {A: 'High-level language', B: 'Assembly language', C: 'Object-oriented language', D: 'Declarative language'}, right: 'B'},
-
-    {text: 'Which of the following is an example of an iterative process in programming?', 
-    selections: {A: 'Conditional statement', B: 'Loop', C: 'Variable declaration', D: 'Function definition'}, right: 'B'},
-
-    {text: 'What is the primary purpose of an operating system?', 
-    selections: {A: 'To manage hardware resources', B: 'To perform calculations', C: 'To write code', D: 'To handle user input'}, right: 'A'},
-
-    {text: 'Which of the following would NOT be considered good practice for software security?', 
-    selections: {A: 'Input validation', B: 'Strong password policies', C: 'Storing passwords in plain text', D: 'Encryption of sensitive data'}, right: 'C'},
-
-    {text: 'What type of loop will execute at least once, regardless of the condition?', 
-    selections: {A: 'While loop', B: 'Do-while loop', C: 'For loop', D: 'Infinite loop'}, right: 'B'},
-
-    {text: 'What is the purpose of an API (Application Programming Interface)?', 
-    selections: {A: 'To allow communication between different software components', B: 'To store data for a web application', C: 'To encrypt sensitive information', D: 'To define the structure of a database'}, right: 'A'},
-
-    {text: 'What does the acronym "HTTP" stand for?', 
-    selections: {A: 'Hyper Transfer Text Protocol', B: 'Hyper Text Transfer Protocol', C: 'Hyper Transmission Transfer Protocol', D: 'Hyper Technical Transfer Protocol'}, right: 'B'},
-
-    {text: 'In a relational database, what is the purpose of a primary key?', 
-    selections: {A: 'To uniquely identify a record in a table', B: 'To link one table to another', C: 'To store user credentials', D: 'To define the data type of a column'}, right: 'A'},
-
-    {text: 'Which of the following is a characteristic of object-oriented programming (OOP)?', 
-    selections: {A: 'Linear programming structure', B: 'Use of variables and functions only', C: 'Encapsulation and inheritance', D: 'Focus on hardware interaction'}, right: 'C'},
-
-    {text: 'Which of the following is a non-volatile type of memory?', 
-    selections: {A: 'RAM', B: 'Cache', C: 'ROM', D: 'Register'}, right: 'C'},
-
-    {text: 'What does the term "debugging" refer to in programming?', 
-    selections: {A: 'Writing new features into a program', B: 'Removing unnecessary code', C: 'Identifying and fixing errors in code', D: 'Refactoring code for efficiency'}, right: 'C'},
-    ]
+        selections: { A: '7', B: '8', C: '9', D: '10' }, right: 'A'
+    },
+    {
+        text: 'A data element is intended to contain a range from 15 to 30 and after testing it contains 32. What kind of error is this?',
+        selections: { A: 'Truncation', B: 'Rounding', C: 'Run Time', D: 'Boundary' }, right: 'D'
+    },
+    {
+        text: 'Which of the following consists of a sequence of events to follow so they can be repeated?',
+        selections: { A: 'Runtime', B: 'Test Files', C: 'Trace Route', D: 'Script' }, right: 'D'
+    },
+    {
+        text: 'Maintenance refers to changes to a system in operating arising from error corrections, performance improvements, changes int the business environment and',
+        selections: { A: 'Enhancements and functions', B: 'Application Requirements', C: 'Referencing Software', D: 'Material Requirements' }, right: 'A'
+    },
+    {
+        text: 'One method of ensuring that updates to documentation are efficiently distributed is to',
+        selections: {
+            A: 'Send customers printed documents annually regardless of whether there have been changes',
+            B: 'Make changes in an online help system rather then printed sources',
+            C: 'Send fliers containing only the changes rather then a new printed volumes',
+            D: 'Make changes only on a pre-specified schedule'
+        }, right: 'B'
+    },
+    {
+        text: 'A programmer has to make programmer changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as ______ documentation.',
+        selections: { A: 'External', B: 'Internal', C: 'Primary', D: 'Secondary' }, right: 'B'
+    },
+    {
+        text: 'A programmer has decided to create a pop-up window that will display a brief description of a controls purpose when the mouse hovers over it. This pop-up window is known as a',
+        selections: { A: 'Hyper Clip', B: 'Tool Tip', C: 'Task Bar', D: 'Help Bar' }, right: 'B'
+    },
+    {
+        text: 'Which of the following is the correct name for a variable?',
+        selections: { A: '1variable', B: '$varName', C: 'var-name', D: 'varName!' }, right: 'B'
+    },
+    {
+        text: 'Which of the following is a control structure used for decision making?',
+        selections: { A: 'Loop', B: 'Function', C: 'Selection', D: 'Sequence' }, right: 'C'
+    },
+    {
+        text: 'What type of programming language is designed to allow for easy interaction with hardware?',
+        selections: { A: 'High-level language', B: 'Assembly language', C: 'Object-oriented language', D: 'Declarative language' }, right: 'B'
+    },
+    {
+        text: 'What is the primary purpose of an operating system?',
+        selections: { A: 'To manage hardware resources', B: 'To perform calculations', C: 'To write code', D: 'To handle user input' }, right: 'A'
+    },
+    {
+        text: 'Which of the following would NOT be considered good practice for software security?',
+        selections: { A: 'Input validation', B: 'Strong password policies', C: 'Storing passwords in plain text', D: 'Encryption of sensitive data' }, right: 'C'
+    },
+    {
+        text: 'What type of loop will execute at least once, regardless of the condition?',
+        selections: { A: 'While loop', B: 'Do-while loop', C: 'For loop', D: 'Infinite loop' }, right: 'B'
+    },
+    {
+        text: 'What is the purpose of an API (Application Programming Interface)?',
+        selections: { A: 'To allow communication between different software components', B: 'To store data for a web application', C: 'To encrypt sensitive information', D: 'To define the structure of a database' }, right: 'A'
+    },
+    {
+        text: 'What does the acronym "HTTP" stand for?',
+        selections: { A: 'Hyper Transfer Text Protocol', B: 'Hyper Text Transfer Protocol', C: 'Hyper Transmission Transfer Protocol', D: 'Hyper Technical Transfer Protocol' }, right: 'B'
+    },
+    {
+        text: 'In a relational database, what is the purpose of a primary key?',
+        selections: { A: 'To uniquely identify a record in a table', B: 'To link one table to another', C: 'To store user credentials', D: 'To define the data type of a column' }, right: 'A'
+    },
+    {
+        text: 'Which of the following is a characteristic of object-oriented programming (OOP)?',
+        selections: { A: 'Linear programming structure', B: 'Use of variables and functions only', C: 'Encapsulation and inheritance', D: 'Focus on hardware interaction' }, right: 'C'
+    },
+    {
+        text: 'Which of the following is a non-volatile type of memory?',
+        selections: { A: 'RAM', B: 'Cache', C: 'ROM', D: 'Register' }, right: 'C'
+    },
+    {
+        text: 'What does the term "debugging" refer to in programming?',
+        selections: { A: 'Writing new features into a program', B: 'Removing unnecessary code', C: 'Identifying and fixing errors in code', D: 'Refactoring code for efficiency' }, right: 'C'
+    }, 
+    {
+        text: 'Which of the following is used to manage memory allocation and deallocation automatically?',
+        selections: { A: 'Manual Memory Management', B: 'Garbage Collection', C: 'Memory Caching', D: 'Memory Mapping' },
+        right: 'B'
+    },
+    {
+        text: 'Which programming paradigm focuses on objects and their interactions?',
+        selections: { A: 'Procedural Programming', B: 'Functional Programming', C: 'Object-Oriented Programming', D: 'Declarative Programming' },
+        right: 'C'
+    },
+    {
+        text: 'Which of the following is the correct name for a function in a program?',
+        selections: { A: 'function_name()', B: 'function name()', C: 'function-name()', D: 'function.name()' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following data types is used to store true or false values?',
+        selections: { A: 'int', B: 'bool', C: 'char', D: 'string' },
+        right: 'B'
+    },
+    {
+        text: 'What does the acronym "JSON" stand for?',
+        selections: { A: 'JavaScript Object Notation', B: 'Java Simple Object Notation', C: 'Java Standard Object Notation', D: 'JavaScript Structured Object Notation' },
+        right: 'A'
+    },
+    {
+        text: 'What is the purpose of a stack data structure?',
+        selections: { A: 'FIFO storage', B: 'LIFO storage', C: 'Dynamic storage', D: 'Sorted storage' },
+        right: 'B'
+    },
+    {
+        text: 'In the following code snippet, what will the value of x be after execution?',
+        block: 'x = 5;<br> x += 10;',
+        selections: { A: '5', B: '10', C: '15', D: '20' },
+        right: 'C'
+    },
+    {
+        text: 'Which of the following is an example of an interpreted language?',
+        selections: { A: 'Java', B: 'C++', C: 'Python', D: 'C' },
+        right: 'C'
+    },
+    {
+        text: 'Which of the following is used for preventing SQL injection attacks?',
+        selections: { A: 'Data encryption', B: 'Input validation', C: 'Output sanitization', D: 'User authentication' },
+        right: 'B'
+    },
+    {
+        text: 'What kind of error occurs when there is an attempt to access a variable that does not exist?',
+        selections: { A: 'Logic error', B: 'Syntax error', C: 'Runtime error', D: 'Type error' },
+        right: 'C'
+    },
+    {
+        text: 'Which control structure is used to repeat a block of code a specific number of times?',
+        selections: { A: 'For loop', B: 'While loop', C: 'If statement', D: 'Switch statement' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following is a characteristic of functional programming?',
+        selections: { A: 'Use of classes and objects', B: 'State changes', C: 'Pure functions and immutability', D: 'Loops and conditions' },
+        right: 'C'
+    },
+    {
+        text: 'In SQL, what is used to sort the result set of a query?',
+        selections: { A: 'ORDER BY', B: 'SELECT', C: 'GROUP BY', D: 'HAVING' },
+        right: 'A'
+    },
+    {
+        text: 'What does the acronym "SQL" stand for?',
+        selections: { A: 'Standard Query Language', B: 'Structured Query Language', C: 'Sequential Query Language', D: 'Simple Query Language' },
+        right: 'B'
+    },
+    {
+        text: 'In object-oriented programming, what is the term for hiding the internal implementation details of an object?',
+        selections: { A: 'Encapsulation', B: 'Inheritance', C: 'Abstraction', D: 'Polymorphism' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following operators is used for concatenation in most programming languages?',
+        selections: { A: '&', B: '+', C: '-', D: '=' },
+        right: 'B'
+    },
+    {
+        text: 'What is the main purpose of a compiler?',
+        selections: { A: 'To execute code directly', B: 'To convert high-level code into machine code', C: 'To debug code', D: 'To manage memory' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following is an example of a markup language?',
+        selections: { A: 'HTML', B: 'Python', C: 'C++', D: 'Java' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following is used to define the structure of a database in SQL?',
+        selections: { A: 'CREATE TABLE', B: 'INSERT INTO', C: 'SELECT', D: 'DROP TABLE' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following would be used to terminate a program in C?',
+        selections: { A: 'exit(0);', B: 'return 0;', C: 'terminate();', D: 'end();' },
+        right: 'A'
+    },
+    {
+        text: 'What is the main goal of version control systems like Git?',
+        selections: { A: 'To store backups of code', B: 'To track changes and collaborate with others', C: 'To execute code remotely', D: 'To create automated tests' },
+        right: 'B'
+    }, {
+        text: 'Which of the following is an example of a dynamic data structure?',
+        selections: { A: 'Array', B: 'Stack', C: 'Linked List', D: 'String' },
+        right: 'C'
+    },
+    {
+        text: 'What is the primary purpose of an operating system kernel?',
+        selections: { A: 'To manage user interfaces', B: 'To perform network communications', C: 'To manage system resources', D: 'To run software applications' },
+        right: 'C'
+    },
+    {
+        text: 'Which of the following is a non-relational database?',
+        selections: { A: 'MySQL', B: 'SQLite', C: 'MongoDB', D: 'PostgreSQL' },
+        right: 'C'
+    },
+    {
+        text: 'In object-oriented programming, what does the term "polymorphism" refer to?',
+        selections: { A: 'Inheritance of attributes and methods', B: 'The ability to take many forms', C: 'The ability to override methods', D: 'Encapsulation of private data' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following is NOT a feature of functional programming?',
+        selections: { A: 'First-class functions', B: 'Immutability', C: 'Side effects', D: 'Recursion' },
+        right: 'C'
+    },
+    {
+        text: 'What is the purpose of an index in a database?',
+        selections: { A: 'To speed up data retrieval', B: 'To define the structure of a table', C: 'To secure data', D: 'To provide backup storage' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following is a common method for detecting memory leaks in a program?',
+        selections: { A: 'Profiling', B: 'Caching', C: 'Garbage collection', D: 'Code review' },
+        right: 'A'
+    },
+    {
+        text: 'Which of the following represents a valid HTML tag for creating a hyperlink?',
+        selections: { A: '<a>', B: '<link>', C: '<href>', D: '<hyper>' },
+        right: 'A'
+    },
+    {
+        text: 'In which of the following programming languages are closures a key feature?',
+        selections: { A: 'Java', B: 'JavaScript', C: 'C#', D: 'Python' },
+        right: 'B'
+    },
+    {
+        text: 'What type of algorithm does a sorting function like QuickSort implement?',
+        selections: { A: 'Divide and conquer', B: 'Dynamic programming', C: 'Greedy algorithm', D: 'Backtracking' },
+        right: 'A'
+    },
+    {
+        text: 'What is the primary advantage of using multithreading in a program?',
+        selections: { A: 'Improved memory management', B: 'Parallel execution of tasks', C: 'Simplified code', D: 'Reduced complexity' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following best describes a deadlock in a system?',
+        selections: { A: 'A system crash', B: 'A cycle of dependencies preventing execution', C: 'A memory leak', D: 'Excessive disk I/O' },
+        right: 'B'
+    },
+    {
+        text: 'In SQL, which command is used to modify an existing record in a table?',
+        selections: { A: 'INSERT INTO', B: 'UPDATE', C: 'DELETE', D: 'SELECT' },
+        right: 'B'
+    },
+    {
+        text: 'What is the main purpose of using a version control system in software development?',
+        selections: { A: 'To ensure code is optimized', B: 'To enable team collaboration and track changes', C: 'To automate testing', D: 'To secure sensitive data' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following algorithms is typically used for searching in a sorted array?',
+        selections: { A: 'Linear Search', B: 'Binary Search', C: 'Breadth-First Search', D: 'Depth-First Search' },
+        right: 'B'
+    },
+    {
+        text: 'Which programming concept allows a class to inherit properties and methods from another class?',
+        selections: { A: 'Encapsulation', B: 'Polymorphism', C: 'Inheritance', D: 'Abstraction' },
+        right: 'C'
+    },
+    {
+        text: 'What is the function of a router in a computer network?',
+        selections: { A: 'To store data', B: 'To manage traffic between networks', C: 'To amplify signals', D: 'To secure network traffic' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following describes an abstraction layer in software design?',
+        selections: { A: 'A way of hiding complex details and exposing only essential parts', B: 'A detailed description of how a system works internally', C: 'A method for increasing system performance', D: 'A technique to prevent errors in the code' },
+        right: 'A'
+    },
+    {
+        text: 'What is the role of an IP address in networking?',
+        selections: { A: 'To assign tasks to devices in a network', B: 'To identify devices on a network', C: 'To encrypt data being transferred', D: 'To create a secure connection between devices' },
+        right: 'B'
+    },
+    {
+        text: 'Which of the following programming languages is designed primarily for web development?',
+        selections: { A: 'Java', B: 'Python', C: 'JavaScript', D: 'C++' },
+        right: 'C'
+    }]
 
     function shuffle(arr) {
         let currentIndex = arr.length
@@ -271,14 +530,14 @@ OUT = TEMP & right (in, text_len -n)`,
                 div.appendChild(block)
             }
         }
-        
+
         for (selection of Object.keys(question.selections)) {
             let qDiv = document.createElement('div')
             qDiv.className = 'question'
             qDiv.id = 'qDiv'
             let text = question.selections[selection]
             let radio = document.createElement('input')
-            radio.addEventListener('click', (event) => {submit(true, div)})
+            radio.addEventListener('click', (event) => { submit(true, div) })
             radio.setAttribute('type', 'radio')
             radio.setAttribute('name', question.text)
             radio.className = selection
@@ -322,6 +581,7 @@ OUT = TEMP & right (in, text_len -n)`,
             }
         }
         if (!bool) alert(`You got ${correct} / ${questions.length}`)
-        }
+    }
 </script>
+
 </html>
