@@ -285,7 +285,7 @@ OUT = TEMP & right (in, text_len -n)`,
     {
         text: 'What does the term "debugging" refer to in programming?',
         selections: { A: 'Writing new features into a program', B: 'Removing unnecessary code', C: 'Identifying and fixing errors in code', D: 'Refactoring code for efficiency' }, right: 'C'
-    }, 
+    },
     {
         text: 'Which of the following is used to manage memory allocation and deallocation automatically?',
         selections: { A: 'Manual Memory Management', B: 'Garbage Collection', C: 'Memory Caching', D: 'Memory Mapping' },
@@ -488,17 +488,36 @@ OUT = TEMP & right (in, text_len -n)`,
     }]
 
     function shuffle(arr) {
-        let currentIndex = arr.length
+        if (Array.isArray(arr)) {
+            let currentIndex = arr.length
 
-        while (currentIndex != 0) {
-            let randomIndex = Math.floor(Math.random() * currentIndex)
-            currentIndex--
+            while (currentIndex != 0) {
+                let randomIndex = Math.floor(Math.random() * currentIndex)
+                currentIndex--
 
-            [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]]
+                [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]]
+            }
+        } else if (typeof arr === 'object') {
+            const keys = Object.keys(arr);
+            // Fisher-Yates shuffle algorithm
+            for (let i = keys.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [keys[i], keys[j]] = [keys[j], keys[i]]; // Swap elements
+            }
+
+            const randomizedObj = {};
+            keys.forEach(key => {
+                randomizedObj[key] = arr[key];
+            });
+
+            return randomizedObj;
         }
     }
 
     shuffle(questions)
+    for (question of questions) {
+        shuffle(question.selections)
+    }
 
     let form = document.querySelector('#form')
     let quiz = document.getElementById('questions')
