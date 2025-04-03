@@ -71,12 +71,24 @@
         .couldBeRight {
             background-color: yellow !important;
         }
+        #score {
+            position: fixed;
+            border-radius: 5px;
+            box-shadow: 4px 4px 8px 5px rgba(0, 0, 0, 0.308);
+            background-color: white;
+            width: min-content;
+            top: 0;
+            right: 0;
+            margin: 1vi 1vi;
+            font-size: 3cqi;
+        }
     </style>
 </head>
 
 <body>
     <h1>Nocti Quiz 😊</h1>
     <button onclick="start(event)">Start Quiz</button>
+    <div id="score">0/0</div>
     <div id="form" hidden>
         <div id="questions"></div>
         <button id="submit" onclick="submit()">Submit</button>
@@ -551,7 +563,12 @@ OUT = TEMP & right (in, text_len -n)`,
             qDiv.id = 'qDiv'
             let text = question.selections[selection]
             let radio = document.createElement('input')
-            radio.addEventListener('click', (event) => { submit(true, div) })
+            radio.addEventListener('click', (event) => {
+                for (elem of div.querySelectorAll('input[type=radio]')) {
+                    elem.style.pointerEvents = 'none'
+                }
+                submit(true, div)
+            })
             radio.setAttribute('type', 'radio')
             radio.setAttribute('name', question.text)
             radio.className = selection
@@ -575,26 +592,30 @@ OUT = TEMP & right (in, text_len -n)`,
 
     }
 
+    let score = document.getElementById('score')
+    let qNum = questions.length
+    let right = 0
+    score.innerHTML = right + '/' + qNum
+
     function submit(bool = false, elem = document.querySelectorAll('#qDiv')) {
-        let correct = questions.length * 4
-        if (!elem.length && bool) elem = [elem]
+        if (!elem.length && bool) {elem = [elem]} else {right = 0}
         for (elem of elem) {
             for (child of elem.querySelectorAll('input[type="radio"]')) {
                 parent = child.parentElement
                 let found = questions.find((element) => element.text == child.name)
                 if (found.right == child.className) {
                     parent.setAttribute('class', 'right')
-                    if (child.checked) correct++
+                    if (child.checked) right++
                 } else if (child.checked) {
                     parent.setAttribute('class', 'wrong')
+                    if (!elem.length && bool && right > 0) right--
                 }
                 else {
                     parent.setAttribute('class', 'couldBeRight')
                 }
-                correct--
             }
         }
-        if (!bool) alert(`You got ${correct} / ${questions.length}`)
+        score.innerHTML = right + '/' + qNum
     }
 </script>
 
