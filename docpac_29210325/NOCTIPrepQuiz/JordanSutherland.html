@@ -243,7 +243,7 @@ OUT = TEMP & right (in, text_len -n)`,
         }, right: 'B'
     },
     {
-        text: 'A programmer has to make programmer changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as ______ documentation.',
+        text: 'A programmer has to make changes to an existing program. Therefore the comments in the existing program must also be updated. The comments are referred to as ______ documentation.',
         selections: { A: 'External', B: 'Internal', C: 'Primary', D: 'Secondary' }, right: 'B'
     },
     {
@@ -528,7 +528,8 @@ OUT = TEMP & right (in, text_len -n)`,
 
     shuffle(questions)
     for (question of questions) {
-        shuffle(question.selections)
+        question.selections = shuffle(question.selections)
+        console.log('shuffle')
     }
 
     let form = document.querySelector('#form')
@@ -596,8 +597,9 @@ OUT = TEMP & right (in, text_len -n)`,
     let qNum = questions.length
     let right = 0
     score.innerHTML = right + '/' + qNum
-
+    
     function submit(bool = false, elem = document.querySelectorAll('#qDiv')) {
+        right = 0
         if (!elem.length && bool) {elem = [elem]} else {right = 0}
         for (elem of elem) {
             for (child of elem.querySelectorAll('input[type="radio"]')) {
@@ -605,15 +607,17 @@ OUT = TEMP & right (in, text_len -n)`,
                 let found = questions.find((element) => element.text == child.name)
                 if (found.right == child.className) {
                     parent.setAttribute('class', 'right')
-                    if (child.checked) right++
                 } else if (child.checked) {
                     parent.setAttribute('class', 'wrong')
-                    if (!elem.length && bool && right > 0) right--
                 }
                 else {
                     parent.setAttribute('class', 'couldBeRight')
                 }
             }
+        }
+        for (child of document.querySelectorAll('input[type="radio"]')) {
+            let found = questions.find((element) => element.text == child.name)
+            if (child.checked && found.right == child.className) right++
         }
         score.innerHTML = right + '/' + qNum
     }
