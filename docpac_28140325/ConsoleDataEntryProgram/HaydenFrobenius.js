@@ -126,7 +126,7 @@ function calculateOrderTotals(order) {
         totals.shipping = SHIPPING;
     }
 
-    totals.tax = (totals.subTotal * SALES_TAX).toFixed(2);
+    totals.tax = Number((totals.subTotal * SALES_TAX).toFixed(2));
 
     totals.total = totals.subTotal + totals.shipping + totals.tax;
 
