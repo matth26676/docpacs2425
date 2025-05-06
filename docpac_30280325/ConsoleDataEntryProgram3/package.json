@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "node": "^20.19.0",
-    "readline-sync": "^1.4.10"
-  }
-}
