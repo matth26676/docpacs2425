@@ -2,7 +2,8 @@ var readline = require('readline-sync');
 
 var orders = []
 
-while (true) {
+
+function run() {
     var order = {
         name: '',
         address: '',
@@ -12,27 +13,27 @@ while (true) {
 
     switch (selection) {
         case 0:
-            console.clear()
             order.name = readline.question('What is your name?')
             order.address = readline.question('What is your address?')
             orders.push(order)
             break;
         case 1:
-            console.clear()
             var selection = []
             for (var i = 0; i < Object.keys(orders).length; i++) {
                 var orderS = orders[i]
                 selection.push(orderS.name)
             }
-            if (selection.length > 0) order = orders[readline.keyInSelect(selection, 'Which one is yours?')]
-            var editing = true
+
+            if (selection.length > 0) {
+                 order = orders[readline.keyInSelect(selection, 'Which one is your order?')]
+                var editing = true 
+            }
+
             while (editing) {
-                console.clear()
                 switch (readline.keyInSelect(['Add Item', 'Finish Editing'], 'Select an Option')) {
                     case 0:
-                        console.clear()
                         var Name = readline.question('Whats the name of this product?')
-                        var Price = parseFloat(readline.question('Whats the esitmated price?'))
+                        var Price = parseFloat(readline.question('Whats the esitmated price?(No symbols)'))
                         var Amount = parseFloat(readline.question('How many do you want?'))
 
                         var item = {
@@ -43,7 +44,6 @@ while (true) {
                         order.items.push(item)
                         break;
                     case 1:
-                        console.clear()
                         var shipFee = 5
                         var total = 0
                         order.items.forEach(item => {
@@ -52,7 +52,9 @@ while (true) {
                         order.total = total
                         var tax = total * 0.06
                         order.tax = tax
-                        if (total + tax > 50) shipFee = 0
+                        if (total + tax > 50){
+                            shipFee = 0
+                        }
                         order.shippingFee = shipFee
                         editing = false
                         var total = total + tax + shipFee
@@ -61,15 +63,16 @@ while (true) {
                 }
             }
             break;
+            
         case 2:
-            console.clear()
             console.log(orders)
-            orders.forEach(tOrder => {
+            orders.forEach(Order => {
                 console.log('')
-                console.log(tOrder)
+                console.log(Order)
             });
             break;
             
-    }
+    } 
 }
 
+run()
